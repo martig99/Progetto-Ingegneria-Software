@@ -15,7 +15,7 @@ public class Main {
 			
 			System.out.print("Email: ");
 			String email = input.nextLine();
-			
+	
 			System.out.print("Password: ");
 			String password = input.nextLine();
 			
@@ -34,6 +34,8 @@ public class Main {
 				}
 			}
 		}
+		
+		System.out.println("Modifica CRI");
 	}
 
 }
