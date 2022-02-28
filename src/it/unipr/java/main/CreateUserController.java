@@ -1,6 +1,6 @@
 package it.unipr.java.main;
 
-import it.unipr.java.model.UserRole;
+import it.unipr.java.model.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -109,14 +109,18 @@ public class CreateUserController {
     public void setMain(final App main) {
         this.main = main;
         
-        if (this.main.getLoggedUser() != null) {
+        if (this.main.getLoggedUser() != null && this.main.getLoggedUser() instanceof Employee) {
         	this.title.setText("CREATE A NEW USER");
         	this.link.setText("GO BACK");
         	
-        	this.boxRole.setVisible(true);
-        	this.boxRole.setManaged(true);
-        	this.admin.setVisible(true);
-        	this.admin.setManaged(true);
+        	Employee employee = (Employee) this.main.getLoggedUser();
+        	if (employee.isAdministrator()) {
+	        	this.boxRole.setVisible(true);
+	        	this.boxRole.setManaged(true);
+	        	
+	        	this.admin.setVisible(true);
+	        	this.admin.setManaged(true);
+        	}
         } else {
         	this.title.setText("SIGN UP");
         	this.link.setText("LOGIN");
