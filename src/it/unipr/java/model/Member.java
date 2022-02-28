@@ -2,6 +2,9 @@ package it.unipr.java.model;
 
 /**
  * The class {@code Member} provides an implementation of a model of a club member and extends the class {@code User}.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
 **/
 public class Member extends User{
 	

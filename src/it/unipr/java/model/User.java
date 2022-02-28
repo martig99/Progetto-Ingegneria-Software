@@ -2,6 +2,9 @@ package it.unipr.java.model;
 
 /**
  * The class {@code User} provides an implementation of a model of an user.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
 **/
 public class User {
 	
@@ -74,15 +77,9 @@ public class User {
 	 * Sets the user's fiscal code.
 	 * 
 	 * @param fiscalCode the fiscal code.
-	 * @return {@code true} if the operation is successful.
 	**/
-	public boolean setFiscalCode(final String fiscalCode) {
-		if (!fiscalCode.isEmpty()) {
-			this.fiscalCode = fiscalCode;
-			return true;
-		}
-		
-		return false;
+	public void setFiscalCode(final String fiscalCode) {
+		this.fiscalCode = fiscalCode;
 	}
 	
 	/**
@@ -98,15 +95,9 @@ public class User {
 	 * Sets the user's first name.
 	 * 
 	 * @param firstName the first name.
-	 * @return {@code true} if the operation is successful.
 	**/
-	public boolean setFirstName(final String firstName) {
-		if (!firstName.isEmpty()) {
-			this.firstName = firstName;
-			return true;
-		}
-		
-		return false;
+	public void setFirstName(final String firstName) {
+		this.firstName = firstName;
 	}
 	 
 	/**
@@ -122,15 +113,9 @@ public class User {
 	 * Sets the user's last name.
 	 * 
 	 * @param lastName the last name.
-	 * @return {@code true} if the operation is successful.
 	**/
-	public boolean setLastName(final String lastName) {
-		if (!lastName.isEmpty()) {
-			this.lastName = lastName;
-			return true;
-		}
-		
-		return false;
+	public void setLastName(final String lastName) {
+		this.lastName = lastName;
 	}
 	 
 	/**
@@ -146,15 +131,9 @@ public class User {
 	 * Sets the user's email address.
 	 * 
 	 * @param email the new user's email address.
-	 * @return {@code true} if the operation is successful.
 	**/
-	public boolean setEmail(final String email) {
-		if (!email.isEmpty()) {
-			this.email = email;
-			return true;
-		}
-		
-		return false;
+	public void setEmail(final String email) {
+		this.email = email;
 	}
 	
 	/**
@@ -170,15 +149,9 @@ public class User {
 	 * Sets the user's password.
 	 * 
 	 * @param password the new user's password.
-	 * @return {@code true} if the operation is successful.
 	**/
-	public boolean setPassword(final String password) {
-		if (!password.isEmpty()) {
-			this.password = password;
-			return true;
-		} 
-		
-		return false;
+	public void setPassword(final String password) {
+		this.password = password;
 	}
 
 	/**
