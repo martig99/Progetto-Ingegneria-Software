@@ -237,7 +237,7 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new Fee(rset.getInt("IdFee"), FeeType.valueOf(rset.getString("Type").toUpperCase()), rset.getFloat("Amount"));
+				return new Fee(rset.getInt("IdFee"), FeeType.valueOf(rset.getString("Type").toUpperCase()), rset.getFloat("Amount"), rset.getInt("ValidityPeriod"));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();

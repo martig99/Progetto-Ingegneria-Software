@@ -11,6 +11,7 @@ public class Fee {
 	private int id;
 	private FeeType type;
 	private float amount;
+	private int validityPeriod;
 	
 	/**
 	 * Class constructor.
@@ -19,6 +20,7 @@ public class Fee {
 		this.id = 0;
 		this.type = null;
 		this.amount = 0;
+		this.validityPeriod = 0;
 	}	
 	
 	/**
@@ -27,11 +29,13 @@ public class Fee {
 	 * @param id the id of the fee.
 	 * @param type the type of the fee.
 	 * @param amount the amount of the fee.
+	 * @param validityPeriod the validity period of the fee in days.
 	**/
-	public Fee(final int id, final FeeType type, final float amount) {
+	public Fee(final int id, final FeeType type, final float amount, final int validityPeriod) {
 		this.setId(id);
 		this.setType(type);
 		this.setAmount(amount);
+		this.setValidityPeriod(validityPeriod);
 	}	
 	
 	/**
@@ -89,12 +93,30 @@ public class Fee {
 	}
 	
 	/**
+	 * Gets the validity period of the fee in days.
+	 * 
+	 * @return the validity period.
+	**/
+	public int getValidityPeriod() {
+		return this.validityPeriod;
+	}
+	
+	/**
+	 * Sets the validity period of the fee in days.
+	 * 
+	 * @param validityPeriod the new validity period.
+	**/
+	public void setValidityPeriod(final int validityPeriod) {
+		this.validityPeriod = validityPeriod;
+	}
+	
+	/**
 	 * Gets a string that describes a fee.
 	 * 
 	 * @return the string.
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Type: " + this.type.toString() + " - Amount: " + this.amount;
+		return "Id: " + this.id + " - Type: " + this.type.toString() + " - Amount: " + this.amount + " - Validity Period: " + this.validityPeriod;
 	}
 }
