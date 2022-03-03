@@ -48,7 +48,7 @@ public class Boat {
 	 * @return the unique identifier.
 	**/
 	public int getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**

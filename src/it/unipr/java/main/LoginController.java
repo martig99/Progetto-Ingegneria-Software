@@ -20,10 +20,7 @@ public class LoginController {
 	private App main;
 	
 	@FXML
-    private TextField email;
-	
-	@FXML
-    private TextField password;
+    private TextField email, password;
 	
 	@FXML
 	ToggleGroup group;
@@ -50,11 +47,11 @@ public class LoginController {
 	**/
 	public void login() {
 		RadioButton selectedRadioButton = (RadioButton) group.getSelectedToggle();
-    	String role = selectedRadioButton.getText();
+    	String userType = selectedRadioButton.getText();
     	
     	if (!this.email.getText().isEmpty() && !this.password.getText().isEmpty()) {
     		if (this.main.emailValidation(this.email.getText())) {
-		    	User loggedUser = this.main.getClub().login(email.getText(), password.getText(), UserRole.valueOf(role.toUpperCase()));
+		    	User loggedUser = this.main.getClub().login(email.getText(), password.getText(), UserType.valueOf(userType.toUpperCase()));
 				
 				if (loggedUser != null) {
 					this.main.setLoggedUser(loggedUser);

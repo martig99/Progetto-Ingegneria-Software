@@ -11,7 +11,7 @@
 
 <VBox prefHeight="550.0" prefWidth="800.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.BoatsController">
 	<children>
-		<Text fx:id="info" strokeType="OUTSIDE" text="">
+		<Text fx:id="info" strokeType="OUTSIDE" text="" textAlignment="CENTER">
 			<font>
 				<Font name="Arial" size="12.0" />
 			</font>

@@ -22,15 +22,14 @@ public class Employee extends User{
 	 * Class constructor.
 	 * 
 	 * @param id the user's id.
-	 * @param fiscalCode the user's fiscal code.
 	 * @param firstName the user's first name.
 	 * @param lastName the user's last name.
 	 * @param email the user's email.
 	 * @param password the user's password.
 	 * @param administrator {@code true} if the employee is administrator.
 	**/
-	public Employee (final int id, final String fiscalCode, final String firstName, final String lastName, final String email, final String password, final boolean administrator) {
-		super(id, fiscalCode, firstName, lastName, email, password);
+	public Employee (final int id, final String firstName, final String lastName, final String email, final String password, final boolean administrator) {
+		super(id, firstName, lastName, email, password);
 		this.setAdministrator(administrator);
 	}
 	

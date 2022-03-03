@@ -22,10 +22,7 @@ public class AddBoatController {
 	private App main;
 	
 	@FXML
-    private TextField name;
-	
-	@FXML
-    private TextField length;
+    private TextField name, length;
 	
 	@FXML
     private HBox boxUser;
@@ -48,22 +45,27 @@ public class AddBoatController {
 	**/
 	public void addBoat() {
 		if (!this.name.getText().isEmpty() && !this.length.getText().isEmpty()) {
+			int length = this.main.convertToInteger(this.length.getText());			
+			if (length <= 0) {
+				return;
+			}
+			
 			User owner = new User();
 			if (this.main.getLoggedUser() instanceof Member) {
 				owner = this.main.getLoggedUser(); 
 			} else {
-				String member = this.users.getSelectionModel().getSelectedItem().toString();
-				owner = this.main.getClub().getUser("", member);
+				String emailMember = this.users.getSelectionModel().getSelectedItem().toString();
+				owner = this.main.getClub().getUserByEmail(emailMember);
+				
+				if (owner == null) {
+					this.main.showAlert(Alert.AlertType.WARNING, "Error", null, "Select the email of the owner of the boat.");
+					return;
+				}
 			}
 			
 			if (this.main.getClub().getBoatByName(name.getText(), owner) != null) {
 				this.main.showAlert(Alert.AlertType.WARNING, "Error", null,"Already exists a boat with entered name.");
 			} else {
-				int length = this.main.convertToInteger(this.length.getText());			
-    			if (length <= 0) {
-    				return;
-    			}
-    			
     			this.main.getClub().insertBoat(name.getText(), length, owner);
 				
 				this.main.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The new boat has been added correctly.");

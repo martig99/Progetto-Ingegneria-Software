@@ -9,7 +9,6 @@ package it.unipr.java.model;
 public class User {
 	
 	private int id;
-	private String fiscalCode;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -19,27 +18,24 @@ public class User {
 	 * Class constructor.
 	**/
 	public User() {
-		this.id = 0;
-		this.fiscalCode = "";
-		this.firstName = "";
-		this.lastName = "";
-		this.email = "";
-		this.password = "";
+		this.setId(0);
+		this.setFirstName("");
+		this.setLastName("");
+		this.setEmail("");
+		this.setPassword("");
 	}
 	
 	/**
 	 * Class constructor.
 	 * 
 	 * @param id the user's id.
-	 * @param fiscalCode the user's fiscal code.
 	 * @param firstName the user's first name.
 	 * @param lastName the user's last name.
 	 * @param email the user's email.
 	 * @param password the user's password.
 	**/
-	public User (final int id, final String fiscalCode, final String firstName, final String lastName, final String email, final String password) {
+	public User (final int id, final String firstName, final String lastName, final String email, final String password) {
 		this.setId(id);
-		this.setFiscalCode(fiscalCode);
 		this.setFirstName(firstName);
 		this.setLastName(lastName);
 		this.setEmail(email);
@@ -58,28 +54,10 @@ public class User {
 	/**
 	 * Sets the user's identifier.
 	 *
-	 * @param id the identifier.
+	 * @param id the new identifier.
 	**/
 	public void setId(final int id) {
 		this.id = id;
-	}
-	
-	/**
-	 * Gets the user's fiscal code.
-	 *
-	 * @return the fiscal code.
-	**/
-	public String getFiscalCode() {
-		return this.fiscalCode;
-	}
-
-	/**
-	 * Sets the user's fiscal code.
-	 * 
-	 * @param fiscalCode the fiscal code.
-	**/
-	public void setFiscalCode(final String fiscalCode) {
-		this.fiscalCode = fiscalCode;
 	}
 	
 	/**
@@ -94,7 +72,7 @@ public class User {
 	/**
 	 * Sets the user's first name.
 	 * 
-	 * @param firstName the first name.
+	 * @param firstName the new first name.
 	**/
 	public void setFirstName(final String firstName) {
 		this.firstName = firstName;
@@ -112,7 +90,7 @@ public class User {
 	/**
 	 * Sets the user's last name.
 	 * 
-	 * @param lastName the last name.
+	 * @param lastName the new last name.
 	**/
 	public void setLastName(final String lastName) {
 		this.lastName = lastName;
@@ -161,6 +139,6 @@ public class User {
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Fiscal Code: " + this.fiscalCode + " - First Name: " + this.firstName + " - Last Name: " + this.lastName + " - Email: " + this.email + " - Password: " + this.password;
+		return "Id: " + this.id + " - First Name: " + this.firstName + " - Last Name: " + this.lastName + " - Email: " + this.email + " - Password: " + this.password;
 	}
 }

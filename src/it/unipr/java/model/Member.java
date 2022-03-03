@@ -8,49 +8,71 @@ package it.unipr.java.model;
 **/
 public class Member extends User{
 	
-	private float membershipFee;
+	private String fiscalCode;
+	private String address;
 	
 	/**
 	 * Class constructor.
 	**/
 	public Member() {
 		super();
-		this.membershipFee = 0;
+		this.setFiscalCode("");
+		this.setAddress("");
 	}
 	
 	/**
 	 * Class constructor.
 	 * 
-	 * @param id the user's id.
-	 * @param fiscalCode the user's fiscal code.
-	 * @param firstName the user's first name.
-	 * @param lastName the user's last name.
-	 * @param email the user's email.
-	 * @param password the user's password.
-	 * @param membershipFee the user's membership fee.
+	 * @param id the member's id.
+	 * @param firstName the member's first name.
+	 * @param lastName the member's last name.
+	 * @param email the member's email.
+	 * @param password the member's password.
+	 * @param fiscalCode the member's fiscal code.
+	 * @param address the member's address.
 	**/
-	public Member (final int id, final String fiscalCode, final String firstName, final String lastName, final String email, final String password, final float membershipFee) {
-		super(id, fiscalCode, firstName, lastName, email, password);
-		this.setMembershipFee(membershipFee);
+	public Member (final int id, final String firstName, final String lastName, final String email, final String password, final String fiscalCode, final String address) {
+		super(id, firstName, lastName, email, password);
+		this.setFiscalCode(fiscalCode);
+		this.setAddress(address);
 	}
 	
 	/**
-	 * Gets the user's membership fee.
-	 * 
-	 * @return the membership fee.
+	 * Gets the member's fiscal code.
+	 *
+	 * @return the fiscal code.
 	**/
-	public float getMembershipFee() {
-		return this.membershipFee;
+	public String getFiscalCode() {
+		return this.fiscalCode;
+	}
+
+	/**
+	 * Sets the member's fiscal code.
+	 * 
+	 * @param fiscalCode the new fiscal code.
+	**/
+	public void setFiscalCode(final String fiscalCode) {
+		this.fiscalCode = fiscalCode;
 	}
 	
 	/**
-	 * Sets the user's membership fee.
-	 * 
-	 * @param membershipFee the new user's membership fee.
+	 * Gets the member's address.
+	 *
+	 * @return the address.
 	**/
-	public void setMembershipFee(final float membershipFee) {
-		this.membershipFee = membershipFee;
+	public String getAddress() {
+		return this.address;
 	}
+
+	/**
+	 * Sets the member's address.
+	 * 
+	 * @param fiscalCode the new address.
+	**/
+	public void setAddress(final String address) {
+		this.address = address;
+	}
+	
 
 	/**
 	 * Gets a string that describes a club member.
@@ -59,6 +81,6 @@ public class Member extends User{
 	**/
 	@Override
 	public String toString() {
-		return super.toString() + " - Membership Fee: " + this.membershipFee;
+		return super.toString() + " - Fiscal Code: " + this.fiscalCode + " - Address: " + this.address;
 	}
 }

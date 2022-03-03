@@ -3,7 +3,6 @@ package it.unipr.java.main;
 import java.util.Optional;
 
 import it.unipr.java.model.*;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 
 /**
@@ -34,19 +34,10 @@ public class BoatsController {
     private TableView<Boat> boatsTable;
 
     @FXML
-    private TableColumn<Boat, Number> idColumn;
+    private TableColumn<Boat, Number> idColumn, lengthColumn, storageFeeColumn;
     
     @FXML
-    private TableColumn<Boat, String> nameColumn;
-    
-    @FXML
-    private TableColumn<Boat, Number> lengthColumn;
-    
-    @FXML
-    private TableColumn<Boat, Number> storageFeeColumn;
-    
-    @FXML
-    private TableColumn<Boat, String> ownerColumn;
+    private TableColumn<Boat, String> nameColumn, ownerColumn;
     
     @FXML
     private Button addButton;
@@ -63,6 +54,11 @@ public class BoatsController {
     		if (event.getClickCount() == 2 && this.boatsTable.getSelectionModel().getSelectedItem() != null) {
 				this.removeBoat();
 			}
+    		
+			if (event.getButton() == MouseButton.SECONDARY  && this.boatsTable.getSelectionModel().getSelectedItem() != null) {
+		    	int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
+				this.main.initUpdateBoat(id);
+			}
         });
     }
     
@@ -74,7 +70,7 @@ public class BoatsController {
 		this.nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 		this.lengthColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getLength()));
 		this.storageFeeColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getStoragFee()));
-		this.ownerColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(this.main.getClub().getUserById(cellData.getValue().getOwner()).getEmail()));		
+		this.ownerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.main.getClub().getUserById(cellData.getValue().getOwner()).getEmail()));		
 	}
     
     /**
@@ -117,7 +113,7 @@ public class BoatsController {
     public void setMain(final App main) {
         this.main = main;
         
-        this.info.setText("Double click to delete a boat.");
+        this.info.setText("Double click to delete a boat.\nRight click to update a boat.");
         
         if (this.main.getLoggedUser() instanceof Employee) {
         	this.ownerColumn.setVisible(true);

@@ -22,31 +22,16 @@ public class CreateUserController {
 	private App main;
 	
 	@FXML
-    private Text title;
+    private Text title, link;
 	
 	@FXML
-    private TextField fiscalCode;
-	
-	@FXML
-    private TextField firstName;
-	
-	@FXML
-    private TextField lastName;
-	
-	@FXML
-    private TextField email;
-	
-	@FXML
-    private TextField password;
+    private TextField fiscalCode, firstName, lastName, email, password, address;
 	
 	@FXML
     private Button saveButton;
 	
 	@FXML
-	private Text link;
-	
-	@FXML
-	private HBox boxRole;
+	private HBox boxUserType;
 	
 	@FXML
 	private ToggleGroup group;
@@ -73,21 +58,23 @@ public class CreateUserController {
 	 * Creates a new user.
 	**/
 	public void createUser() {   
-		if (!this.fiscalCode.getText().isEmpty() && !this.firstName.getText().isEmpty() && !this.lastName.getText().isEmpty() && !this.email.getText().isEmpty() && !this.password.getText().isEmpty()) {
+		if (!this.fiscalCode.getText().isEmpty() && !this.firstName.getText().isEmpty() && !this.lastName.getText().isEmpty() && !this.email.getText().isEmpty() && !this.password.getText().isEmpty() && !this.address.getText().isEmpty()) {
 			if (this.main.emailValidation(this.email.getText())) {
-				if (this.main.getClub().getUser(this.fiscalCode.getText(), this.email.getText()) != null) {
-					this.main.showAlert(Alert.AlertType.WARNING, "Attention", null, "Account already exists with the fiscal code and/or the email entered.");
+				if (this.main.getLoggedUser() != null && this.main.getClub().getUserByEmail(this.email.getText()) != null) {
+					this.main.showAlert(Alert.AlertType.WARNING, "Attention", null, "Account already exists with the email entered.");
+				} else if (this.main.getLoggedUser() != null && this.main.getClub().getMemberByFiscalCode(this.fiscalCode.getText()) != null)  {
+					this.main.showAlert(Alert.AlertType.WARNING, "Attention", null, "Account already exists with the fiscal code entered.");
 				} else {
 					if (this.main.getLoggedUser() != null) {
 						RadioButton selectedRadioButton = (RadioButton) group.getSelectedToggle();
-				    	String role = selectedRadioButton.getText();
+				    	String userType = selectedRadioButton.getText();
 				    	
-						this.main.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), this.admin.isSelected(), UserRole.valueOf(role.toUpperCase()));
+						this.main.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), this.address.getText(), this.admin.isSelected(), UserType.valueOf(userType.toUpperCase()));
 						
     					this.main.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The new user was created correctly.");
     					this.main.initUsers();
 					} else {
-						this.main.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), false, UserRole.MEMBER);
+						this.main.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), this.address.getText(), false, UserType.MEMBER);
 						
 						this.main.showAlert(Alert.AlertType.INFORMATION, "Thanks", null, "Your account has been successfully created.");
 						this.main.initLogin();
@@ -110,17 +97,16 @@ public class CreateUserController {
         this.main = main;
         
         if (this.main.getLoggedUser() != null && this.main.getLoggedUser() instanceof Employee) {
-        	this.title.setText("CREATE A NEW USER");
-        	this.link.setText("GO BACK");
-        	
         	Employee employee = (Employee) this.main.getLoggedUser();
         	if (employee.isAdministrator()) {
-	        	this.boxRole.setVisible(true);
-	        	this.boxRole.setManaged(true);
-	        	
-	        	this.admin.setVisible(true);
-	        	this.admin.setManaged(true);
+        		this.title.setText("CREATE A NEW MEMBER OR EMPLOYEE");
+
+        		this.main.setVisibleElement(this.boxUserType, true);
+        	} else {
+        		this.title.setText("CREATE A NEW MEMBER");
         	}
+        	
+        	this.link.setText("GO BACK");
         } else {
         	this.title.setText("SIGN UP");
         	this.link.setText("LOGIN");

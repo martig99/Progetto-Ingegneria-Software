@@ -22,7 +22,7 @@
         		<Insets bottom="10.0" left="0.0" right="0.0" top="10.0" />
         	</VBox.margin>
         </Text>
-		<TextField fx:id="fiscalCode" promptText="FiscalCode" maxWidth="400.0">
+		<TextField fx:id="fiscalCode" promptText="FiscalCode" maxWidth="400.0" visible="${member.selected}" managed="${member.selected}">
 			<font>
 				<Font name="Arial" size="18.0" />
 			</font>
@@ -50,6 +50,14 @@
 				</TextField>
 			</children>
 		</HBox>
+		<TextField fx:id="address" promptText="Address" maxWidth="400.0" visible="${member.selected}" managed="${member.selected}">
+			<font>
+				<Font name="Arial" size="18.0" />
+			</font>
+			<HBox.margin>
+				<Insets bottom="10.0" left="5.0" right="0.0" top="10.0" />
+			</HBox.margin>
+		</TextField>
 		<TextField fx:id="email" promptText="Email" maxWidth="400.0">
 			<font>
 				<Font name="Arial" size="18.0" />
@@ -66,7 +74,7 @@
 				<Insets bottom="10.0" left="0.0" right="0.0" top="10.0" />
 			</VBox.margin>
 		</PasswordField>
-		<HBox fx:id="boxRole" alignment="CENTER" visible="false" managed="false">
+		<HBox fx:id="boxUserType" alignment="CENTER" visible="false" managed="false">
         	<children>
         		<RadioButton fx:id="member" mnemonicParsing="false" text="Member" selected="true">
         			<font>
@@ -82,7 +90,7 @@
           				<Insets bottom="15.0" left="0.0" right="0.0" top="10.0" />
           			</HBox.margin>
         		</RadioButton>
-        		<RadioButton mnemonicParsing="false" text="Employee" toggleGroup="$group">
+        		<RadioButton fx:id="employee" mnemonicParsing="false" text="Employee" toggleGroup="$group">
         			<font>
            				<Font size="17.0" />
         			</font>
@@ -95,7 +103,7 @@
         		</RadioButton>
         	</children>
         </HBox>
-        <CheckBox fx:id="admin" mnemonicParsing="false" text="Administrator" disable="${member.selected}" visible="false" managed="false">
+        <CheckBox fx:id="admin" mnemonicParsing="false" text="Administrator" visible="${employee.selected}" managed="${employee.selected}">
         	<font>
         		<Font size="17.0" />
      		</font>

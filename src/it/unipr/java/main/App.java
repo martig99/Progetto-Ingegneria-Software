@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 import it.unipr.java.model.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -14,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -209,6 +212,30 @@ public class App extends Application {
     }
 	
 	/**
+	 * Initializes the dialog panel to update a boat.
+	**/
+	public void initUpdateBoat(final int id) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/UpdateBoatLayout.fxml"));
+            
+            AnchorPane root = (AnchorPane) loader.load();
+            Scene scene = new Scene(root);
+            
+            UpdateBoatController controller = loader.getController();
+            controller.setMain(this);
+            controller.setIdBoat(id);
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setScene(scene);
+            dialogStage.setTitle("Update the boat with unique code " + id);
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
 	 * Initializes the users page.
 	**/
 	public void initUsers() {
@@ -267,6 +294,33 @@ public class App extends Application {
 	    	this.showAlert(Alert.AlertType.WARNING, "Error!", null, "The entered number is incorrect.");
 	    	return -1;
 	    }
+	}
+	
+	/**
+     * 
+     * @param clickedLink the link of the clicked menu.
+    **/
+    public void activeLinkMenu (final Parent parent, final Node clickedLink) {
+    	if (parent != null) {
+	    	for (Node child: parent.getChildrenUnmodifiable()) {
+	    		if (child instanceof Text) {
+	    			Text link = (Text) child;
+	    			link.setUnderline(false);
+	    		}
+	    	}
+	    	
+	    	if (clickedLink instanceof Text) {
+	    		((Text) clickedLink).setUnderline(true);
+	    	}
+    	}
+    }
+	
+	/**
+	 * 
+	**/
+	public void setVisibleElement(final Node element, final boolean visible) {
+	    element.setVisible(visible);
+	    element.setManaged(visible);
 	}
 	
 	/**

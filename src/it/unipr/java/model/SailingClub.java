@@ -6,7 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * The class {@code SailingClub} describes a sailing club and its properties.
@@ -31,30 +34,31 @@ public class SailingClub {
 	 * 
 	 * @param email the login email address.
 	 * @param password the login password.
-	 * @param role the user's role.
+	 * @param type the user type to select.
 	 * @return the reference of the user or <code>null</code>.
 	**/
-	public User login(final String email, final String password, final UserRole role) {		
+	public User login(final String email, final String password, final UserType type) {		
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			
 			String query = "";
-			if (role == UserRole.MEMBER) {
-				query = "SELECT * FROM Users JOIN Members ON IdUser = IdMember JOIN Fees ON MembershipFee = IdFee WHERE Email = ? AND Password = ?";
-			} else if (role == UserRole.EMPLOYEE) {
-				query = "SELECT * FROM Users JOIN Employees ON IdUser = IdEmployee WHERE Email = ? AND Password = ?";
+			if (type == UserType.MEMBER) {
+				query = "SELECT * FROM Users JOIN Members ON IdUser = IdMember WHERE Email = ? AND Password = ? AND StatusCode <> ?";
+			} else if (type == UserType.EMPLOYEE) {
+				query = "SELECT * FROM Users JOIN Employees ON IdUser = IdEmployee WHERE Email = ? AND Password = ? AND StatusCode <> ?";
 			}
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, email);
 			pstmt.setString(2, password);
+			pstmt.setInt(3, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				if (role == UserRole.MEMBER) {
-					return new Member(rset.getInt("IdUser"), rset.getString("FiscalCode"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getFloat("Amount"));
-				} else if (role == UserRole.EMPLOYEE) {
-					return new Employee(rset.getInt("IdUser"), rset.getString("FiscalCode"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getBoolean("Administrator"));
+				if (type == UserType.MEMBER) {
+					return new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"));
+				} else if (type == UserType.EMPLOYEE) {
+					return new Employee(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getBoolean("Administrator"));
 				}
 			}
 		} catch (SQLException sqle) {
@@ -72,46 +76,63 @@ public class SailingClub {
 	 * @param lastName the last name of the new user.
 	 * @param email the email address of the new user.
 	 * @param password the password of the new user.
-	 * @param role the user's role.
+	 * @param type the type of user to insert.
 	**/
-	public void createUser(final String fiscalCode, final String firstName, final String lastName, final String email, final String password, final boolean admin, final UserRole role) {	
-		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
-				Statement stmt = conn.createStatement()) {
-			
-			Fee membershipFee = getFee(FeeType.MEMBERSHIP);
-			insertUser(fiscalCode, firstName, lastName, email, password);
-			User newUser = getUser(fiscalCode, email);
-			
-			if (role.equals(UserRole.MEMBER)) {
-				insertMember(newUser.getId(), membershipFee.getId());
-			} else {
-				insertEmployee(newUser.getId(), admin);
-			}
-			
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+	public void createUser(final String fiscalCode, final String firstName, final String lastName, final String email, final String password, final String address, final boolean admin, final UserType type) {	
+		this.insertUser(firstName, lastName, email, password);
+		User newUser = this.getUserByEmail(email);
+		
+		if (type.equals(UserType.MEMBER)) {
+			this.insertMember(newUser.getId(), fiscalCode, address);
+		} else {
+			this.insertEmployee(newUser.getId(), admin);
 		}
 	}
 	
 	/**
-	 * Gets the user in the database given the fiscal code or email.
+	 * Gets the user in the database given the email.
 	 * 
-	 * @param fiscalCode the fiscal code.
 	 * @param email the email address.
 	 * @return the reference of the user or <code>null</code>.
 	**/
-	public User getUser(final String fiscalCode, final String email) {
+	public User getUserByEmail(final String email) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "SELECT * FROM Users WHERE FiscalCode = ? OR Email = ?";
+			String query = "SELECT * FROM Users WHERE Email = ? AND StatusCode <> ?";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, fiscalCode);
-			pstmt.setString(2, email);
+			pstmt.setString(1, email);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new User(rset.getInt("IdUser"), rset.getString("FiscalCode"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"));
+				return new User(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the member in the database given the fiscal code.
+	 * 
+	 * @param fiscalCode the fiscal code.
+	 * @return the reference of the member or <code>null</code>.
+	**/
+	public Member getMemberByFiscalCode(final String fiscalCode) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE FiscalCode = ? AND StatusCode <> ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, fiscalCode);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -129,17 +150,17 @@ public class SailingClub {
 	 * @param email the email address of the new user.
 	 * @param password the password of the new user.
 	**/
-	public void insertUser(final String fiscalCode, final String firstName, final String lastName, final String email, final String password) {
+	public void insertUser(final String firstName, final String lastName, final String email, final String password) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "INSERT INTO Users (FiscalCode, FirstName, LastName, Email, Password) VALUES (?,?,?,?,?)";
+			String query = "INSERT INTO Users (FirstName, LastName, Email, Password, StatusCode) VALUES (?,?,?,?,?)";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, fiscalCode);
-			pstmt.setString(2, firstName);	
-			pstmt.setString(3, lastName);
-			pstmt.setString(4, email);
-			pstmt.setString(5, password);
+			pstmt.setString(1, firstName);	
+			pstmt.setString(2, lastName);
+			pstmt.setString(3, email);
+			pstmt.setString(4, password);
+			pstmt.setInt(5, StatusCode.ACTIVE.getValue());
 			
 			pstmt.executeUpdate();
 			
@@ -157,14 +178,68 @@ public class SailingClub {
 	public User getUserById(final int id) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "SELECT * FROM Users WHERE IdUser = ?";
 			
+			Member member = (Member) this.getMemberById(id);
+			if (member != null) {
+				return member;
+			}
+			
+			Employee employee = (Employee) this.getEmployee(id);
+			if (employee != null) {
+				return employee;
+			}
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the club member in the database given the unique identifier.
+	 * 
+	 * @param id the unique identifier.
+	 * @return the reference of the member or <code>null</code>.
+	**/
+	public Member getMemberById(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			
+			String query = "SELECT * FROM Users JOIN Members ON IdUser = IdMember WHERE IdMember = ? AND StatusCode <> ?";
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, id);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new User(rset.getInt("IdUser"), rset.getString("FiscalCode"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"));
+				return new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the club employee in the database given the unique identifier.
+	 * 
+	 * @param id the unique identifier.
+	 * @return the reference of the employee or <code>null</code>.
+	**/
+	public User getEmployee(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			
+			String query = "SELECT * FROM Users JOIN Employees ON IdUser = IdEmployee WHERE IdEmployee = ? AND StatusCode <> ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new Employee(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getBoolean("Administrator"));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -176,19 +251,31 @@ public class SailingClub {
 	/**
 	 * Gets the list of all the users.
 	 * 
+	 * @param type the type of users to select.
 	 * @return the list.
 	**/
-	public ArrayList<User> getAllUsers() {
+	public ArrayList<User> getAllUser(final UserType type) {
 		ArrayList<User> list = new ArrayList<User>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			
-			String query = "SELECT * FROM Users ORDER BY IdUser";			
-			PreparedStatement pstmt = conn.prepareStatement(query);	
+			String query = "";
+			if (type == UserType.MEMBER) {
+				query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE StatusCode <> ? ORDER BY IdUser";			
+			} else if (type == UserType.EMPLOYEE) {
+				query = "SELECT * FROM Users JOIN Employees ON IdEmployee = IdUser WHERE StatusCode <> ? ORDER BY IdUser";			
+			}
 			
-			ResultSet rset = pstmt.executeQuery(query);
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
-				list.add(new User(rset.getInt("IdUser"), rset.getString("FiscalCode"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password")));
+				if (type == UserType.MEMBER) {
+					list.add(new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address")));
+				} else if (type == UserType.EMPLOYEE) {
+					list.add(new Employee(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getBoolean("Administrator")));
+				}
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -207,10 +294,11 @@ public class SailingClub {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			
-			String query = "SELECT Email FROM Users JOIN Members ON IdMember = IdUser";			
+			String query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE StatusCode <> ? ORDER BY Email";
 			PreparedStatement pstmt = conn.prepareStatement(query);	
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
 			
-			ResultSet rset = pstmt.executeQuery(query);
+			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
 				list.add(rset.getString("Email"));
 			}
@@ -230,10 +318,11 @@ public class SailingClub {
 	public Fee getFee(FeeType type) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "SELECT * FROM Fees WHERE Type = ?";
+			String query = "SELECT * FROM Fees WHERE Type = ? AND StatusCode <> ?";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, type.toString());
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -250,16 +339,16 @@ public class SailingClub {
 	 * Inserts a new club member into the database.
 	 * 
 	 * @param idUser the user's id.
-	 * @param idFee the fee identification code. 
 	**/
-	public void insertMember(final int idUser, final int idFee) {
+	public void insertMember(final int idUser, final String fiscalCode, final String address) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "INSERT INTO Members (IdMember, MembershipFee) VALUES (?, ?)";
+			String query = "INSERT INTO Members (IdMember, FiscalCode, Address) VALUES (?,?,?)";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, idUser);
-			pstmt.setInt(2, idFee);
+			pstmt.setString(2, fiscalCode);
+			pstmt.setString(3, address);
 			
 			pstmt.executeUpdate();
 		} catch (SQLException sqle) {
@@ -276,7 +365,7 @@ public class SailingClub {
 	public void insertEmployee(final int idUser, final boolean admin) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "INSERT INTO Employees (IdEmployee, Administrator) VALUES (?, ?)";
+			String query = "INSERT INTO Employees (IdEmployee, Administrator) VALUES (?,?)";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, idUser);
@@ -299,16 +388,18 @@ public class SailingClub {
 		ArrayList<Boat> list = new ArrayList<Boat>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			Fee storageFee = getFee(FeeType.STORAGE);
+			Fee storageFee = this.getFee(FeeType.STORAGE);
 			
 			PreparedStatement pstmt;
 			if (owner != null) {
-				String query = "SELECT * FROM Boats WHERE Owner = ? ORDER BY IdBoat";
+				String query = "SELECT * FROM Boats WHERE Owner = ? AND StatusCode <> ? ORDER BY IdBoat";
 				pstmt = conn.prepareStatement(query);
 				pstmt.setInt(1, owner.getId());
+				pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			} else {
-				String query = "SELECT * FROM Boats ORDER BY IdBoat";
+				String query = "SELECT * FROM Boats WHERE StatusCode <> ? ORDER BY IdBoat";
 				pstmt = conn.prepareStatement(query);
+				pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
 			}
 			
 			ResultSet rset = pstmt.executeQuery();
@@ -332,12 +423,13 @@ public class SailingClub {
 	public Boat getBoatByName(final String name, final User owner) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			Fee storageFee = getFee(FeeType.STORAGE);
+			Fee storageFee = this.getFee(FeeType.STORAGE);
 			
-			String query = "SELECT * FROM Boats WHERE Name = ? AND Owner = ?";
+			String query = "SELECT * FROM Boats WHERE Name = ? AND Owner = ? AND StatusCode <> ?";
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, name);
 			pstmt.setInt(2, owner.getId());
+			pstmt.setInt(3, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -359,16 +451,45 @@ public class SailingClub {
 	**/
 	public void insertBoat(final String name, final int length, final User owner) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
-				Statement stmt = conn.createStatement()) {
-			Fee storageFee = getFee(FeeType.STORAGE);
+				Statement stmt = conn.createStatement()) {			
+			String query = "INSERT INTO Boats (Name, Length, Owner, StatusCode) VALUES (?,?,?,?)";
 			
-			String query = "INSERT INTO Boats (Name, Length, StorageFee, Owner) VALUES (?, ?, ?, ?)";
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, name);
 			pstmt.setInt(2, length);
-			pstmt.setInt(3, storageFee.getId());
-			pstmt.setInt(4, owner.getId());
+			pstmt.setInt(3, owner.getId());
+			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Updates the boat information.
+	 * If the information has value <code>null</code> are not replaced.
+	 * 
+	 * @param id the identification of the boat.
+	 * @param name the new name of the boat.
+	 * @param length the new length of the boat.
+	**/
+	public void updateBoat(final int id, final String name, final Integer length) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			
+			String query = "UPDATE Boats SET Name = IfNull(?, Name), Length = IfNull(?, Length) WHERE IdBoat = ?"; 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, name);
+			
+			if (length == null) {
+	            pstmt.setNull(2, Types.INTEGER);
+	        } else {
+	        	pstmt.setInt(2, length);
+	        }
+			
+			pstmt.setInt(3, id);
 			pstmt.executeUpdate();
 			
 		} catch (SQLException sqle) {
@@ -384,14 +505,91 @@ public class SailingClub {
 	public void removeBoat(final int id) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
+			String query = "UPDATE Boats SET StatusCode = ? WHERE IdBoat = ?";
 			
-			String query = "DELETE FROM Boats WHERE IdBoat = ?";
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setInt(1, id);
-			pstmt.executeUpdate();
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			pstmt.setInt(2, id);
 			
+			pstmt.executeUpdate();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Gets the list of all the payment services.
+	 * 
+	 * @return the list.
+	**/
+	public ArrayList<PaymentService> getAllPaymentServices() {
+		ArrayList<PaymentService> list = new ArrayList<PaymentService>();
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			
+			String query = "SELECT * FROM PaymentServices ORDER BY IdService";
+			PreparedStatement pstmt = conn.prepareStatement(query);			
+			ResultSet rset = pstmt.executeQuery();
+			while (rset.next()) {
+				list.add(new PaymentService(rset.getInt("IdService"), rset.getString("Description")));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Gets the last payment of the association fee made by the club member.
+	 * 
+	 * @param idMember the club member's unique identifier.
+	 * @return the date of the last payment or <code>null</code>.
+	**/
+	public Date getLastPaymentMembershipFee(final int idMember) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			
+			int idFee = this.getFee(FeeType.MEMBERSHIP).getId();
+			
+			String query = "SELECT MAX(Date) FROM Payments JOIN Members ON Member = IdMember JOIN Fees ON Fee = IdFee WHERE Member = ? AND Fee = ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);			
+			pstmt.setInt(1, idMember);
+			pstmt.setInt(2, idFee);
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return rset.getDate(1);
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Checks whether the payment of the membership fee of the club member is still valid.
+	 * 
+	 * @param idMember the club member's unique identifier.
+	 * @return <code>true</code> if the last payment is valid.
+	**/
+	public boolean checkPaymentMembershipFee(final int idMember) {
+		int validityPeriod = this.getFee(FeeType.MEMBERSHIP).getValidityPeriod();
+		Date minDate = this.getLastPaymentMembershipFee(idMember);
+		
+		if (minDate != null) {
+			Calendar c = Calendar.getInstance();
+			c.setTime(minDate);
+			c.add(Calendar.DATE, validityPeriod);
+			Date maxDate = c.getTime();
+			
+			Date currentDate = new Date();
+			if (currentDate.after(minDate) && currentDate.before(maxDate)) {
+				return true;
+			} 
+		}
+		
+		return false;
 	}
 }

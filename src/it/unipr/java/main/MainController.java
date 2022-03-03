@@ -1,8 +1,8 @@
 package it.unipr.java.main;
 
-import it.unipr.java.model.Employee;
+import it.unipr.java.model.*;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -21,67 +21,38 @@ public class MainController {
 	private HBox menu;
 	
 	@FXML
-	private Text linkBoats;
-	
-	@FXML
-	private Text linkRaces;
-	
-	@FXML
-	private Text linkPayments;
-	
-	@FXML
-	private Text linkFees;
-	
-	@FXML
-	private Text linkUsers;
+	private Text linkBoats, linkRaces, linkPayments, linkFees, linkUsers;
 	
 	@FXML
 	private ImageView logout;
 
     @FXML
-    private void initialize() {
-    	this.activeLink(this.linkBoats);
-    	
+    private void initialize() {    	
     	this.linkBoats.setOnMouseClicked(clickEvent -> {
         	this.main.initBoats();
-        	this.activeLink(this.linkBoats);
+        	this.main.activeLinkMenu(this.menu, this.linkBoats);
         });
     	
     	this.linkRaces.setOnMouseClicked(clickEvent -> {
-        	this.activeLink(this.linkRaces);
+    		this.main.activeLinkMenu(this.menu, this.linkRaces);
         });
     	
     	this.linkPayments.setOnMouseClicked(clickEvent -> {
-        	this.activeLink(this.linkPayments);
+    		this.main.activeLinkMenu(this.menu, this.linkPayments);
         });
     	
     	this.linkFees.setOnMouseClicked(clickEvent -> {
-        	this.activeLink(this.linkFees);
+    		this.main.activeLinkMenu(this.menu, this.linkFees);
         });
     	
     	this.linkUsers.setOnMouseClicked(clickEvent -> {
     		this.main.initUsers();
-        	this.activeLink(this.linkUsers);
+    		this.main.activeLinkMenu(this.menu, this.linkUsers);
         });
     	
     	this.logout.setOnMouseClicked(clickEvent -> {
         	this.main.initLogout();
         });
-    }
-    
-    /**
-     * 
-     * @param clickedLink the link of the clicked menu.
-    **/
-    public void activeLink (Text clickedLink) {
-    	for (Node child: this.menu.getChildren()) {
-    		if (child instanceof Text) {
-    			Text link = (Text) child;
-    			link.setUnderline(false);
-    		}
-    	}
-    	
-    	clickedLink.setUnderline(true);
     }
 	
 	/**
@@ -101,6 +72,14 @@ public class MainController {
         }
         
         this.menu.setVisible(true);
-        this.main.initBoats();
+    	this.main.activeLinkMenu(this.menu, this.linkBoats);
+        
+ 
+        if (this.main.getClub().checkPaymentMembershipFee(this.main.getLoggedUser().getId()) && 
+        		this.main.getLoggedUser() instanceof Member) {
+			this.main.showAlert(Alert.AlertType.INFORMATION, "CARICARE PAGINA PAGAMENTI", "Quota di associazione non pagata.", "ANCORA DA TERMINARE..");
+        }
+    	
+    	this.main.initBoats();
     }
 }

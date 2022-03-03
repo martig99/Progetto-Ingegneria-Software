@@ -1,16 +1,17 @@
 package it.unipr.java.model;
 
 /**
- * The enum {@code UserRole} defines the user's role.
+ * The enum {@code UserRole} defines the user type.
  * 
  * {@link #MEMBER}
  * {@link #EMPLOYEE}
+ * {@link #ADMINISTRATOR}
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
 **/
 
-public enum UserRole {
+public enum UserType {
 	/**
 	 * The club member.
 	**/
