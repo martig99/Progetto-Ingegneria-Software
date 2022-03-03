@@ -443,6 +443,33 @@ public class SailingClub {
 	}
 	
 	/**
+	 * Gets a boat given the unique identifier.
+	 * 
+	 * @param name the unique identifier of the boat.
+	 * @return the reference of the boat or <code>null</code>.
+	**/
+	public Boat getBoatById(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			Fee storageFee = this.getFee(FeeType.STORAGE);
+			
+			String query = "SELECT * FROM Boats WHERE IdBoat = ? AND StatusCode <> ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new Boat(rset.getInt("IdBoat"), rset.getString("Name"), rset.getInt("Length"), (rset.getInt("Length") * storageFee.getAmount()), rset.getInt("Owner"));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Inserts a boat in the database.
 	 * 
 	 * @param name the name of the boat.

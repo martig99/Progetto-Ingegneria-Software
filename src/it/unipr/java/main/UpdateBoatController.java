@@ -45,7 +45,8 @@ public class UpdateBoatController {
 			if (this.main.getLoggedUser() instanceof Member) {
 				owner = this.main.getLoggedUser(); 
 			} else {
-				owner = this.main.getClub().getUserById(id);
+				Boat boat = this.main.getClub().getBoatById(this.id);
+				owner = this.main.getClub().getUserById(boat.getOwner());
 			}
 			
 			if (this.main.getClub().getBoatByName(name.getText(), owner) != null) {
