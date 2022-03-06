@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<VBox prefHeight="550.0" prefWidth="800.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.PaymentsController">
+	<children>
+		<HBox fx:id="menu" alignment="CENTER">
+			<children>
+				<Text fx:id="membershipFees" fill="#49cee9" strokeType="OUTSIDE" text="MEMBERSHIP FEES">
+					<font>
+						<Font name="Arial Black" size="13.0" />
+					</font>
+					<HBox.margin>
+						<Insets bottom="10.0" left="0.0" right="10.0" top="0.0" />
+					</HBox.margin>
+				</Text>
+				<Text fx:id="storageFees" fill="#49cee9" strokeType="OUTSIDE" text="STORAGE FEES">
+					<font>
+						<Font name="Arial Black" size="13.0" />
+					</font>
+					<HBox.margin>
+						<Insets bottom="10.0" left="10.0" right="10.0" top="0.0" />
+					</HBox.margin>
+				</Text>
+				<Text fx:id="raceRegistrationFees" fill="#49cee9" strokeType="OUTSIDE" text="RACE REGISTRATION FEES">
+					<font>
+						<Font name="Arial Black" size="13.0" />
+					</font>
+					<HBox.margin>
+						<Insets bottom="10.0" left="10.0" right="0.0" top="0.0" />
+					</HBox.margin>
+				</Text>
+			</children>
+		</HBox>
+		<TableView fx:id="paymentsTable" prefHeight="300.0">
+			<columns>
+				<TableColumn fx:id="idColumn" prefWidth="50.0" resizable="false" text="Id" />
+				<TableColumn fx:id="dateColumn" prefWidth="75.0" resizable="false" text="Date" />
+				<TableColumn fx:id="memberColumn" prefWidth="150.0" resizable="false" text="Member" visible="false" />
+				<TableColumn fx:id="boatColumn" prefWidth="125.0" resizable="false" text="Boat" visible="false" />
+				<TableColumn fx:id="validityStartDateColumn" prefWidth="125.0" text="Validity Start Date" />
+				<TableColumn fx:id="validityEndDateColumn" prefWidth="125.0" text="Validity End Date" />
+				<TableColumn fx:id="totalColumn" prefWidth="75.0" resizable="false" text="Total" />
+				<TableColumn fx:id="paymentServiceColumn" prefWidth="125.0" resizable="false" text="Payment Service" />
+			</columns>
+			<VBox.margin>
+				<Insets bottom="15.0" left="30.0" right="30.0" top="0.0" />
+			</VBox.margin>
+			<padding>
+				<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+			</padding>
+		</TableView>
+		<Button fx:id="payMembershipFeeButton" mnemonicParsing="false" text="PAY MEMBERSHIP FEE" textFill="#ffffff" style="-fx-background-color: linear-gradient(to bottom right, #0093ed, #32e2d3);">
+			<font>
+				<Font name="Arial" size="18.0" />
+			</font>
+			<HBox.margin>
+				<Insets bottom="30.0" left="0.0" right="0.0" top="0.0" />
+			</HBox.margin>
+		</Button>
+		<Button fx:id="payStorageFeeButton" mnemonicParsing="false" text="PAY STORAGE FEE" textFill="#ffffff" style="-fx-background-color: linear-gradient(to bottom right, #0093ed, #32e2d3);">
+			<font>
+				<Font name="Arial" size="18.0" />
+			</font>
+			<HBox.margin>
+				<Insets bottom="30.0" left="0.0" right="0.0" top="0.0" />
+			</HBox.margin>
+		</Button>
+   </children>
+</VBox>

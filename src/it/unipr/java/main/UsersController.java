@@ -21,7 +21,7 @@ import javafx.scene.text.Text;
 **/
 public class UsersController {
 
-	private App main;
+	private App app;
 
 	@FXML
 	private Text members, employees, info;
@@ -49,7 +49,7 @@ public class UsersController {
 		this.setTable();
 		
 		this.addButton.setOnMouseClicked(event -> {    		
-    		this.main.initCreateUser();
+    		this.app.initCreateUser();
         });
 		
 		this.members.setOnMouseClicked(event -> {  	
@@ -106,35 +106,35 @@ public class UsersController {
 	**/
     public void setTableContent(final UserType userType) { 
     	ObservableList<User> users = FXCollections.<User>observableArrayList();    	
-    	users.addAll(this.main.getClub().getAllUser(userType));
+    	users.addAll(this.app.getClub().getAllUser(userType));
         this.usersTable.refresh();
 		this.usersTable.setItems(users);
     }
     
     public void displayMembersTable() {
-    	this.main.activeLinkMenu(this.menu, this.members);
+    	this.app.activeLinkMenu(this.menu, this.members);
 		
 		this.fiscalCodeColumn.setVisible(true);
 		this.addressColumn.setVisible(true);
 		this.administratorColumn.setVisible(false);
 		
-		this.main.setVisibleElement(this.info, true);
+		this.app.setVisibleElement(this.info, true);
 		
 		this.setTableContent(UserType.MEMBER);
 		this.setTable();
     }
     
     public void displayEmployeesTable() {
-    	this.main.activeLinkMenu(this.menu, this.employees);
+    	this.app.activeLinkMenu(this.menu, this.employees);
 		
 		this.administratorColumn.setVisible(true);
 		this.fiscalCodeColumn.setVisible(false);
 		this.addressColumn.setVisible(false);
 		
-		if (this.main.getLoggedUser() instanceof Employee) {
-			Employee employee = (Employee) this.main.getLoggedUser();
+		if (this.app.getLoggedUser() instanceof Employee) {
+			Employee employee = (Employee) this.app.getLoggedUser();
 			if (!employee.isAdministrator()) {
-				this.main.setVisibleElement(this.info, false);
+				this.app.setVisibleElement(this.info, false);
 			}
 		}
 		
@@ -143,15 +143,15 @@ public class UsersController {
     }
     
     /**
-     * Sets the reference to the main application.
+     * Sets the reference to the application.
      * 
-     * @param main the reference to the main.
+     * @param app the reference to the app.
     **/
-    public void setMain(final App main) {
-        this.main = main;
+    public void setApp(final App app) {
+        this.app = app;
         
-        this.setTableContent(UserType.MEMBER);
-        this.main.activeLinkMenu(this.menu, this.members);
+        this.app.activeLinkMenu(this.menu, this.members);
+        this.displayMembersTable();
         
         this.info.setText("Double click to delete an user.\nRight click to update an user.");
     }

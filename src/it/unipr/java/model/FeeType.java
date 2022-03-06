@@ -5,6 +5,7 @@ package it.unipr.java.model;
  * 
  * {@link #MEMBERSHIP}
  * {@link #STORAGE}
+ * {@link #STORAGE}
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -18,5 +19,9 @@ public enum FeeType {
 	/**
 	 * The storage fee.
 	**/
-	STORAGE
+	STORAGE,
+	/**
+	 * The race registration fee.
+	**/
+	RACE_REGISTRATION
 }

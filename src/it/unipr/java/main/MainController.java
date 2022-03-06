@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 **/
 public class MainController {
 	
-	private App main;
+	private App app;
 	
 	@FXML
 	private HBox menu;
@@ -27,59 +27,78 @@ public class MainController {
 	private ImageView logout;
 
     @FXML
-    private void initialize() {    	
+    private void initialize() {     	
     	this.linkBoats.setOnMouseClicked(clickEvent -> {
-        	this.main.initBoats();
-        	this.main.activeLinkMenu(this.menu, this.linkBoats);
+        	this.app.initBoats();
+        	this.app.activeLinkMenu(this.menu, this.linkBoats);
         });
     	
     	this.linkRaces.setOnMouseClicked(clickEvent -> {
-    		this.main.activeLinkMenu(this.menu, this.linkRaces);
+    		this.app.activeLinkMenu(this.menu, this.linkRaces);
         });
     	
     	this.linkPayments.setOnMouseClicked(clickEvent -> {
-    		this.main.activeLinkMenu(this.menu, this.linkPayments);
+    		this.app.initPayments(FeeType.MEMBERSHIP);
+    		this.app.activeLinkMenu(this.menu, this.linkPayments);
         });
     	
     	this.linkFees.setOnMouseClicked(clickEvent -> {
-    		this.main.activeLinkMenu(this.menu, this.linkFees);
+    		this.app.activeLinkMenu(this.menu, this.linkFees);
         });
     	
     	this.linkUsers.setOnMouseClicked(clickEvent -> {
-    		this.main.initUsers();
-    		this.main.activeLinkMenu(this.menu, this.linkUsers);
+    		this.app.initUsers();
+    		this.app.activeLinkMenu(this.menu, this.linkUsers);
         });
     	
     	this.logout.setOnMouseClicked(clickEvent -> {
-        	this.main.initLogout();
+        	this.app.initLogout();
         });
     }
-	
-	/**
-     * Sets the reference to the main application.
+    
+    /**
      * 
-     * @param main the reference to the main.
+     * @return
     **/
-    public void setMain(final App main) {
-        this.main = main;
+    public HBox getMenu() {
+    	return this.menu;
+    }
+    
+	/**
+     * Sets the reference to the application.
+     * 
+     * @param app the reference to the app.
+    **/
+    public void setApp(final App app) {
+        this.app = app;
         
-        if (this.main.getLoggedUser() instanceof Employee) {        	
+        this.menu.setVisible(true);
+    	
+        if (this.app.getLoggedUser() instanceof Employee) {        	
         	this.linkFees.setVisible(true);
     		this.linkFees.setManaged(true);
     		
         	this.linkUsers.setVisible(true);
         	this.linkUsers.setManaged(true);
-        }
+        }	
         
-        this.menu.setVisible(true);
-    	this.main.activeLinkMenu(this.menu, this.linkBoats);
+        if (this.app.getLoggedUser() instanceof Member) {
+			Member member = (Member) this.app.getLoggedUser();
+			
+    		if(!this.app.getClub().checkPaymentFee(member, null, FeeType.MEMBERSHIP)) {
+        		this.app.showAlert(Alert.AlertType.INFORMATION, "Payments error.", null, "Unpaid membership fee.");
+        		
+        		this.app.activeLinkMenu(this.menu, this.linkPayments);
+        		this.app.toggleLinkMenu(this.menu, true);
+        		this.app.initPayments(FeeType.MEMBERSHIP);
+        		
+        		return;
+        	} else {
+        		this.app.toggleLinkMenu(this.menu, false);
+        	}
+		}
         
- 
-        if (this.main.getClub().checkPaymentMembershipFee(this.main.getLoggedUser().getId()) && 
-        		this.main.getLoggedUser() instanceof Member) {
-			this.main.showAlert(Alert.AlertType.INFORMATION, "CARICARE PAGINA PAGAMENTI", "Quota di associazione non pagata.", "ANCORA DA TERMINARE..");
-        }
-    	
-    	this.main.initBoats();
+        this.app.activeLinkMenu(this.menu, this.linkBoats);
+		this.app.initBoats();
     }
 }

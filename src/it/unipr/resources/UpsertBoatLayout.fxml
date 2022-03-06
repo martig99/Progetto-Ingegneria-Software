@@ -11,18 +11,18 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.ChoiceBox?>
 
-<AnchorPane prefHeight="125.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.UpdateBoatController">
+<AnchorPane prefHeight="125.0" prefWidth="350" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.UpsertBoatController">
     <children>
-    	<VBox prefHeight="125.0" prefWidth="300.0" alignment="CENTER">
+    	<VBox prefHeight="125.0"  prefWidth="350" alignment="CENTER">
     		<children>
         		<HBox prefWidth="300.0">
         			<children>
-		            	<Label text="Name:" prefWidth="50.0">
+		            	<Label text="Name:" prefWidth="100.0">
 		            		<font>
 		               			<Font name="Arial" size="12.0" />
 		               		</font>
 		               		<HBox.margin>
-								<Insets bottom="10.0" left="10.0" right="0.0" top="25.0" />
+								<Insets bottom="5.0" left="10.0" right="0.0" top="15.0" />
 							</HBox.margin>
 		            	</Label>
 		            	<TextField fx:id="name" prefWidth="220.0">
@@ -30,19 +30,19 @@
 		               			<Font name="Arial" size="12.0" />
 		               		</font>
 		               		<HBox.margin>
-								<Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+								<Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
 							</HBox.margin>
 		               	</TextField>
                		</children>
                	</HBox>
                	<HBox>
                		<children>
-		            	<Label text="Length:" prefWidth="50.0">
+		            	<Label text="Length (mt):" prefWidth="100.0">
 		            		<font>
 		               			<Font name="Arial" size="12.0" />
 		               		</font>
 		               		<HBox.margin>
-								<Insets bottom="10.0" left="10.0" right="0.0" top="5.0" />
+								<Insets bottom="5.0" left="10.0" right="0.0" top="5.0" />
 							</HBox.margin>
 		            	</Label>
 		            	<TextField fx:id="length" prefWidth="220.0">
@@ -50,17 +50,34 @@
 		               			<Font name="Arial" size="12.0" />
 		               		</font>
 		               		<HBox.margin>
-								<Insets bottom="10.0" left="10.0" right="10.0" top="0.0" />
+								<Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
 							</HBox.margin>
 		            	</TextField>
 					</children>
 				</HBox>
-		        <Button fx:id="updateButton" minWidth="80.0" mnemonicParsing="false" text="Save">
+				<HBox fx:id="boxUser" visible="false" managed="false">
+               		<children>
+		            	<Label text="User:" prefWidth="100.0">
+		            		<font>
+		               			<Font name="Arial" size="12.0" />
+		               		</font>
+		               		<HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="10.0" />
+							</HBox.margin>
+		            	</Label>
+		            	<ChoiceBox fx:id="users" value="User" prefWidth="220.0"> 
+						    <HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="5.0" />
+							</HBox.margin>
+						</ChoiceBox>
+					</children>
+				</HBox>
+		        <Button fx:id="upsertButton" minWidth="80.0" mnemonicParsing="false" text="Save">
 		        	<font>
 						<Font name="Arial" size="12.0" />
 					</font>
 					<VBox.margin>
-						<Insets bottom="15.0" left="210.0" right="10.0" top="15.0" />
+						<Insets bottom="10.0" left="260.0" right="10.0" top="5.0" />
 					</VBox.margin>
 		        </Button>
 	        </children>

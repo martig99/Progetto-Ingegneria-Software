@@ -12,17 +12,17 @@ public class Boat {
 	private String name;
 	private int length;
 	private float storageFee;
-	private int owner;
+	private Member owner;
 	
 	/**
 	 * Class constructor.
 	**/
 	public Boat() {
-		this.id = 0;
-		this.name = "";
-		this.length = 0;
-		this.storageFee = 0;
-		this.owner = 0;
+		this.setId(0);
+		this.setName("");
+		this.setLength(0);
+		this.setStorageFee(0);
+		this.setOwner(null);
 	}	
 	
 	/**
@@ -32,9 +32,9 @@ public class Boat {
 	 * @param name the name of the boat.
 	 * @param length the length of the boat.
 	 * @param storageFee the storage fee of the boat.
-	 * @param owner the owner's id of the boat.
+	 * @param owner the owner of the boat.
 	**/
-	public Boat(final int id, final String name, final int length, final float storageFee, final int owner) {
+	public Boat(final int id, final String name, final int length, final float storageFee, final Member owner) {
 		this.setId(id);
 		this.setName(name);
 		this.setLength(length);
@@ -115,20 +115,20 @@ public class Boat {
 	}
 	
 	/**
-	 * Gets the owner's id of the boat.
+	 * Gets the owner of the boat.
 	 * 
-	 * @return the owner's id.
+	 * @return the owner.
 	**/
-	public int getOwner() {
+	public Member getOwner() {
 		return this.owner;
 	}
 	
 	/**
-	 * Sets the owner's id of the boat.
+	 * Sets the owner of the boat.
 	 * 
-	 * @param owner the new owner's id.
+	 * @param owner the new owner.
 	**/
-	public void setOwner(final int owner) {
+	public void setOwner(final Member owner) {
 		this.owner = owner;
 	}
 	
@@ -139,6 +139,6 @@ public class Boat {
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Name: " + this.name + " - Length: " + this.length + " - Storage Fee: " + this.storageFee + " - Owner:" + this.owner;
+		return "Id: " + this.id + " - Name: " + this.name + " - Length: " + this.length + " - Storage Fee: " + this.storageFee + " - Owner [" + this.owner.toString() + "]";
 	}
 }
