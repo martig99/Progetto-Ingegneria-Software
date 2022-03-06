@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.ChoiceBox?>
+
+<AnchorPane prefWidth="350.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.PayFeeController">
+    <children>
+    	<VBox prefWidth="350.0" alignment="CENTER">
+    		<children>
+        		<HBox fx:id="boxMember" visible="false" managed="false">
+        			<children>
+		            	<Label text="Member:" prefWidth="100.0">
+		            		<font>
+		               			<Font name="Arial" size="12.0" />
+		               		</font>
+		               		<HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="10.0" />
+							</HBox.margin>
+		            	</Label>
+		            	<ChoiceBox fx:id="members" value="Member" prefWidth="220.0"> 
+						    <HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="5.0" />
+							</HBox.margin>
+						</ChoiceBox>
+               		</children>
+               	</HBox>
+               	<HBox fx:id="boxBoat" visible="false" managed="false">
+        			<children>
+		            	<Label text="Boat:" prefWidth="100.0">
+		            		<font>
+		               			<Font name="Arial" size="12.0" />
+		               		</font>
+		               		<HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="10.0" />
+							</HBox.margin>
+		            	</Label>
+		            	<ChoiceBox fx:id="boats" value="Boat" prefWidth="220.0"> 
+						    <HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="5.0" />
+							</HBox.margin>
+						</ChoiceBox>
+               		</children>
+               	</HBox>
+               	<HBox>
+               		<children>
+		            	<Label text="Payment service:" prefWidth="100.0">
+		            		<font>
+		               			<Font name="Arial" size="12.0" />
+		               		</font>
+		               		<HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="10.0" />
+							</HBox.margin>
+		            	</Label>
+		            	<ChoiceBox fx:id="paymentServices" value="Payment service" prefWidth="220.0"> 
+						    <HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="0.0" top="5.0" />
+							</HBox.margin>
+						</ChoiceBox>
+					</children>
+				</HBox>
+		        <Button fx:id="payButton" minWidth="80.0" mnemonicParsing="false" text="Pay">
+		        	<font>
+						<Font name="Arial" size="12.0" />
+					</font>
+					<VBox.margin>
+						<Insets bottom="10.0" left="260.0" right="10.0" top="5.0" />
+					</VBox.margin>
+		        </Button>
+	        </children>
+        </VBox>
+    </children>
+</AnchorPane>

@@ -19,7 +19,7 @@ import javafx.scene.control.Alert;
 **/
 public class CreateUserController {
 	
-	private App main;
+	private App app;
 	
 	@FXML
     private Text title, link;
@@ -46,10 +46,10 @@ public class CreateUserController {
         });
         
         this.link.setOnMouseClicked(clickEvent -> {
-        	if (this.main.getLoggedUser() != null) {
-        		this.main.initUsers();
+        	if (this.app.getLoggedUser() != null) {
+        		this.app.initUsers();
         	} else {
-        		this.main.initLogin();
+        		this.app.initLogin();
         	}
 	    });
     }
@@ -59,49 +59,49 @@ public class CreateUserController {
 	**/
 	public void createUser() {   
 		if (!this.fiscalCode.getText().isEmpty() && !this.firstName.getText().isEmpty() && !this.lastName.getText().isEmpty() && !this.email.getText().isEmpty() && !this.password.getText().isEmpty() && !this.address.getText().isEmpty()) {
-			if (this.main.emailValidation(this.email.getText())) {
-				if (this.main.getLoggedUser() != null && this.main.getClub().getUserByEmail(this.email.getText()) != null) {
-					this.main.showAlert(Alert.AlertType.WARNING, "Attention", null, "Account already exists with the email entered.");
-				} else if (this.main.getLoggedUser() != null && this.main.getClub().getMemberByFiscalCode(this.fiscalCode.getText()) != null)  {
-					this.main.showAlert(Alert.AlertType.WARNING, "Attention", null, "Account already exists with the fiscal code entered.");
+			if (this.app.emailValidation(this.email.getText())) {
+				if (this.app.getLoggedUser() != null && this.app.getClub().getUserByEmail(this.email.getText()) != null) {
+					this.app.showAlert(Alert.AlertType.WARNING, "Attention", null, "Account already exists with the email entered.");
+				} else if (this.app.getLoggedUser() != null && this.app.getClub().getMemberByFiscalCode(this.fiscalCode.getText()) != null)  {
+					this.app.showAlert(Alert.AlertType.WARNING, "Attention", null, "Account already exists with the fiscal code entered.");
 				} else {
-					if (this.main.getLoggedUser() != null) {
+					if (this.app.getLoggedUser() != null) {
 						RadioButton selectedRadioButton = (RadioButton) group.getSelectedToggle();
 				    	String userType = selectedRadioButton.getText();
 				    	
-						this.main.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), this.address.getText(), this.admin.isSelected(), UserType.valueOf(userType.toUpperCase()));
+						this.app.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), this.address.getText(), this.admin.isSelected(), UserType.valueOf(userType.toUpperCase()));
 						
-    					this.main.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The new user was created correctly.");
-    					this.main.initUsers();
+    					this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The new user was created correctly.");
+    					this.app.initUsers();
 					} else {
-						this.main.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), this.address.getText(), false, UserType.MEMBER);
+						this.app.getClub().createUser(this.fiscalCode.getText(), this.firstName.getText(), this.lastName.getText(), this.email.getText(), this.password.getText(), this.address.getText(), false, UserType.MEMBER);
 						
-						this.main.showAlert(Alert.AlertType.INFORMATION, "Thanks", null, "Your account has been successfully created.");
-						this.main.initLogin();
+						this.app.showAlert(Alert.AlertType.INFORMATION, "Thanks", null, "Your account has been successfully created.");
+						this.app.initLogin();
 					}
 				}
 			} else {
-    			this.main.showAlert(Alert.AlertType.WARNING, "Error", null, "Please enter a valid email address.");
+    			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please enter a valid email address.");
     		}
 		} else {
-			this.main.showAlert(Alert.AlertType.WARNING, "Error", null, "Please complete all fields.");
+			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please complete all fields.");
 		}
 	}
 	
 	/**
-     * Sets the reference to the main application.
+     * Sets the reference to the application.
      * 
-     * @param main the reference to the main.
+     * @param app the reference to the app.
     **/
-    public void setMain(final App main) {
-        this.main = main;
+    public void setApp(final App app) {
+        this.app = app;
         
-        if (this.main.getLoggedUser() != null && this.main.getLoggedUser() instanceof Employee) {
-        	Employee employee = (Employee) this.main.getLoggedUser();
+        if (this.app.getLoggedUser() != null && this.app.getLoggedUser() instanceof Employee) {
+        	Employee employee = (Employee) this.app.getLoggedUser();
         	if (employee.isAdministrator()) {
         		this.title.setText("CREATE A NEW MEMBER OR EMPLOYEE");
 
-        		this.main.setVisibleElement(this.boxUserType, true);
+        		this.app.setVisibleElement(this.boxUserType, true);
         	} else {
         		this.title.setText("CREATE A NEW MEMBER");
         	}

@@ -25,7 +25,7 @@ import javafx.scene.text.Text;
 **/
 public class BoatsController {
 
-	private App main;
+	private App app;
 	
 	@FXML
 	private Text info;
@@ -47,7 +47,7 @@ public class BoatsController {
 		this.setTable();
 		
 		this.addButton.setOnMouseClicked(event -> {    		
-    		this.main.initAddBoat();
+    		this.app.initUpsertBoat(null);
         });
 		
 		this.boatsTable.setOnMouseClicked(event -> {
@@ -57,7 +57,7 @@ public class BoatsController {
     		
 			if (event.getButton() == MouseButton.SECONDARY  && this.boatsTable.getSelectionModel().getSelectedItem() != null) {
 		    	int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
-				this.main.initUpdateBoat(id);
+				this.app.initUpsertBoat(id);
 			}
         });
     }
@@ -70,7 +70,7 @@ public class BoatsController {
 		this.nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 		this.lengthColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getLength()));
 		this.storageFeeColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getStoragFee()));
-		this.ownerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.main.getClub().getUserById(cellData.getValue().getOwner()).getEmail()));		
+		this.ownerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner().getEmail()));		
 	}
     
     /**
@@ -80,11 +80,11 @@ public class BoatsController {
     	ObservableList<Boat> boats = FXCollections.<Boat>observableArrayList();
     	
     	Member member = null;
-    	if (this.main.getLoggedUser() instanceof Member) {
-        	member = (Member) this.main.getLoggedUser();
+    	if (this.app.getLoggedUser() instanceof Member) {
+        	member = (Member) this.app.getLoggedUser();
         }
     	
-        boats.addAll(this.main.getClub().getAllBoats(member));
+        boats.addAll(this.app.getClub().getAllBoats(member));
         
         this.boatsTable.refresh();
 		this.boatsTable.setItems(boats);
@@ -96,26 +96,26 @@ public class BoatsController {
     public void removeBoat() {
     	int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
     	
-    	Optional<ButtonType> result = this.main.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + id, "Are you sure?");
+    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + id, "Are you sure?");
     	if (result.get() == ButtonType.OK){
-    		this.main.getClub().removeBoat(id);
+    		this.app.getClub().removeBoat(id);
     		this.setTableContent();
     		
-			this.main.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The boat has been removed correctly.");
+			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The boat has been removed correctly.");
     	}
     }
-    
+
     /**
-     * Sets the reference to the main application.
+     * Sets the reference to the application.
      * 
-     * @param main the reference to the main.
+     * @param app the reference to the app.
     **/
-    public void setMain(final App main) {
-        this.main = main;
+    public void setApp(final App app) {
+        this.app = app;
         
         this.info.setText("Double click to delete a boat.\nRight click to update a boat.");
         
-        if (this.main.getLoggedUser() instanceof Employee) {
+        if (this.app.getLoggedUser() instanceof Employee) {
         	this.ownerColumn.setVisible(true);
         }
         

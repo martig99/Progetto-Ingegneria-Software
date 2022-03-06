@@ -32,6 +32,7 @@ public class App extends Application {
 	
 	private User loggedUser;
 	private SailingClub club;
+	private MainController mainController;
 	
 	/**
 	 * Gets the user who logged into the application.
@@ -70,12 +71,29 @@ public class App extends Application {
 	}
 	
 	/**
+	 * 
+	 * @return
+	**/
+	public MainController getMainController() {
+		return this.mainController;
+	}
+	
+	/**
+	 * 
+	 * @param mainController
+	**/
+	public void setMainController(final MainController mainController) {
+		this.mainController = mainController;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	**/
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.setLoggedUser(null);
-		this.club = new SailingClub();
+		this.setClub(new SailingClub());
+		this.setMainController(null);
 		
 		this.primaryStage = primaryStage;
 		primaryStage.setTitle("Sailing Club");
@@ -116,7 +134,7 @@ public class App extends Application {
 			this.rootLayout.setCenter(overview);
 			
 			LoginController controller = loader.getController();
-			controller.setMain(this);
+			controller.setApp(this);
 		} catch (IOException e){
             e.printStackTrace();
         }
@@ -134,7 +152,7 @@ public class App extends Application {
 			this.rootLayout.setCenter(overview);
     		
             CreateUserController controller = loader.getController();
-            controller.setMain(this);
+            controller.setApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -164,7 +182,9 @@ public class App extends Application {
             this.primaryStage.show();
             
             MainController controller = loader.getController();
-            controller.setMain(this);
+            controller.setApp(this);
+            
+            this.setMainController(controller);
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -182,53 +202,38 @@ public class App extends Application {
 			this.rootLayout.setCenter(overview);
             
             BoatsController controller = loader.getController();
-            controller.setMain(this);
+            controller.setApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 	
 	/**
-	 * Initializes the dialog panel to add a new boat.
+	 * Initializes the dialog panel to update or insert a boat.
 	**/
-	public void initAddBoat() {
+	public void initUpsertBoat(final Integer idBoat) {
         try {
         	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../../resources/AddBoatLayout.fxml"));
+            loader.setLocation(getClass().getResource("../../resources/UpsertBoatLayout.fxml"));
             
             AnchorPane root = (AnchorPane) loader.load();
             Scene scene = new Scene(root);
             
-            AddBoatController controller = loader.getController();
-            controller.setMain(this);
+            UpsertBoatController controller = loader.getController();
+            controller.setIdBoat(idBoat);
+            controller.setApp(this);
             
             Stage dialogStage = new Stage();
             dialogStage.setScene(scene);
-            dialogStage.setTitle("Add a new boat");
-            dialogStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
-	 * Initializes the dialog panel to update a boat.
-	**/
-	public void initUpdateBoat(final int id) {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../../resources/UpdateBoatLayout.fxml"));
             
-            AnchorPane root = (AnchorPane) loader.load();
-            Scene scene = new Scene(root);
+            String title = "";
+            if (idBoat == null) {
+            	title = "Add a new boat";
+            } else {
+            	title = "Update the boat";
+            }
             
-            UpdateBoatController controller = loader.getController();
-            controller.setMain(this);
-            controller.setIdBoat(id);
-            
-            Stage dialogStage = new Stage();
-            dialogStage.setScene(scene);
-            dialogStage.setTitle("Update the boat with unique code " + id);
+            dialogStage.setTitle(title);
             dialogStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -247,11 +252,128 @@ public class App extends Application {
 			this.rootLayout.setCenter(overview);
             
             UsersController controller = loader.getController();
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes the payments page.
+	**/
+	public void initPayments(final FeeType feeType) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/PaymentsLayout.fxml"));
+
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            PaymentsController controller = loader.getController();
+            controller.setFeeType(feeType);
+            controller.setApp(this);   
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes the dialog panel to pay a fee.
+	 * Initializes the users page.
+	**/
+	public void initPayFee(final FeeType type) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/PayFeeLayout.fxml"));
+            
+            AnchorPane root = (AnchorPane) loader.load();
+            Scene scene = new Scene(root);
+            
+            PayFeeController controller = loader.getController();
+            controller.setFeeType(type);
+            controller.setApp(this);
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setScene(scene);
+            
+            if (type == FeeType.MEMBERSHIP) {
+            	dialogStage.setTitle("Pay the membership fee");
+            } else if (type == FeeType.STORAGE) {
+            	dialogStage.setTitle("Pay the storage fee for a boat");
+            }
+            
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes the dialog panel to update an user.
+	**/
+	public void initUpdateUser(final int id) {
+       try {
+       	FXMLLoader loader = new FXMLLoader();
+           loader.setLocation(getClass().getResource("../../resources/UpdateUserLayout.fxml"));
+           
+           AnchorPane root = (AnchorPane) loader.load();
+           Scene scene = new Scene(root);
+           
+           UpdateUserController controller = loader.getController();
+           controller.setIdUser(id);
+           controller.setMain(this);
+           
+           Stage dialogStage = new Stage();
+           dialogStage.setScene(scene);
+           dialogStage.setTitle("Update a user");
+           dialogStage.showAndWait();
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+	}
+	
+	/**
+	 * Initializes the races page.
+	**/
+	public void initRaces() {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/RacesLayout.fxml"));
+
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            RacesController controller = loader.getController();
             controller.setMain(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+	
+	
+	/**
+	 * Initializes the dialog panel to add a new race.
+	**/
+	public void initAddRace() {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/AddRaceLayout.fxml"));
+            
+            AnchorPane root = (AnchorPane) loader.load();
+            Scene scene = new Scene(root);
+            
+            AddRaceController controller = loader.getController();
+            controller.setMain(this);
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setScene(scene);
+            dialogStage.setTitle("Add a new race");
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 	
 	/**
 	 * Checks if the email matches the correct format.
@@ -305,16 +427,31 @@ public class App extends Application {
 	    	for (Node child: parent.getChildrenUnmodifiable()) {
 	    		if (child instanceof Text) {
 	    			Text link = (Text) child;
-	    			link.setUnderline(false);
+	    			
+	    			if (child == clickedLink) {
+	    				link.setUnderline(true);
+	    			} else {
+	    				link.setUnderline(false);
+	    			}
 	    		}
-	    	}
-	    	
-	    	if (clickedLink instanceof Text) {
-	    		((Text) clickedLink).setUnderline(true);
 	    	}
     	}
     }
-	
+
+    /**
+     * 
+    **/
+    public void toggleLinkMenu (final Parent parent, final boolean val) {
+    	if (parent != null) {
+	    	for (Node child: parent.getChildrenUnmodifiable()) {
+	    		if (child instanceof Text) {
+	    			Text link = (Text) child;
+	    			link.setDisable(val);
+	    		}
+	    	}
+    	}
+    }
+    
 	/**
 	 * 
 	**/

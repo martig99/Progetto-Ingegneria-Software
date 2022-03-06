@@ -17,7 +17,7 @@ import javafx.scene.control.Alert;
 **/
 public class LoginController {
 	
-	private App main;
+	private App app;
 	
 	@FXML
     private TextField email, password;
@@ -38,7 +38,7 @@ public class LoginController {
         });
         
         this.linkSignUp.setOnMouseClicked(clickEvent -> {
-        	this.main.initCreateUser();
+        	this.app.initCreateUser();
         });
     }
 	
@@ -50,31 +50,31 @@ public class LoginController {
     	String userType = selectedRadioButton.getText();
     	
     	if (!this.email.getText().isEmpty() && !this.password.getText().isEmpty()) {
-    		if (this.main.emailValidation(this.email.getText())) {
-		    	User loggedUser = this.main.getClub().login(email.getText(), password.getText(), UserType.valueOf(userType.toUpperCase()));
+    		if (this.app.emailValidation(this.email.getText())) {
+		    	User loggedUser = this.app.getClub().login(email.getText(), password.getText(), UserType.valueOf(userType.toUpperCase()));
 				
 				if (loggedUser != null) {
-					this.main.setLoggedUser(loggedUser);
-					this.main.showAlert(Alert.AlertType.INFORMATION, "Login", null, loggedUser.toString());
+					this.app.setLoggedUser(loggedUser);
+					this.app.showAlert(Alert.AlertType.INFORMATION, "Login", null, loggedUser.toString());
 					
-					this.main.initMainPage();
+					this.app.initMainPage();
 				} else {
-					this.main.showAlert(Alert.AlertType.WARNING, "Error", null, "The credentials entered are incorrect.");            
+					this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "The credentials entered are incorrect.");            
 				}
     		} else {
-    			this.main.showAlert(Alert.AlertType.WARNING, "Error", null, "Please enter a valid email address.");
+    			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please enter a valid email address.");
     		}
     	} else {
-    		this.main.showAlert(Alert.AlertType.WARNING, "Error", null, "Please enter email and password.");
+    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please enter email and password.");
     	}
 	}
 	
 	/**
-     * Sets the reference to the main application.
+     * Sets the reference to the application.
      * 
-     * @param main the reference to the main.
+     * @param app the reference to the app.
     **/
-    public void setMain(final App main) {
-        this.main = main;
+    public void setApp(final App app) {
+        this.app = app;
     }
 }
