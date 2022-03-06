@@ -306,6 +306,74 @@ public class App extends Application {
             e.printStackTrace();
         }
     }
+
+	
+	/**
+	 * Initializes the dialog panel to update an user.
+	**/
+	public void initUpdateUser(final int id) {
+       try {
+       	FXMLLoader loader = new FXMLLoader();
+           loader.setLocation(getClass().getResource("../../resources/UpdateUserLayout.fxml"));
+           
+           AnchorPane root = (AnchorPane) loader.load();
+           Scene scene = new Scene(root);
+           
+           UpdateUserController controller = loader.getController();
+           controller.setIdUser(id);
+           controller.setMain(this);
+           
+           Stage dialogStage = new Stage();
+           dialogStage.setScene(scene);
+           dialogStage.setTitle("Update a user");
+           dialogStage.showAndWait();
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+	}
+	
+	/**
+	 * Initializes the races page.
+	**/
+	public void initRaces() {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/RacesLayout.fxml"));
+
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            RacesController controller = loader.getController();
+            controller.setMain(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	
+	/**
+	 * Initializes the dialog panel to add a new race.
+	**/
+	public void initAddRace() {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/AddRaceLayout.fxml"));
+            
+            AnchorPane root = (AnchorPane) loader.load();
+            Scene scene = new Scene(root);
+            
+            AddRaceController controller = loader.getController();
+            controller.setMain(this);
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setScene(scene);
+            dialogStage.setTitle("Add a new race");
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 	
 	/**
 	 * Checks if the email matches the correct format.

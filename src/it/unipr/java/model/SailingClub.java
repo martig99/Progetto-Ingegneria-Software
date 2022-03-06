@@ -377,6 +377,27 @@ public class SailingClub {
 		}
 	}
 	
+	
+	/**
+	 * Removes an user from the database.
+	 * 
+	 * @param id the unique identifier of the user.
+	**/
+	public void removeUser(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "UPDATE users SET StatusCode = ? WHERE IdUser = ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			pstmt.setInt(2, id);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+
+	
 	/**
 	 * Gets the list of all the boats.
 	 * If the member passed as parameter is different from <code>null</code> returns the list of the boats owned by the user.
@@ -551,6 +572,44 @@ public class SailingClub {
 		}
 	}
 	
+	
+	public void updateUser(final int id, final String firstName, final String lastName, final String email, final String password) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			
+			String query = "UPDATE users SET FirstName = IfNull(?, FirstName), LastName = IfNull(?, LastName), Email = IfNull(?, Email), Password = ifNull (?,Password) WHERE IdUser = ?"; 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, firstName);
+			pstmt.setString(2, lastName);
+			pstmt.setString(3, email);
+			pstmt.setString(4, password);
+			
+			pstmt.setInt(5, id);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+
+	public void updateMember(final int id, final String fiscalCode, final String address) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			
+			String query = "UPDATE members SET FiscalCode = IfNull(?, FiscalCode), Address = IfNull(?, Address) WHERE IdMember = ?"; 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, fiscalCode);
+			pstmt.setString(2, address);
+			
+			pstmt.setInt(3, id);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Removes a boat from the database.
 	 * 
@@ -715,7 +774,7 @@ public class SailingClub {
 		
 		return false;
 	}
-	
+
 	/**
 	 * Gets the list of all the payments.
 	 * 
@@ -830,4 +889,57 @@ public class SailingClub {
 			sqle.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Gets the list of all the races.
+	 * 
+	 * @return the list.
+	**/
+	public ArrayList<Race> getAllRaces() {
+		ArrayList<Race> list = new ArrayList<Race>();
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			
+			PreparedStatement pstmt;
+			String query = "SELECT * FROM Races WHERE StatusCode <> ? ORDER BY IdRace";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			while (rset.next()) {
+				list.add(new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("DateRace"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee")));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Gets a race of a club member given the data.
+	 * 
+	 * @param dataRace the data of the race.
+	 * @return the reference of the race or <code>null</code>.
+	**/
+	public Race getRaceByDate(final Date dataRace) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			
+			String query = "SELECT * FROM Races WHERE DateRace = ? AND StatusCode <> ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setObject(1,dataRace);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("DaraRace"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee"));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 }

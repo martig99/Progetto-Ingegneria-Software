@@ -34,6 +34,7 @@ public class MainController {
         });
     	
     	this.linkRaces.setOnMouseClicked(clickEvent -> {
+    		this.app.initRaces();
     		this.app.activeLinkMenu(this.menu, this.linkRaces);
         });
     	
