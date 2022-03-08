@@ -1,6 +1,8 @@
 package it.unipr.java.main;
 
 
+import java.util.Optional;
+
 import it.unipr.java.model.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -8,9 +10,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 
 /**
@@ -45,21 +50,24 @@ public class RacesController {
     private void initialize() {	
 		this.setTable();
 		
-		this.addButton.setOnMouseClicked(event -> {    		
-    		this.app.initAddRace();
-        });
-		/*
-		this.racesTable.setOnMouseClicked(event -> {
-    		/*if (event.getClickCount() == 2 && this.boatsTable.getSelectionModel().getSelectedItem() != null) {
-				this.removeBoat();
-			}
-    		
-			if (event.getButton() == MouseButton.SECONDARY  && this.boatsTable.getSelectionModel().getSelectedItem() != null) {
-		    	int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
-				this.app.initUpdateBoat(id);
-			}
-        });
-        */
+			this.addButton.setOnMouseClicked(event -> {    		
+				if (this.app.getLoggedUser() instanceof Employee)
+					this.app.initUpsertRace(null);
+	        });
+			
+			this.racesTable.setOnMouseClicked(event -> {
+				if (this.app.getLoggedUser() instanceof Employee)
+				{
+					if (event.getClickCount() == 2 && this.racesTable.getSelectionModel().getSelectedItem() != null) {
+						this.removeRace();
+					}
+	    		
+					if (event.getButton() == MouseButton.SECONDARY  && this.racesTable.getSelectionModel().getSelectedItem() != null) {
+						int id = this.racesTable.getSelectionModel().getSelectedItem().getId();
+						this.app.initUpsertRace(id);
+					}
+				}
+	        });
     }
     
     /**
@@ -75,7 +83,7 @@ public class RacesController {
 	}
     
     /**
-	 * Inserts the data of each boat in the table.
+	 * Inserts the data of each race in the table.
 	**/
     public void setTableContent() {    	
     	ObservableList<Race> races = FXCollections.<Race>observableArrayList();
@@ -87,19 +95,19 @@ public class RacesController {
     }
     
     /**
-     * Removes a selected boat from the table. 
+     * Removes a selected race from the table. 
     **/
-    /*public void removeBoat() {
-    	int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
+    public void removeRace() {
+    	int id = this.racesTable.getSelectionModel().getSelectedItem().getId();
     	
-    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + id, "Are you sure?");
+    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + id, "Are you sure?");
     	if (result.get() == ButtonType.OK){
-    		this.app.getClub().removeBoat(id);
+    		this.app.getClub().removeRace(id);
     		this.setTableContent();
     		
-			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The boat has been removed correctly.");
+    		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The race has been removed correctly.");
     	}
-    }*/
+    }
     
     /**
      * Sets the reference to the app application.
@@ -109,7 +117,14 @@ public class RacesController {
     public void setMain(final App app) {
         this.app = app;
         
-        this.info.setText("Double click to delete a race.\nRight click to update a race.");
+        if (this.app.getLoggedUser() instanceof Employee) {
+        	this.info.setText("Double click to delete a race.\nRight click to update a race.");   
+        }
+        else {
+        	this.info.setText(""); 
+        	this.app.setVisibleElement(addButton, false);
+        }
+        	
                
         this.setTableContent();
     }

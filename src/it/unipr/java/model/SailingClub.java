@@ -922,24 +922,121 @@ public class SailingClub {
 	 * @param dataRace the data of the race.
 	 * @return the reference of the race or <code>null</code>.
 	**/
-	public Race getRaceByDate(final Date dataRace) {
+	public int getIdRaceByDate(final Date dateRace) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			
 			String query = "SELECT * FROM Races WHERE DateRace = ? AND StatusCode <> ?";
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setObject(1,dataRace);
+			pstmt.setObject(1,dateRace);
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("DaraRace"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee"));
+				return rset.getInt("IdRace");
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return -1;
+	}
+	
+	/**
+	 * Inserts a boat in the database.
+	 * 
+	 * @param name the name of the race.
+	 * @param place the place of the race.
+	 * @param dateRace the date of the race.
+	 * @param boatsNumber the number of the participating boats.
+	 * @param registrationFee the registration fee of the race.
+	**/
+	public void insertRace(final String name, final String place, final Date dateRace, final int boatsNumber, final float registrationFee) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {			
+			String query = "INSERT INTO Races (Name, Place, DateRace, BoatsNumber, RegistrationFee, StatusCode) VALUES (?,?,?,?,?,?)";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, name);
+			pstmt.setString(2, place);
+			pstmt.setObject(3, dateRace);
+			pstmt.setInt(4, boatsNumber);
+			pstmt.setFloat(5, registrationFee);
+			pstmt.setInt(6, StatusCode.ACTIVE.getValue());
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Updates the race information.
+	 * If the information has value <code>null</code> are not replaced.
+	 * 
+	 * @param name the name of the race.
+	 * @param place the place of the race.
+	 * @param dateRace the date of the race.
+	 * @param boatsNumber the number of the participating boats.
+	 * @param registrationFee the registration fee of the race.
+	**/
+	public void updateRace(final int id, final String name, final String place, final Date dateRace, final Integer boatsNumber, final Float registrationFee) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			
+			String query = "UPDATE Races SET Name = IfNull(?, Name), Place = IfNull(?, Place), DateRace = IfNull(?, DateRace), BoatsNumber = IfNull(?, BoatsNumber), RegistrationFee = IfNull(?, RegistrationFee) WHERE IdRace = ?"; 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, name);
+			pstmt.setString(2, place);
+			
+			if (dateRace == null) {
+	            pstmt.setNull(3, Types.DATE);
+	        } else {
+	        	pstmt.setObject(3, dateRace);
+	        }
+			
+
+			if (boatsNumber == null) {
+	            pstmt.setNull(4, Types.INTEGER);
+	        } else {
+	        	pstmt.setInt(4, boatsNumber);
+	        }
+						
+
+			if (registrationFee == null) {
+	            pstmt.setNull(5, Types.FLOAT);
+	        } else {
+	        	pstmt.setFloat(5, registrationFee);
+	        }
+			
+			
+			pstmt.setInt(6, id);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Removes a race from the database.
+	 * 
+	 * @param id the unique identifier of the race.
+	**/
+	public void removeRace(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "UPDATE Races SET StatusCode = ? WHERE IdRace = ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			pstmt.setInt(2, id);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
 	}
 	
 }

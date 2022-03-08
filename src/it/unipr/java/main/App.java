@@ -352,22 +352,30 @@ public class App extends Application {
 	
 	
 	/**
-	 * Initializes the dialog panel to add a new race.
+	 * Initializes the dialog panel to add or update a race.
 	**/
-	public void initAddRace() {
+	public void initUpsertRace(final Integer idRace) {
         try {
         	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../../resources/AddRaceLayout.fxml"));
+            loader.setLocation(getClass().getResource("../../resources/UpsertRaceLayout.fxml"));
             
             AnchorPane root = (AnchorPane) loader.load();
             Scene scene = new Scene(root);
             
-            AddRaceController controller = loader.getController();
-            controller.setMain(this);
+            UpsertRaceController controller = loader.getController();
+            controller.setIdRace(idRace);
+            controller.setApp(this);
             
             Stage dialogStage = new Stage();
             dialogStage.setScene(scene);
-            dialogStage.setTitle("Add a new race");
+            String title = "";
+            if (idRace == null) {
+            	title = "Add a new race";
+            } else {
+            	title = "Update the race";
+            }
+            
+            dialogStage.setTitle(title);
             dialogStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
