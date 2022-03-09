@@ -12,15 +12,16 @@ public class Fee {
 	private FeeType type;
 	private float amount;
 	private int validityPeriod;
+	private StatusCode statusCode;
 	
 	/**
 	 * Class constructor.
 	**/
 	public Fee() {
-		this.id = 0;
-		this.type = null;
-		this.amount = 0;
-		this.validityPeriod = 0;
+		this.setId(0);
+		this.setType(null);
+		this.setAmount(0);
+		this.setValidityPeriod(0);
 	}	
 	
 	/**
@@ -30,12 +31,14 @@ public class Fee {
 	 * @param type the type of the fee.
 	 * @param amount the amount of the fee.
 	 * @param validityPeriod the validity period of the fee in days.
+	 * @param statusCode the status code of the fee.
 	**/
-	public Fee(final int id, final FeeType type, final float amount, final int validityPeriod) {
+	public Fee(final int id, final FeeType type, final float amount, final int validityPeriod, final StatusCode statusCode) {
 		this.setId(id);
 		this.setType(type);
 		this.setAmount(amount);
 		this.setValidityPeriod(validityPeriod);
+		this.setStatusCode(statusCode);
 	}	
 	
 	/**
@@ -111,12 +114,30 @@ public class Fee {
 	}
 	
 	/**
+	 * Gets the status code of the fee.
+	 * 
+	 * @return the status code.
+	**/
+	public StatusCode getStatusCode() {
+		return this.statusCode;
+	}
+	
+	/**
+	 * Sets the status code of the fee.
+	 * 
+	 * @param statusCode the new status code.
+	**/
+	public void setStatusCode(final StatusCode statusCode) {
+		this.statusCode = statusCode;
+	}
+	
+	/**
 	 * Gets a string that describes a fee.
 	 * 
 	 * @return the string.
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Type: " + this.type.toString() + " - Amount: " + this.amount + " - Validity Period: " + this.validityPeriod;
+		return "Id: " + this.id + " - Type: " + this.type.toString() + " - Amount: " + this.amount + " - Validity Period: " + this.validityPeriod + " - Status Code: " + this.statusCode.toString();
 	}
 }

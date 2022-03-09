@@ -29,4 +29,13 @@ public enum StatusCode {
     public int getValue() { 
     	return value; 
     }
+    
+    public static StatusCode getStatusCode(final int value) {
+        for (StatusCode s: StatusCode.values()) {
+            if (s.value == value) 
+            	return s;
+        }
+        
+        throw new IllegalArgumentException("Status code not found.");
+     }
 }

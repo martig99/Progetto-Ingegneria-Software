@@ -27,6 +27,7 @@ import javafx.scene.text.Text;
 public class UsersController {
 
 	private App app;
+	private UserType userType;
 
 	@FXML
 	private Text members, employees, info;
@@ -54,7 +55,7 @@ public class UsersController {
 		this.setTable();
 		
 		this.addButton.setOnMouseClicked(event -> {    		
-    		this.app.initCreateUser();
+    		this.app.initUpsertUser(null, this.userType);
         });
 		
 		this.members.setOnMouseClicked(event -> {  	
@@ -66,32 +67,15 @@ public class UsersController {
         });
 
 		this.usersTable.setOnMouseClicked(event -> {
-			if (this.app.getLoggedUser() instanceof Employee)
-			{
-				if (event.getClickCount() == 2 && this.usersTable.getSelectionModel().getSelectedItem() != null) {
-					this.removeMember();
+			if (this.app.getLoggedUser() instanceof Employee) {
+				User selectedUser = this.usersTable.getSelectionModel().getSelectedItem();
+				if (selectedUser != null) {				
+					if (event.getClickCount() == 2) {
+						this.removeUser(selectedUser);
 					}
-				
-				if (event.getButton() == MouseButton.SECONDARY && this.usersTable.getSelectionModel().getSelectedItem() != null){	
-					int id = this.usersTable.getSelectionModel().getSelectedItem().getId();
-					User u = this.app.getClub().getUserById(id);
-					int n = this.app.getLoggedUser().getId();
-					if(u.getId() != n) //da chiedere a martina se uno può modificare se stesso
-			    	{
-						Employee e = (Employee)this.app.getLoggedUser();
-						if(!e.isAdministrator() && u instanceof Member || e.isAdministrator())
-			    		{
-			    			this.app.initUpdateUser(id);
-			    		}
-			    		else
-				    	{
-				    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "you cannot update an employee");
-				    	}
-			    			
-					}
-					else
-					{
-						this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "you cannot update yourself");
+					
+					if (event.getButton() == MouseButton.SECONDARY) {	
+						this.updateUser(selectedUser);
 					}
 				}
 			}
@@ -100,35 +84,44 @@ public class UsersController {
 	}
     
     /**
-     * Removes a selected member from the table
+     * Removes a selected user from the table
     **/
-    public void removeMember() {
-    	int id = this.usersTable.getSelectionModel().getSelectedItem().getId();
-    	User u = this.app.getClub().getUserById(id);
-    	int n = this.app.getLoggedUser().getId();
-    	if(u.getId() != n)
-    	{
-    		Employee e = (Employee)this.app.getLoggedUser();
-    		if(!e.isAdministrator() && u instanceof Member || e.isAdministrator())
-    		{
-		    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a user", "You are removing the user with unique identifier " + id, "Are you sure?");
+    public void removeUser(final User selectedUser) {  	
+    	if(selectedUser.getId() != this.app.getLoggedUser().getId()) {
+    		Employee employee = (Employee) this.app.getLoggedUser();
+    		
+    		if((!employee.isAdministrator() && selectedUser instanceof Member) || employee.isAdministrator()) {
+		    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove an user", "You are removing the user with unique identifier " + selectedUser.getId(), "Are you sure?");
 		    	if (result.get() == ButtonType.OK){
-		    		this.app.getClub().removeUser(id);
+		    		this.app.getClub().removeUser(selectedUser.getId());
 		    		//(modifica) aggiungere nel caso la rimozione anche delle barche collegate a quel socio
-		    		this.setTableContent(UserType.MEMBER);
 		    		
+		    		this.setTableContent(this.userType);
 					this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The user has been removed correctly.");
 		    	}
+	    	} else {
+	    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot remove an employee.");
 	    	}
-	    	else
-	    	{
-	    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "you cannot remove an employee");
-	    	}
+    	} else {
+    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot remove yourself.");
     	}
-    	else
-    	{
-    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "you cannot remove yourself");
-    	}
+    }
+    
+    /**
+     * 
+     * @param selectedUser
+    **/
+    public void updateUser(final User selectedUser) {
+    	if(selectedUser.getId() != this.app.getLoggedUser().getId()) { 
+			Employee employee = (Employee) this.app.getLoggedUser();
+			if((!employee.isAdministrator() && selectedUser instanceof Member) || employee.isAdministrator()) {
+    			this.app.initUpsertUser(selectedUser.getId(), this.userType);
+    		} else {
+	    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot update an employee.");
+	    	}		
+		} else {
+			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot update yourself.");
+		}
     }
     
     /**
@@ -181,6 +174,9 @@ public class UsersController {
 		this.usersTable.setItems(users);
     }
     
+    /**
+     * 
+    **/
     public void displayMembersTable() {
     	this.app.activeLinkMenu(this.menu, this.members);
 		
@@ -190,10 +186,16 @@ public class UsersController {
 		
 		this.app.setVisibleElement(this.info, true);
 		
-		this.setTableContent(UserType.MEMBER);
+		this.setUserType(UserType.MEMBER);
+		this.setTableContent(this.userType);
 		this.setTable();
+		
+		this.addButton.setText("ADD MEMBER");
     }
     
+    /**
+     * 
+    **/
     public void displayEmployeesTable() {
     	this.app.activeLinkMenu(this.menu, this.employees);
 		
@@ -208,8 +210,19 @@ public class UsersController {
 			}
 		}
 		
-		this.setTableContent(UserType.EMPLOYEE);
+		this.setUserType(UserType.EMPLOYEE);
+		this.setTableContent(this.userType);
 		this.setTable();
+		
+		this.addButton.setText("ADD EMPLOYEE");
+    }
+    
+    /**
+     * 
+     * @param feeType
+    **/
+    public void setUserType(final UserType userType) {
+    	this.userType = userType;
     }
     
     /**
@@ -220,8 +233,13 @@ public class UsersController {
     public void setApp(final App app) {
         this.app = app;
         
-        this.app.activeLinkMenu(this.menu, this.members);
-        this.displayMembersTable();
+        if (this.userType == UserType.MEMBER) {
+	        this.app.activeLinkMenu(this.menu, this.members);
+	        this.displayMembersTable();
+        } else {
+        	this.app.activeLinkMenu(this.menu, this.employees);
+        	this.displayEmployeesTable();
+        }
         
         this.info.setText("Double click to delete an user.\nRight click to update an user.");
     }

@@ -13,9 +13,11 @@ public class Race {
 	private int id;
 	private String name;
 	private String place;
-	private Date dateRace;
+	private Date date;
 	private int boatsNumber;
 	private float registrationFee;
+	private Date endDateRegistration;
+	private StatusCode statusCode;
 	
 	/**
 	 * Class constructor.
@@ -24,9 +26,11 @@ public class Race {
 		this.setId(0);
 		this.setName("");
 		this.setPlace("");
-		this.setDateRace(null);
+		this.setDate(null);
 		this.setBoatsNumber(0);
 		this.setRegistrationFee(0);
+		this.setEndDateRegistration(null);
+		this.setStatusCode(null);
 	}	
 	
 	/**
@@ -35,18 +39,21 @@ public class Race {
 	 * @param id the unique identifier of the race.
 	 * @param name the name of the race.
 	 * @param place the place of the race.
-	 * @param dateRace the data of the race.
+	 * @param date the date of the race.
 	 * @param boatsNumber the number of boats participating in the race.
-	 * @param registrationFree the race registration fee
-
+	 * @param registrationFree the race registration fee.
+	 * @param endDateRegistration the end date registration of a boat at the race.
+	 * @parma statusCode the status code of the race.
 	**/
-	public Race(final int id, final String name, final String place, final Date dateRace, final int boatsNumber, final float registrationFee) {
+	public Race(final int id, final String name, final String place, final Date date, final int boatsNumber, final float registrationFee, final Date endDateRegistration, final StatusCode statusCode) {
 		this.setId(id);
 		this.setName(name);
 		this.setPlace(place);
-		this.setDateRace(dateRace);
+		this.setDate(date);
 		this.setBoatsNumber(boatsNumber);
 		this.setRegistrationFee(registrationFee);
+		this.setEndDateRegistration(endDateRegistration);
+		this.setStatusCode(statusCode);
 	}	
 	
 	/**
@@ -97,7 +104,7 @@ public class Race {
 	/**
 	 * Sets the place of the race.
 	 *  
-	 * @param place the new race.
+	 * @param place the new place.
 	**/
 	public void setPlace(final String place) {
 		this.place = place;
@@ -108,17 +115,17 @@ public class Race {
 	 * 
 	 * @return the date.
 	**/
-	public Date getDateRace() {
-		return this.dateRace;
+	public Date getDate() {
+		return this.date;
 	}
 	
 	/**
 	 * Sets the date of the race.
 	 * 
-	 * @param dateRace date of the new race.
+	 * @param date the new date.
 	**/
-	public void setDateRace(final Date dateRace) {
-		this.dateRace = dateRace;
+	public void setDate(final Date date) {
+		this.date = date;
 	}
 	
 	/**
@@ -133,7 +140,7 @@ public class Race {
 	/**
 	 * Sets the number of boats participating in the race.
 	 * 
-	 * @param boatsNumber the number of boats.
+	 * @param boatsNumber the new number of boats.
 	**/
 	public void setBoatsNumber(final int boatsNumber) {
 		this.boatsNumber = boatsNumber;
@@ -151,20 +158,55 @@ public class Race {
 	/**
 	 * Sets the registration fee for the race.
 	 * 
-	 * @param registrationFee the registration fee.
+	 * @param registrationFee the new registration fee.
 	**/
 	public void setRegistrationFee(final float registrationFee) {
 		this.registrationFee = registrationFee;
 	}
 	
+	/**
+	 * Gets the end date registration of a boat at the race.
+	 * 
+	 * @return the date.
+	**/
+	public Date getEndDateRegistration() {
+		return this.endDateRegistration;
+	}
 	
 	/**
-	 * Gets a string that describes a boat.
+	 * Sets the end date registration of a boat at the race.
+	 * 
+	 * @param endDateRegistration the new date.
+	**/
+	public void setEndDateRegistration(final Date endDateRegistration) {
+		this.endDateRegistration = endDateRegistration;
+	}
+	
+	/**
+	 * Gets the status code of the race.
+	 * 
+	 * @return the status code.
+	**/
+	public StatusCode getStatusCode() {
+		return this.statusCode;
+	}
+	
+	/**
+	 * Sets the status code of the race.
+	 * 
+	 * @param statusCode the new status code.
+	**/
+	public void setStatusCode(final StatusCode statusCode) {
+		this.statusCode = statusCode;
+	}
+	
+	/**
+	 * Gets a string that describes a race.
 	 * 
 	 * @return the string.
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Name: " + this.name + " - Place: " + this.place + " - Date: " + this.dateRace + " - Boats Number: " + this.boatsNumber + " - Registration Fee: " + this.registrationFee;
+		return "Id: " + this.id + " - Name: " + this.name + " - Place: " + this.place + " - Date: " + this.date + " - Boats Number: " + this.boatsNumber + " - Registration Fee: " + this.registrationFee + " - End Date Registration: " + this.endDateRegistration + " - Status Code: " + this.statusCode;
 	}
 }

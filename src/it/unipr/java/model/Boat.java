@@ -13,6 +13,7 @@ public class Boat {
 	private int length;
 	private float storageFee;
 	private Member owner;
+	private StatusCode statusCode;
 	
 	/**
 	 * Class constructor.
@@ -23,6 +24,7 @@ public class Boat {
 		this.setLength(0);
 		this.setStorageFee(0);
 		this.setOwner(null);
+		this.setStatusCode(null);
 	}	
 	
 	/**
@@ -33,13 +35,15 @@ public class Boat {
 	 * @param length the length of the boat.
 	 * @param storageFee the storage fee of the boat.
 	 * @param owner the owner of the boat.
+	 * @param statusCode the status code of the boat.
 	**/
-	public Boat(final int id, final String name, final int length, final float storageFee, final Member owner) {
+	public Boat(final int id, final String name, final int length, final float storageFee, final Member owner, final StatusCode statusCode) {
 		this.setId(id);
 		this.setName(name);
 		this.setLength(length);
 		this.setStorageFee(storageFee);
 		this.setOwner(owner);
+		this.setStatusCode(statusCode);
 	}	
 	
 	/**
@@ -133,12 +137,30 @@ public class Boat {
 	}
 	
 	/**
+	 * Gets the status code of the boat.
+	 * 
+	 * @return the status code.
+	**/
+	public StatusCode getStatusCode() {
+		return this.statusCode;
+	}
+	
+	/**
+	 * Sets the status code of the boat.
+	 * 
+	 * @param statusCode the new status code.
+	**/
+	public void setStatusCode(final StatusCode statusCode) {
+		this.statusCode = statusCode;
+	}
+	
+	/**
 	 * Gets a string that describes a boat.
 	 * 
 	 * @return the string.
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Name: " + this.name + " - Length: " + this.length + " - Storage Fee: " + this.storageFee + " - Owner [" + this.owner.toString() + "]";
+		return "Id: " + this.id + " - Name: " + this.name + " - Length: " + this.length + " - Storage Fee: " + this.storageFee + " - Owner: " + this.owner.getEmail() + " - Status Code: " + this.statusCode.toString();
 	}
 }

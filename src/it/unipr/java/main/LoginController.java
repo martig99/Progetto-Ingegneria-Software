@@ -38,7 +38,7 @@ public class LoginController {
         });
         
         this.linkSignUp.setOnMouseClicked(clickEvent -> {
-        	this.app.initCreateUser();
+        	this.app.initUpsertUser(null, UserType.MEMBER);
         });
     }
 	
@@ -54,9 +54,7 @@ public class LoginController {
 		    	User loggedUser = this.app.getClub().login(email.getText(), password.getText(), UserType.valueOf(userType.toUpperCase()));
 				
 				if (loggedUser != null) {
-					this.app.setLoggedUser(loggedUser);
-					this.app.showAlert(Alert.AlertType.INFORMATION, "Login", null, loggedUser.toString());
-					
+					this.app.setLoggedUser(loggedUser);					
 					this.app.initMainPage();
 				} else {
 					this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "The credentials entered are incorrect.");            

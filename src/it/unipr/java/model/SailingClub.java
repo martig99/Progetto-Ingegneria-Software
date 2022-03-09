@@ -98,11 +98,10 @@ public class SailingClub {
 	public User getUserByEmail(final String email) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "SELECT * FROM Users WHERE Email = ? AND StatusCode <> ?";
+			String query = "SELECT * FROM Users WHERE Email = ?";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, email);
-			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -124,11 +123,10 @@ public class SailingClub {
 	public Member getMemberByFiscalCode(final String fiscalCode) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			String query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE FiscalCode = ? AND StatusCode <> ?";
+			String query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE FiscalCode = ?";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, fiscalCode);
-			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -326,7 +324,7 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new Fee(rset.getInt("IdFee"), FeeType.valueOf(rset.getString("Type").toUpperCase()), rset.getFloat("Amount"), rset.getInt("ValidityPeriod"));
+				return new Fee(rset.getInt("IdFee"), FeeType.valueOf(rset.getString("Type").toUpperCase()), rset.getFloat("Amount"), rset.getInt("ValidityPeriod"), StatusCode.getStatusCode(rset.getInt("StatusCode")));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -377,7 +375,6 @@ public class SailingClub {
 		}
 	}
 	
-	
 	/**
 	 * Removes an user from the database.
 	 * 
@@ -390,6 +387,57 @@ public class SailingClub {
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
 			pstmt.setInt(2, id);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param firstName
+	 * @param lastName
+	 * @param email
+	 * @param password
+	**/
+	public void updateUser(final int id, final String firstName, final String lastName, final String email, final String password) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			
+			String query = "UPDATE users SET FirstName = IfNull(?, FirstName), LastName = IfNull(?, LastName), Email = IfNull(?, Email), Password = ifNull (?,Password) WHERE IdUser = ?"; 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, firstName);
+			pstmt.setString(2, lastName);
+			pstmt.setString(3, email);
+			pstmt.setString(4, password);
+			
+			pstmt.setInt(5, id);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+
+	/**
+	 * 
+	 * @param id
+	 * @param fiscalCode
+	 * @param address
+	**/
+	public void updateMember(final int id, final String fiscalCode, final String address) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			
+			String query = "UPDATE members SET FiscalCode = IfNull(?, FiscalCode), Address = IfNull(?, Address) WHERE IdMember = ?"; 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, fiscalCode);
+			pstmt.setString(2, address);
+			
+			pstmt.setInt(3, id);
 			pstmt.executeUpdate();
 			
 		} catch (SQLException sqle) {
@@ -411,7 +459,7 @@ public class SailingClub {
 				Statement stmt = conn.createStatement()) {
 			Fee storageFee = this.getFee(FeeType.STORAGE);
 
-			String query = "SELECT * FROM Boats boats JOIN Members members ON members.IdMember = boats.Owner JOIN Users users ON users.IdUser = members.IdMember WHERE (? IS NULL OR boats.Owner = ?) AND boats.StatusCode <> ? ORDER BY IdBoat";
+			String query = "SELECT * FROM Boats JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE (? IS NULL OR Boats.Owner = ?) AND Boats.StatusCode <> ? ORDER BY Boats.IdBoat";
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			
 			if(owner != null) {
@@ -426,7 +474,7 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
-				list.add(new Boat(rset.getInt("IdBoat"), rset.getString("Name"), rset.getInt("Length"), (float)(rset.getInt("Length") * storageFee.getAmount()), (new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address")))));
+				list.add(new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode"))));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -443,7 +491,7 @@ public class SailingClub {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			
-			String query = "SELECT boats.Name FROM Boats boats JOIN Users users ON users.IdUser = boats.Owner WHERE boats.Owner = ? AND boats.StatusCode <> ? ORDER BY IdBoat";
+			String query = "SELECT Boats.Name FROM Boats JOIN Users ON Users.IdUser = Boats.Owner WHERE Boats.Owner = ? AND Boats.StatusCode <> ? ORDER BY Boats.IdBoat";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, owner.getId());
@@ -451,7 +499,7 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
-				list.add(rset.getString("Name"));
+				list.add(rset.getString(1));
 			}
 			
 		} catch (SQLException sqle) {
@@ -473,7 +521,7 @@ public class SailingClub {
 				Statement stmt = conn.createStatement()) {
 			Fee storageFee = this.getFee(FeeType.STORAGE);
 			
-			String query = "SELECT * FROM Boats boats JOIN Members members ON members.IdMember = boats.Owner JOIN Users users ON users.IdUser = members.IdMember WHERE boats.Name = ? AND boats.Owner = ? AND boats.StatusCode <> ?";
+			String query = "SELECT * FROM Boats JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE Boats.Name = ? AND Boats.Owner = ? AND Boats.StatusCode <> ?";
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, name);
 			pstmt.setInt(2, owner.getId());
@@ -481,7 +529,7 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new Boat(rset.getInt("IdBoat"), rset.getString("Name"), rset.getInt("Length"), (float)(rset.getInt("Length") * storageFee.getAmount()), (new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"))));
+				return new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -501,14 +549,14 @@ public class SailingClub {
 				Statement stmt = conn.createStatement()) {
 			Fee storageFee = this.getFee(FeeType.STORAGE);
 			
-			String query = "SELECT * FROM Boats boats JOIN Members members ON members.IdMember = boats.Owner JOIN Users users ON users.IdUser = members.IdMember WHERE boats.IdBoat = ? AND boats.StatusCode <> ?";
+			String query = "SELECT * FROM Boats JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE Boats.IdBoat = ? AND Boats.StatusCode <> ?";
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, id);
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new Boat(rset.getInt("IdBoat"), rset.getString("Name"), rset.getInt("Length"), (float)(rset.getInt("Length") * storageFee.getAmount()), (new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"))));
+				return new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -572,44 +620,6 @@ public class SailingClub {
 		}
 	}
 	
-	
-	public void updateUser(final int id, final String firstName, final String lastName, final String email, final String password) {
-		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
-				Statement stmt = conn.createStatement()) {		
-			
-			String query = "UPDATE users SET FirstName = IfNull(?, FirstName), LastName = IfNull(?, LastName), Email = IfNull(?, Email), Password = ifNull (?,Password) WHERE IdUser = ?"; 			
-			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, firstName);
-			pstmt.setString(2, lastName);
-			pstmt.setString(3, email);
-			pstmt.setString(4, password);
-			
-			pstmt.setInt(5, id);
-			pstmt.executeUpdate();
-			
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-	}
-	
-
-	public void updateMember(final int id, final String fiscalCode, final String address) {
-		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
-				Statement stmt = conn.createStatement()) {		
-			
-			String query = "UPDATE members SET FiscalCode = IfNull(?, FiscalCode), Address = IfNull(?, Address) WHERE IdMember = ?"; 			
-			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, fiscalCode);
-			pstmt.setString(2, address);
-			
-			pstmt.setInt(3, id);
-			pstmt.executeUpdate();
-			
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-	}
-	
 	/**
 	 * Removes a boat from the database.
 	 * 
@@ -628,6 +638,28 @@ public class SailingClub {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	**/
+	public int getMaxBoatsNumber() {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "SELECT COUNT(DISTINCT Users.Email) FROM Boats JOIN Users ON Boats.Owner = Users.IdUser WHERE Boats.StatusCode <> ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return rset.getInt(1);
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return 0;
 	}
 	
 	/**
@@ -695,10 +727,10 @@ public class SailingClub {
 			String query = "";
 			int parameter = 0;
 			if (feeType == FeeType.MEMBERSHIP) {
-				query = "SELECT MAX(ValidityEndDate) FROM Payments payments JOIN Members members ON members.IdMember = payments.Member JOIN Fees fees ON payments.Fee = fees.IdFee WHERE payments.Member = ? AND payments.Fee = ?";
+				query = "SELECT MAX(ValidityEndDate) FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Fees ON Payments.Fee = Fees.IdFee WHERE Payments.Member = ? AND Payments.Fee = ?";
 				parameter = member.getId();
 			} else if (feeType == FeeType.STORAGE && boat != null) {
-				query = "SELECT MAX(ValidityEndDate) FROM Payments payments JOIN Boats boats ON boats.IdBoat = payments.Boat JOIN Fees fees ON payments.Fee = fees.IdFee WHERE payments.Boat = ? AND payments.Fee = ?";
+				query = "SELECT MAX(ValidityEndDate) FROM Payments JOIN Boats ON Boats.IdBoat = Payments.Boat JOIN Fees ON Payments.Fee = Fees.IdFee WHERE Payments.Boat = ? AND Payments.Fee = ?";
 				parameter = boat.getId();
 			}
 			
@@ -749,10 +781,10 @@ public class SailingClub {
 			String query = "";
 			int parameter = 0;
 			if (feeType == FeeType.MEMBERSHIP) {
-				query = "SELECT * FROM Payments payments JOIN Members members ON members.IdMember = payments.Member WHERE payments.Member = ? AND payments.Fee = ? AND payments.ValidityStartDate <= ? AND payments.ValidityEndDate >= ?";
+				query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member WHERE Payments.Member = ? AND Payments.Fee = ? AND Payments.ValidityStartDate <= ? AND Payments.ValidityEndDate >= ?";
 				parameter = member.getId();
 			} else if (feeType == FeeType.STORAGE && boat != null) {
-				query =  "SELECT * FROM Payments payments JOIN Members members ON members.IdMember = payments.Member JOIN Boats boats ON boats.IdBoat = payments.Boat WHERE payments.Boat = ? AND payments.Fee = ? AND payments.ValidityStartDate <= ? AND payments.ValidityEndDate >= ?";
+				query =  "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Boats ON Boats.IdBoat = Payments.Boat WHERE Payments.Boat = ? AND Payments.Fee = ? AND Payments.ValidityStartDate <= ? AND Payments.ValidityEndDate >= ?";
 				parameter = boat.getId();
 			}
 			
@@ -761,8 +793,8 @@ public class SailingClub {
 			pstmt.setInt(2, fee.getId());
 			
 			Date currentDate = new Date();
-			pstmt.setObject(3, currentDate);
-			pstmt.setObject(4, currentDate);
+			pstmt.setDate(3, new java.sql.Date(currentDate.getTime()));
+			pstmt.setDate(4, new java.sql.Date(currentDate.getTime()));
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -788,11 +820,11 @@ public class SailingClub {
 			
 			String query = "";			
 			if (feeType == FeeType.MEMBERSHIP) {
-				query = "SELECT * FROM Payments payments JOIN Members members ON members.IdMember = payments.Member JOIN Users users ON users.IdUser = members.IdMember JOIN PaymentServices paymentServices ON paymentServices.IdPaymentService = payments.PaymentService WHERE (? IS NULL OR payments.Member = ?) AND payments.Fee = ? ORDER BY payments.IdPayment";
+				query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService WHERE (? IS NULL OR Payments.Member = ?) AND Payments.Fee = ? ORDER BY Payments.IdPayment";
 			} else if (feeType == FeeType.STORAGE) {
-				query = "SELECT * FROM Payments payments JOIN Members members ON members.IdMember = payments.Member JOIN Users users ON users.IdUser = members.IdMember JOIN Boats boats ON boats.IdBoat = payments.Boat JOIN PaymentServices paymentServices ON paymentServices.IdPaymentService = payments.PaymentService WHERE (? IS NULL OR payments.Member = ?) AND payments.Fee = ? ORDER BY payments.IdPayment";
+				query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN Boats ON Boats.IdBoat = Payments.Boat JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService WHERE (? IS NULL OR Payments.Member = ?) AND Payments.Fee = ? ORDER BY Payments.IdPayment";
 			} else if (feeType == FeeType.RACE_REGISTRATION) {
-				
+				query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN RaceRegistrations ON RaceRegistrations.IdRegistration = Payments.RaceRegistration JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService WHERE (? IS NULL OR Payments.Member = ?) AND Payments.Fee = ? ORDER BY Payments.IdPayment";
 			}
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
@@ -808,17 +840,24 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
-				Member member = new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"));
-				PaymentService paymentService = new PaymentService(rset.getInt("IdPaymentService"), rset.getString("Description"));
+				Member member = new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"));
+				PaymentService paymentService = new PaymentService(rset.getInt("PaymentServices.IdPaymentService"), rset.getString("PaymentServices.Description"));
 				
-				if (feeType == FeeType.MEMBERSHIP) {
-					list.add(new Payment(rset.getInt("IdPayment"), rset.getDate("Date"), member, null, rset.getDate("ValidityStartDate"), rset.getDate("ValidityEndDate"), rset.getFloat("Total"), paymentService));
-				} else if (feeType == FeeType.STORAGE) {
-					Boat boat = new Boat(rset.getInt("IdBoat"), rset.getString("Name"), rset.getInt("Length"), (float)(rset.getInt("Length") * fee.getAmount()), member);
-					list.add(new Payment(rset.getInt("IdPayment"), rset.getDate("Date"), member, boat, rset.getDate("ValidityStartDate"), rset.getDate("ValidityEndDate"), rset.getFloat("Total"), paymentService));
-				} else if (feeType == FeeType.RACE_REGISTRATION) {
-					
+				Boat boat = null;
+				Race race = null;
+				RaceRegistration raceRegistration = null;
+
+				if (feeType != FeeType.MEMBERSHIP) {
+					boat = new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * this.getFee(FeeType.STORAGE).getAmount()), member, StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
+				} 
+				
+				if (feeType == FeeType.RACE_REGISTRATION) {
+					race = new Race(rset.getInt("Races.IdRace"), rset.getString("Races.Name"), rset.getString("Races.Place"), rset.getDate("Races.Date"), rset.getInt("Races.BoatsNumber"), rset.getFloat("Races.RegistrationFee"), rset.getDate("Races.EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("Races.StatusCode")));
+					raceRegistration = new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode")));
 				}
+				
+				list.add(new Payment(rset.getInt("Payments.IdPayment"), rset.getDate("Payments.Date"), member, boat, raceRegistration, rset.getDate("Payments.ValidityStartDate"), rset.getDate("Payments.ValidityEndDate"), rset.getFloat("Payments.Total"), paymentService));
+
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -829,20 +868,22 @@ public class SailingClub {
 	
 	/**
 	 * 
-	 * @param user
+	 * @param member
 	 * @param boat
+	 * @param raceRegistration
 	 * @param feeType
 	 * @param paymentService
 	**/
-	public void payFee(final User member, final Boat boat, final FeeType feeType, final PaymentService paymentService) {
+	public void payFee(final User member, final Boat boat, final RaceRegistration raceRegistration, final FeeType feeType, final PaymentService paymentService) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			Fee fee = this.getFee(feeType);
 
 			String query = "INSERT INTO Payments (Date, Member, Boat, RaceRegistration, Fee, ValidityStartDate, ValidityEndDate, Total, PaymentService) VALUES (?,?,?,?,?,?,?,?,?)";
-			
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setObject(1, new Date());
+			
+			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+			pstmt.setDate(1, sqlDate);
 			pstmt.setInt(2, member.getId());
 			
 			if (boat != null) {
@@ -851,28 +892,33 @@ public class SailingClub {
 				pstmt.setNull(3, Types.INTEGER);
 			}
 			
-			pstmt.setNull(4, Types.INTEGER); //RACE REGISTRATION
+			if (raceRegistration != null) {
+				pstmt.setInt(4, raceRegistration.getId());
+			} else {
+				pstmt.setNull(4, Types.INTEGER);
+			}
+			
 			pstmt.setInt(5, fee.getId());
 			
-			Date newDate = new Date();
-			
+			Date validityStartDate = new Date();
 			if (feeType == FeeType.MEMBERSHIP || feeType == FeeType.STORAGE) {
 				Date dateLastPayment = this.getLastPaymentFee(member, boat, feeType);
 				if (dateLastPayment != null) {
-					if (dateLastPayment.after(newDate)) {
-						newDate = this.getEndDate(dateLastPayment, 1);	
+					if (dateLastPayment.after(validityStartDate)) {
+						validityStartDate = this.getEndDate(dateLastPayment, 1);
+						sqlDate = new java.sql.Date(validityStartDate.getTime());	
 					}
 				}
 				
-				pstmt.setObject(6, newDate); //CONTROLLARE DATA
+				pstmt.setDate(6, sqlDate);
 			
-				Date validityEndDate = this.getEndDate(newDate, fee.getValidityPeriod());
-				pstmt.setObject(7, validityEndDate);
+				Date validityEndDate = this.getEndDate(validityStartDate, fee.getValidityPeriod());
+				pstmt.setDate(7, new java.sql.Date(validityEndDate.getTime()));
 			} else if (feeType == FeeType.RACE_REGISTRATION) {
-				pstmt.setObject(6, new Date());
-				pstmt.setObject(7, new Date());
+				pstmt.setDate(6, new java.sql.Date(validityStartDate.getTime()));
+				pstmt.setDate(7, new java.sql.Date(validityStartDate.getTime()));
 				
-				//MANCA TOTALE FEE RACE REGISTRATION
+				pstmt.setDouble(8, raceRegistration.getRace().getRegistrationFee());
 			}
 			
 			if (feeType == FeeType.MEMBERSHIP) {
@@ -884,7 +930,6 @@ public class SailingClub {
 			pstmt.setInt(9, paymentService.getId());
 			
 			pstmt.executeUpdate();
-			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -907,7 +952,7 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
-				list.add(new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("DateRace"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee")));
+				list.add(new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("Date"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee"), rset.getDate("EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("StatusCode"))));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -917,23 +962,23 @@ public class SailingClub {
 	}
 	
 	/**
-	 * Gets a race of a club member given the data.
+	 * Gets a race of a club member given the date.
 	 * 
-	 * @param dataRace the data of the race.
+	 * @param date the date of the race.
 	 * @return the reference of the race or <code>null</code>.
 	**/
-	public Race getRaceByDate(final Date dataRace) {
+	public Race getRaceByDate(final Date date) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			
-			String query = "SELECT * FROM Races WHERE DateRace = ? AND StatusCode <> ?";
+			String query = "SELECT * FROM Races WHERE Date = ? AND StatusCode <> ?";
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setObject(1,dataRace);
+			pstmt.setDate(1, new java.sql.Date(date.getTime()));
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("DaraRace"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee"));
+				return new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("Date"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee"), rset.getDate("EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("StatusCode")));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -942,4 +987,331 @@ public class SailingClub {
 		return null;
 	}
 	
+	/**
+	 * Gets the race given the unique identifier.
+	 * 
+	 * @param id the unique identifier.
+	 * @return the reference of the race or <code>null</code>.
+	**/
+	public Race getRaceById(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "SELECT * FROM Races WHERE IdRace = ? AND StatusCode <> ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new Race(rset.getInt("IdRace"), rset.getString("Name"), rset.getString("Place"), rset.getDate("Date"), rset.getInt("BoatsNumber"), rset.getFloat("RegistrationFee"), rset.getDate("EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("StatusCode")));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Inserts a boat in the database.
+	 * 
+	 * @param name the name of the race.
+	 * @param place the place of the race.
+	 * @param dateRace the date of the race.
+	 * @param boatsNumber the number of the participating boats.
+	 * @param registrationFee the registration fee of the race.
+	**/
+	public void insertRace(final String name, final String place, final Date dateRace, final int boatsNumber, final float registrationFee, final Date endDateRegistration) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {			
+			String query = "INSERT INTO Races (Name, Place, Date, BoatsNumber, RegistrationFee, EndDateRegistration, StatusCode) VALUES (?,?,?,?,?,?,?)";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, name);
+			pstmt.setString(2, place);
+			pstmt.setDate(3, new java.sql.Date(dateRace.getTime()));
+			pstmt.setInt(4, boatsNumber);
+			pstmt.setFloat(5, registrationFee);
+			pstmt.setDate(6, new java.sql.Date(endDateRegistration.getTime()));
+			pstmt.setInt(7, StatusCode.ACTIVE.getValue());
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Updates the race information.
+	 * If the information has value <code>null</code> are not replaced.
+	 * 
+	 * @param name the name of the race.
+	 * @param place the place of the race.
+	 * @param dateRace the date of the race.
+	 * @param boatsNumber the number of the participating boats.
+	 * @param registrationFee the registration fee of the race.
+	**/
+	public void updateRace(final int id, final String name, final String place, final Date dateRace, final Integer boatsNumber, final Float registrationFee, final Date endDateRegistration) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			
+			String query = "UPDATE Races SET Name = IfNull(?, Name), Place = IfNull(?, Place), Date = IfNull(?, Date), BoatsNumber = IfNull(?, BoatsNumber), RegistrationFee = IfNull(?, RegistrationFee), EndDateRegistration = IfNull(?, EndDateRegistration) WHERE IdRace = ?"; 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, name);
+			pstmt.setString(2, place);
+			
+			if (dateRace == null) {
+	            pstmt.setNull(3, Types.DATE);
+	        } else {
+	        	pstmt.setDate(3, new java.sql.Date(dateRace.getTime()));
+	        }
+			
+			if (boatsNumber == null) {
+	            pstmt.setNull(4, Types.INTEGER);
+	        } else {
+	        	pstmt.setInt(4, boatsNumber);
+	        }
+						
+			if (registrationFee == null) {
+	            pstmt.setNull(5, Types.FLOAT);
+	        } else {
+	        	pstmt.setFloat(5, registrationFee);
+	        }
+			
+			if (endDateRegistration == null) {
+				pstmt.setNull(6, Types.DATE);
+			} else {
+				pstmt.setDate(6, new java.sql.Date(endDateRegistration.getTime()));
+			}
+			
+			pstmt.setInt(7, id);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Removes a race from the database.
+	 * 
+	 * @param id the unique identifier of the race.
+	**/
+	public void removeRace(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "UPDATE Races SET StatusCode = ? WHERE IdRace = ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			pstmt.setInt(2, id);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	public int getNumberParticipantsInRace(final Race race) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "SELECT COUNT(*) FROM RaceRegistrations WHERE Race = ? AND StatusCode <> ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, race.getId());
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return rset.getInt(1);
+			}
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return 0;
+	}
+	
+	/**
+	 * 
+	 * @param member
+	 * @return
+	**/
+	public Boat getBoatInRaceByMember(final User member, final Race race) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			Fee storageFee = this.getFee(FeeType.STORAGE);
+			
+			String query = "SELECT * FROM RaceRegistrations JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.Race = ? AND Boats.Owner = ? AND RaceRegistrations.StatusCode <> ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, race.getId());
+			pstmt.setInt(2, member.getId());
+			pstmt.setInt(3, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the race registration given the race and the boat registered.
+	 * 
+	 * @param race the race.
+	 * @param boat the boat.
+	 * @return the reference of the race registration or <code>null</code>.
+	**/
+	public RaceRegistration getRaceRegistration(final Race race, final Boat boat) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "SELECT * FROM RaceRegistrations WHERE Race = ? AND Boat = ? AND StatusCode <> ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, race.getId());
+			pstmt.setInt(2, boat.getId());
+			pstmt.setInt(3, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new RaceRegistration(rset.getInt("IdRegistration"), rset.getDate("Date"), race, boat, StatusCode.getStatusCode(rset.getInt("StatusCode")));
+			}
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	**/
+	public RaceRegistration getRaceRegistrationById(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			Fee storageFee = this.getFee(FeeType.STORAGE);
+			
+			String query = "SELECT * FROM RaceRegistrations JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.IdRegistration = ? AND RaceRegistrations.StatusCode <> ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				Race race = new Race(rset.getInt("Races.IdRace"), rset.getString("Races.Name"), rset.getString("Races.Place"), rset.getDate("Races.Date"), rset.getInt("Races.BoatsNumber"), rset.getFloat("Races.RegistrationFee"), rset.getDate("Races.EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("Races.StatusCode")));
+				Boat boat = new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
+				return new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode")));
+			}
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Registers a boat at a race. It inserts a new record in the race registration table.
+	 * Then it calls the method to pay for registration to the race.
+	 * 
+	 * @param race the race.
+	 * @param member the club member who pays for registration.
+	 * @param boat the boat registered to the race.
+	 * @param paymentService the payment service used to pay the registration fee for the race.
+	**/
+	public void registerBoatAtRace(final Race race, final User member, final Boat boat, final PaymentService paymentService) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "INSERT INTO RaceRegistrations (Date, Race, Boat, StatusCode) VALUES (?,?,?,?)";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			
+			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+			pstmt.setDate(1, sqlDate);
+			pstmt.setInt(2, race.getId());
+			pstmt.setInt(3, boat.getId());
+			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
+			
+			pstmt.executeUpdate();
+			
+			RaceRegistration registration = this.getRaceRegistration(race, boat);
+			if (registration != null) {
+				this.payFee(member, null, registration, FeeType.RACE_REGISTRATION, paymentService);
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	public ArrayList<RaceRegistration> getAllRegistrationsByRace(final Race race) {
+		ArrayList<RaceRegistration> list = new ArrayList<RaceRegistration>();
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			Fee storageFee = this.getFee(FeeType.STORAGE);
+			
+			String query = "SELECT * FROM RaceRegistrations JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.Race = ? AND RaceRegistrations.StatusCode <> ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, race.getId());
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			while (rset.next()) {
+				Boat boat = new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
+				list.add(new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode"))));
+			}
+			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Removes a registration from the database.
+	 * 
+	 * @param id the unique identifier of the registration.
+	**/
+	public void removeRegistration(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "UPDATE RaceRegistrations SET StatusCode = ? WHERE IdRegistration = ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			pstmt.setInt(2, id);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 
+	**/
+	public void updateBoatRegistration(final int id, final Boat boat) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "UPDATE RaceRegistrations SET Boat = ? WHERE IdRegistration = ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, boat.getId());
+			pstmt.setInt(2, id);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
 }

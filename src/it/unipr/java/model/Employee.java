@@ -15,7 +15,7 @@ public class Employee extends User{
 	**/
 	public Employee() {
 		super();
-		this.administrator = false;
+		this.setAdministrator(false);
 	}
 	
 	/**

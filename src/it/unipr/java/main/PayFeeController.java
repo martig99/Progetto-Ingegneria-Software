@@ -8,8 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
 /**
  * The class {@code PayFeeController} supports the payment of a fee.
@@ -23,7 +22,7 @@ public class PayFeeController {
 	private FeeType feeType;
 	
 	@FXML
-    private HBox boxMember, boxBoat;
+	private Text title, link;
 	
 	@FXML
     private ChoiceBox<String> members, boats, paymentServices;
@@ -44,6 +43,10 @@ public class PayFeeController {
 		this.payButton.setOnMouseClicked(event -> {    		
     		this.payFee();
         });
+		
+		this.link.setOnMouseClicked(clickEvent -> {
+        	this.app.initPayments(this.feeType);
+	    });
     }
 	
 	/**
@@ -75,7 +78,7 @@ public class PayFeeController {
 		String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
 		PaymentService paymentService = this.app.getClub().getPaymentServiceByDescription(descriptionPaymentService);
 		if (paymentService != null) {
-			this.app.getClub().payFee(user, boat, this.feeType, paymentService);
+			this.app.getClub().payFee(user, boat, null, this.feeType, paymentService);
 			
 			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The membership fee has been paid correctly.");
 			
@@ -86,9 +89,6 @@ public class PayFeeController {
 			}
 			
 			this.app.initPayments(this.feeType);
-			
-		    Stage stage = (Stage) this.payButton.getScene().getWindow();
-		    stage.close();
 		} else {
 			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the payment service.");
 			return;
@@ -140,12 +140,15 @@ public class PayFeeController {
         this.app = app;
         
         if (this.app.getLoggedUser() instanceof Employee) {
-        	this.app.setVisibleElement(this.boxMember, true);
+        	this.title.setText("PAY MEMBERSHIP FEE");
+
+        	this.app.setVisibleElement(this.members, true);
         	this.setChoiceBoxMembers();
         }
         
         if (this.feeType == FeeType.STORAGE) {
-        	this.app.setVisibleElement(this.boxBoat, true);
+        	this.title.setText("PAY STORAGE FEE");
+        	this.app.setVisibleElement(this.boats, true);
         	
         	if (this.app.getLoggedUser() instanceof Employee) {
         		this.boats.setDisable(true);

@@ -8,8 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
 /**
  * The class {@code UpsertBoatController} supports the update or insert of a boat. 
@@ -23,10 +22,10 @@ public class UpsertBoatController {
 	private Integer idBoat;
 	
 	@FXML
-    private TextField name, length;
+	private Text title, link;
 	
 	@FXML
-    private HBox boxUser;
+    private TextField name, length;
 	
 	@FXML
     private ChoiceBox<String> users;
@@ -39,13 +38,16 @@ public class UpsertBoatController {
 		this.upsertButton.setOnMouseClicked(event -> {
 			this.upsertBoat();
         });
+		
+		this.link.setOnMouseClicked(event -> {
+			this.app.initBoats();
+        });
 	}
 
 	/**
 	 * 
 	**/
 	public void upsertBoat() {
-		String name = null;
 		Integer length = null;
 		
 		if (this.idBoat == null) {
@@ -67,9 +69,7 @@ public class UpsertBoatController {
 			}
 		}
 		
-		if (!this.name.getText().isEmpty()) {
-			name = this.name.getText();
-		}
+		String name = !this.name.getText().isEmpty() ? this.name.getText() : null;
 			
 		User owner = new User();
 		if (this.app.getLoggedUser() instanceof Member) {
@@ -104,9 +104,6 @@ public class UpsertBoatController {
 			
 			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, message);
 			this.app.initBoats();
-			
-		    Stage stage = (Stage) this.upsertButton.getScene().getWindow();
-		    stage.close();
 		}
 	}
 	
@@ -128,9 +125,11 @@ public class UpsertBoatController {
         
         if (this.app.getLoggedUser() instanceof Employee) {
         	if (this.idBoat == null) {
-        		this.app.setVisibleElement(this.boxUser, true);
+        		this.app.setVisibleElement(this.users, true);
+        		this.title.setText("ADD A NEW BOAT");
         	} else {
-        		this.app.setVisibleElement(this.boxUser, false);
+        		this.app.setVisibleElement(this.users, false);
+        		this.title.setText("UPDATE THE BOAT WITH ID " + this.idBoat);
         	}
         	
         	ObservableList<String> listUser = FXCollections.<String>observableArrayList();

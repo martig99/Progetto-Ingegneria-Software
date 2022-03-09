@@ -1,8 +1,5 @@
 package it.unipr.java.main;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import it.unipr.java.model.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -28,7 +25,7 @@ public class PaymentsController {
 	private FeeType feeType;
 	
 	@FXML
-	private Text membershipFees, storageFees;
+	private Text membershipFees, storageFees, raceRegistrationFees;
 	
 	@FXML
 	private HBox menu;
@@ -40,7 +37,7 @@ public class PaymentsController {
     private TableColumn<Payment, Number> idColumn, totalColumn;
     
     @FXML
-    private TableColumn<Payment, String> dateColumn, memberColumn, boatColumn, validityStartDateColumn, validityEndDateColumn, paymentServiceColumn;
+    private TableColumn<Payment, String> dateColumn, memberColumn, boatColumn, validityStartDateColumn, validityEndDateColumn, raceColumn, paymentServiceColumn;
     
     @FXML
     private Button payMembershipFeeButton, payStorageFeeButton;
@@ -57,6 +54,10 @@ public class PaymentsController {
 			this.displayPaymentsStorageFeesTable();
 		});
 		
+		this.raceRegistrationFees.setOnMouseClicked(event -> {
+			this.displayPaymentsRaceRegistrationFeesTable();
+		});
+		
 		this.payMembershipFeeButton.setOnMouseClicked(event -> {
 			this.app.initPayFee(FeeType.MEMBERSHIP);
 		});
@@ -71,14 +72,23 @@ public class PaymentsController {
 	**/
 	public void setTable() {
 		this.idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
-		
-		String pattern = "dd/MM/yyyy";
-		DateFormat df = new SimpleDateFormat(pattern);
-		this.dateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(df.format(cellData.getValue().getDate())));
-		this.validityStartDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(df.format(cellData.getValue().getValidityStartDate())));
-		this.validityEndDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(df.format(cellData.getValue().getValidityEndDate())));
-		
+		this.dateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getDate())));
+		this.validityStartDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getValidityStartDate())));
+		this.validityEndDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getValidityEndDate())));
 		this.memberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMember().getEmail()));
+		this.totalColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotal()));
+		this.paymentServiceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPaymentService().getDescription()));
+		
+		this.raceColumn.setCellValueFactory(cellData -> {
+			RaceRegistration raceRegistration = cellData.getValue().getRaceRegistration();
+			if (raceRegistration != null) {
+				String raceDescription = raceRegistration.getRace().getName() + " - " + this.app.setDateFormat(raceRegistration.getRace().getDate());
+				return new SimpleStringProperty(raceDescription);
+			}
+			
+			return null;
+		});
+		
 		this.boatColumn.setCellValueFactory(cellData -> {
 			Boat boat = cellData.getValue().getBoat();
 			if (boat != null) {
@@ -87,9 +97,6 @@ public class PaymentsController {
 			
 			return null;
 		});
-		
-		this.totalColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotal()));
-		this.paymentServiceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPaymentService().getDescription()));
 	}
 	
     /**
@@ -114,7 +121,11 @@ public class PaymentsController {
     public void displayPaymentsMembershipFeesTable() {
     	this.app.activeLinkMenu(this.menu, this.membershipFees);	
     	
+    	this.validityStartDateColumn.setVisible(true);
+    	this.validityEndDateColumn.setVisible(true);
+    	this.raceColumn.setVisible(false);
     	this.boatColumn.setVisible(false);
+    	
     	this.app.setVisibleElement(this.payMembershipFeeButton, true);
     	this.app.setVisibleElement(this.payStorageFeeButton, false);
     	
@@ -128,11 +139,30 @@ public class PaymentsController {
     public void displayPaymentsStorageFeesTable() {
     	this.app.activeLinkMenu(this.menu, this.storageFees);	
     	
+    	this.validityStartDateColumn.setVisible(true);
+    	this.validityEndDateColumn.setVisible(true);
+    	this.raceColumn.setVisible(false);
     	this.boatColumn.setVisible(true);
+    	
     	this.app.setVisibleElement(this.payMembershipFeeButton, false);
     	this.app.setVisibleElement(this.payStorageFeeButton, true);
     	
 		this.setTableContent(FeeType.STORAGE);
+		this.setTable();
+    }
+    
+    public void displayPaymentsRaceRegistrationFeesTable() {
+    	this.app.activeLinkMenu(this.menu, this.raceRegistrationFees);
+    	
+    	this.validityStartDateColumn.setVisible(false);
+    	this.validityEndDateColumn.setVisible(false);
+    	this.raceColumn.setVisible(true);
+    	this.boatColumn.setVisible(true);
+    	
+    	this.app.setVisibleElement(this.payMembershipFeeButton, false);
+    	this.app.setVisibleElement(this.payStorageFeeButton, false);
+    	
+    	this.setTableContent(FeeType.RACE_REGISTRATION);
 		this.setTable();
     }
     

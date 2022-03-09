@@ -48,7 +48,7 @@ public class MainController {
         });
     	
     	this.linkUsers.setOnMouseClicked(clickEvent -> {
-    		this.app.initUsers();
+    		this.app.initUsers(UserType.MEMBER);
     		this.app.activeLinkMenu(this.menu, this.linkUsers);
         });
     	

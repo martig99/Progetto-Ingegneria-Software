@@ -15,8 +15,8 @@ public class PaymentService {
 	 * Class constructor.
 	**/
 	public PaymentService() {
-		this.id = 0;
-		this.description = "";
+		this.setId(0);
+		this.setDescription("");
 	}	
 	
 	/**

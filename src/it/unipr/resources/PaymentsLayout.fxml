@@ -9,7 +9,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 
-<VBox prefHeight="550.0" prefWidth="800.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.PaymentsController">
+<VBox prefHeight="550.0" prefWidth="900.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.PaymentsController">
 	<children>
 		<HBox fx:id="menu" alignment="CENTER">
 			<children>
@@ -44,6 +44,7 @@
 				<TableColumn fx:id="idColumn" prefWidth="50.0" resizable="false" text="Id" />
 				<TableColumn fx:id="dateColumn" prefWidth="75.0" resizable="false" text="Date" />
 				<TableColumn fx:id="memberColumn" prefWidth="150.0" resizable="false" text="Member" visible="false" />
+				<TableColumn fx:id="raceColumn" prefWidth="125.0" resizable="false" text="Race" visible="false" />
 				<TableColumn fx:id="boatColumn" prefWidth="125.0" resizable="false" text="Boat" visible="false" />
 				<TableColumn fx:id="validityStartDateColumn" prefWidth="125.0" text="Validity Start Date" />
 				<TableColumn fx:id="validityEndDateColumn" prefWidth="125.0" text="Validity End Date" />
@@ -59,7 +60,7 @@
 		</TableView>
 		<Button fx:id="payMembershipFeeButton" mnemonicParsing="false" text="PAY MEMBERSHIP FEE" textFill="#ffffff" style="-fx-background-color: linear-gradient(to bottom right, #0093ed, #32e2d3);">
 			<font>
-				<Font name="Arial" size="18.0" />
+				<Font name="Arial" size="16.0" />
 			</font>
 			<HBox.margin>
 				<Insets bottom="30.0" left="0.0" right="0.0" top="0.0" />
@@ -67,7 +68,7 @@
 		</Button>
 		<Button fx:id="payStorageFeeButton" mnemonicParsing="false" text="PAY STORAGE FEE" textFill="#ffffff" style="-fx-background-color: linear-gradient(to bottom right, #0093ed, #32e2d3);">
 			<font>
-				<Font name="Arial" size="18.0" />
+				<Font name="Arial" size="16.0" />
 			</font>
 			<HBox.margin>
 				<Insets bottom="30.0" left="0.0" right="0.0" top="0.0" />

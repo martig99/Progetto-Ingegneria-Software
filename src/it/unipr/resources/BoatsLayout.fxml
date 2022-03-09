@@ -9,7 +9,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="550.0" prefWidth="800.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.BoatsController">
+<VBox prefHeight="550.0" prefWidth="900.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.BoatsController">
 	<children>
 		<Text fx:id="info" strokeType="OUTSIDE" text="" textAlignment="CENTER">
 			<font>
@@ -36,7 +36,7 @@
 		</TableView>
 		<Button fx:id="addButton" mnemonicParsing="false" maxWidth="200.0" text="ADD BOAT" textFill="#ffffff" style="-fx-background-color: linear-gradient(to bottom right, #0093ed, #32e2d3);">
 			<font>
-				<Font name="Arial" size="18.0" />
+				<Font name="Arial" size="16.0" />
 			</font>
 			<HBox.margin>
 				<Insets bottom="30.0" left="0.0" right="0.0" top="0.0" />

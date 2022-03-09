@@ -1,10 +1,14 @@
 package it.unipr.java.main;
 
+import it.unipr.java.model.*;
+
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import it.unipr.java.model.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,7 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -141,24 +144,6 @@ public class App extends Application {
 	}
 	
 	/**
-	 * Initializes the page to create a new user.
-	**/
-	public void initCreateUser() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../../resources/CreateUserLayout.fxml"));
-            
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-    		
-            CreateUserController controller = loader.getController();
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
 	 * Initializes the logout.
 	 * It sets the user to null and calls the login page initialization method.
 	**/
@@ -216,25 +201,12 @@ public class App extends Application {
         	FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("../../resources/UpsertBoatLayout.fxml"));
             
-            AnchorPane root = (AnchorPane) loader.load();
-            Scene scene = new Scene(root);
-            
-            UpsertBoatController controller = loader.getController();
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+    		
+			UpsertBoatController controller = loader.getController();
             controller.setIdBoat(idBoat);
             controller.setApp(this);
-            
-            Stage dialogStage = new Stage();
-            dialogStage.setScene(scene);
-            
-            String title = "";
-            if (idBoat == null) {
-            	title = "Add a new boat";
-            } else {
-            	title = "Update the boat";
-            }
-            
-            dialogStage.setTitle(title);
-            dialogStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -243,7 +215,7 @@ public class App extends Application {
 	/**
 	 * Initializes the users page.
 	**/
-	public void initUsers() {
+	public void initUsers(final UserType userType) {
         try {
         	FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("../../resources/UsersLayout.fxml"));
@@ -252,6 +224,28 @@ public class App extends Application {
 			this.rootLayout.setCenter(overview);
             
             UsersController controller = loader.getController();
+            controller.setUserType(userType);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes the page to create a new user.
+	**/
+	public void initUpsertUser(final Integer idUser, final UserType userType) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/UpsertUserLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+    		
+            UpsertUserController controller = loader.getController();
+            controller.setIdUser(idUser);
+            controller.setUserType(userType);
+            
             controller.setApp(this);
         } catch (IOException e) {
             e.printStackTrace();
@@ -285,53 +279,17 @@ public class App extends Application {
         	FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("../../resources/PayFeeLayout.fxml"));
             
-            AnchorPane root = (AnchorPane) loader.load();
-            Scene scene = new Scene(root);
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
             
             PayFeeController controller = loader.getController();
             controller.setFeeType(type);
             controller.setApp(this);
-            
-            Stage dialogStage = new Stage();
-            dialogStage.setScene(scene);
-            
-            if (type == FeeType.MEMBERSHIP) {
-            	dialogStage.setTitle("Pay the membership fee");
-            } else if (type == FeeType.STORAGE) {
-            	dialogStage.setTitle("Pay the storage fee for a boat");
-            }
-            
-            dialogStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-	
-	/**
-	 * Initializes the dialog panel to update an user.
-	**/
-	public void initUpdateUser(final int id) {
-       try {
-       	FXMLLoader loader = new FXMLLoader();
-           loader.setLocation(getClass().getResource("../../resources/UpdateUserLayout.fxml"));
-           
-           AnchorPane root = (AnchorPane) loader.load();
-           Scene scene = new Scene(root);
-           
-           UpdateUserController controller = loader.getController();
-           controller.setIdUser(id);
-           controller.setMain(this);
-           
-           Stage dialogStage = new Stage();
-           dialogStage.setScene(scene);
-           dialogStage.setTitle("Update a user");
-           dialogStage.showAndWait();
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-	}
-	
 	/**
 	 * Initializes the races page.
 	**/
@@ -344,7 +302,7 @@ public class App extends Application {
 			this.rootLayout.setCenter(overview);
             
             RacesController controller = loader.getController();
-            controller.setMain(this);
+            controller.setApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -354,26 +312,60 @@ public class App extends Application {
 	/**
 	 * Initializes the dialog panel to add a new race.
 	**/
-	public void initAddRace() {
+	public void initUpsertRace(final Integer idRace) {
         try {
         	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../../resources/AddRaceLayout.fxml"));
+            loader.setLocation(getClass().getResource("../../resources/UpsertRaceLayout.fxml"));
             
-            AnchorPane root = (AnchorPane) loader.load();
-            Scene scene = new Scene(root);
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
             
-            AddRaceController controller = loader.getController();
-            controller.setMain(this);
-            
-            Stage dialogStage = new Stage();
-            dialogStage.setScene(scene);
-            dialogStage.setTitle("Add a new race");
-            dialogStage.showAndWait();
+            UpsertRaceController controller = loader.getController();
+            controller.setIdRace(idRace);
+            controller.setApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
+	
+	/**
+	 * Initializes the dialog panel to register a boat to a race.
+	**/
+	public void initUpsertBoatRegistration(final int idRace, final Integer idRegistration) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/UpsertBoatRegistrationLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            UpsertBoatRegistrationController controller = loader.getController();
+            controller.setIdRace(idRace);
+            controller.setIdRegistration(idRegistration);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * 
+	**/
+	public void initRegistrations(final int idRace) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/RegistrationsLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            RegistrationsController controller = loader.getController();
+            controller.setIdRace(idRace);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	/**
 	 * Checks if the email matches the correct format.
@@ -386,6 +378,17 @@ public class App extends Application {
 		        + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
 		
 		return Pattern.compile(regexPattern).matcher(email).matches();
+	}
+	
+	/**
+	 * 
+	 * @param date
+	 * @return
+	**/
+	public String setDateFormat(final Date date) {
+		String pattern = "dd/MM/yyyy";
+		DateFormat df = new SimpleDateFormat(pattern);
+		return df.format(date);		
 	}
 	
 	/**

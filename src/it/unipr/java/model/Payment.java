@@ -14,7 +14,7 @@ public class Payment {
 	private Date date;
 	private Member member;
 	private Boat boat;
-	//MANCA RACE REGISTRATION
+	private RaceRegistration raceRegistration;
 	private Date validityStartDate;
 	private Date validityEndDate;
 	private double total;
@@ -28,7 +28,7 @@ public class Payment {
 		this.setDate(null);
 		this.setMember(null);
 		this.setBoat(null);
-		//MANCA RACE REGISTRATION
+		this.setRaceRegistration(null);
 		this.setValidityStartDate(null);
 		this.setValidityEndDate(null);
 		this.setTotal(0);
@@ -37,12 +37,23 @@ public class Payment {
 	
 	/**
 	 * Class constructor.
+	 * 
+	 * @param id the unique identifier of the payment.
+	 * @param date the date of the payment.
+	 * @param member the club member who made the payment.
+	 * @param boat the boat for which the storage fee was paid.
+	 * @param raceRegistration the registration to the race for which the registration fee was paid.
+	 * @param validityStartDate the validity start date of the payment.
+	 * @param validityEndDate the validity end date of the payment.
+	 * @param total the total of the payment.
+	 * @param paymentService the payment service.
 	**/
-	public Payment(final int id, final Date date, final Member member, final Boat boat, final Date validityStartDate, final Date validityEndDate, final double total, final PaymentService paymentService) {
+	public Payment(final int id, final Date date, final Member member, final Boat boat, final RaceRegistration raceRegistration, final Date validityStartDate, final Date validityEndDate, final double total, final PaymentService paymentService) {
 		this.setId(id);
 		this.setDate(date);
 		this.setMember(member);
 		this.setBoat(boat);
+		this.setRaceRegistration(raceRegistration);
 		this.setValidityStartDate(validityStartDate);
 		this.setValidityEndDate(validityEndDate);
 		this.setTotal(total);
@@ -119,6 +130,24 @@ public class Payment {
 	**/
 	public void setBoat(final Boat boat) {
 		this.boat = boat;
+	}
+	
+	/**
+	 * Gets the registration to the race for which the registration fee was paid.
+	 * 
+	 * @return the race registration.
+	**/
+	public RaceRegistration getRaceRegistration() {
+		return this.raceRegistration;
+	}
+	
+	/**
+	 * Sets the registration to the race for which the registration fee was paid.
+	 * 
+	 * @param raceRegistration the new race registration.
+	**/
+	public void setRaceRegistration(final RaceRegistration raceRegistration) {
+		this.raceRegistration = raceRegistration;
 	}
 	
 	/**
@@ -200,6 +229,6 @@ public class Payment {
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Date: " + this.date + " - Member: " + this.member.getEmail() + " - Validity Start Date: " + this.validityStartDate + " - Validity End Date: " + this.validityEndDate + " - Total: " + this.total + " - Payment Service: " + this.paymentService.getDescription();
+		return "Id: " + this.id + " - Date: " + this.date + " - Member: " + this.member.getEmail() + " - Boat: [" + this.boat.toString() + "] - Race Registration: [" + this.raceRegistration.toString() + "] - Validity Start Date: " + this.validityStartDate + " - Validity End Date: " + this.validityEndDate + " - Total: " + this.total + " - Payment Service: " + this.paymentService.getDescription();
 	}
 }

@@ -51,13 +51,16 @@ public class BoatsController {
         });
 		
 		this.boatsTable.setOnMouseClicked(event -> {
-    		if (event.getClickCount() == 2 && this.boatsTable.getSelectionModel().getSelectedItem() != null) {
-				this.removeBoat();
-			}
-    		
-			if (event.getButton() == MouseButton.SECONDARY  && this.boatsTable.getSelectionModel().getSelectedItem() != null) {
-		    	int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
-				this.app.initUpsertBoat(id);
+			if (this.boatsTable.getSelectionModel().getSelectedItem() != null) {
+				int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
+	    		
+				if (event.getClickCount() == 2) {
+	    			this.removeBoat(id);
+				}
+	    		
+				if (event.getButton() == MouseButton.SECONDARY) {
+					this.app.initUpsertBoat(id);
+				}
 			}
         });
     }
@@ -93,9 +96,7 @@ public class BoatsController {
     /**
      * Removes a selected boat from the table. 
     **/
-    public void removeBoat() {
-    	int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
-    	
+    public void removeBoat(final int id) {   	
     	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + id, "Are you sure?");
     	if (result.get() == ButtonType.OK){
     		this.app.getClub().removeBoat(id);
