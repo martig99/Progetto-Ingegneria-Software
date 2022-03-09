@@ -310,7 +310,7 @@ public class App extends Application {
 	
 	
 	/**
-	 * Initializes the dialog panel to add a new race.
+	 * Initializes the dialog panel to add or update a race.
 	**/
 	public void initUpsertRace(final Integer idRace) {
         try {

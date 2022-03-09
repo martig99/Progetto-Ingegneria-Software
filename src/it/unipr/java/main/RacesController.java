@@ -174,7 +174,23 @@ public class RacesController {
     }
     
     /**
-     * Sets the reference to the application.
+     * Removes a selected race from the table. 
+    **/
+    public void removeRace() {
+    	int id = this.racesTable.getSelectionModel().getSelectedItem().getId();
+    	
+    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + id, "Are you sure?");
+    	if (result.get() == ButtonType.OK){
+    		this.app.getClub().removeRace(id);
+    		this.setTableContent();
+    		
+    		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The race has been removed correctly.");
+    	}
+    }
+    
+    /**
+     * Sets the reference to the app application.
+>>>>>>> branch 'master' of https://github.com/martig99/Progetto-Ingegneria-Software.git
      * 
      * @param app the reference to the app.
     **/
@@ -190,7 +206,7 @@ public class RacesController {
         
         textInfo += "Spacebar to register a boat for a race.";
         this.info.setText(textInfo);
-        
+       
         this.setTableContent();
     }
 }
