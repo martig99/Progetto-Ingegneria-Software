@@ -5,6 +5,7 @@ import it.unipr.java.model.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import javafx.util.Callback;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -22,7 +23,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 
 /**
  * The class {@code RacesController} supports the display of all races. 
@@ -101,19 +101,23 @@ public class RacesController {
     **/
     public void insertBoatRegistration() {
     	Race race = this.racesTable.getSelectionModel().getSelectedItem();
+    	
+    	Date today = this.app.getZeroTimeDate(new Date());
+    	Date endDateRegistration = this.app.getZeroTimeDate(race.getEndDateRegistration());
+    	
     	if (race != null) {
-			if (race.getEndDateRegistration().before(new Date())) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Registrations for this race are closed.");
+			if (endDateRegistration.before(today)) {
+				this.app.showAlert(Alert.AlertType.WARNING, "Error", "It is not possible to register a boat for this race.", "Registrations for this race are closed.");
 				return;
 			} 
 			
 			int participants = this.app.getClub().getNumberParticipantsInRace(race) + 1;
 			if (participants > race.getBoatsNumber()) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Registrations for this race are sold out.");
+				this.app.showAlert(Alert.AlertType.WARNING, "Error", "It is not possible to register a boat for this race.", "The maximum number of participating boats has been reached.");
 				return;
 			}
 			
-			this.app.initUpsertBoatRegistration(race.getId(), null);
+			this.app.initUpsertRaceRegistration(race.getId(), null);
     	}
     }
     
@@ -146,7 +150,7 @@ public class RacesController {
                         	
                         	if (!registrations.isEmpty()) {
 	                            btn.setOnAction(event -> {
-	                                app.initRegistrations(race.getId());
+	                                app.initRaceRegistrations(race.getId());
 	                            });
 	                            
 	            				btn.setStyle("-fx-background-color: transparent; -fx-border-color: #0eaae6; -fx-border-radius: 5px; -fx-text-fill: #0eaae6; -fx-font-weight: bold;");
@@ -190,7 +194,6 @@ public class RacesController {
     
     /**
      * Sets the reference to the app application.
->>>>>>> branch 'master' of https://github.com/martig99/Progetto-Ingegneria-Software.git
      * 
      * @param app the reference to the app.
     **/

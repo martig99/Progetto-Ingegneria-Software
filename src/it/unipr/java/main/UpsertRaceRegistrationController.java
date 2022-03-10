@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
 **/
-public class UpsertBoatRegistrationController {
+public class UpsertRaceRegistrationController {
 	
 	private App app;
 	private int idRace;
@@ -55,7 +55,7 @@ public class UpsertBoatRegistrationController {
 			if (this.idRegistration == null) {
 				this.app.initRaces();
 			} else {
-				this.app.initRegistrations(this.idRace);
+				this.app.initRaceRegistrations(this.idRace);
 			}
         });
     }
@@ -113,7 +113,7 @@ public class UpsertBoatRegistrationController {
 		}
 		
 		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, message);	
-		this.app.initRegistrations(this.idRace);
+		this.app.initRaceRegistrations(this.idRace);
 	}
 	
 	/**

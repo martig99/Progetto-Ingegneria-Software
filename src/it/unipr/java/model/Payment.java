@@ -15,6 +15,7 @@ public class Payment {
 	private Member member;
 	private Boat boat;
 	private RaceRegistration raceRegistration;
+	private Fee fee;
 	private Date validityStartDate;
 	private Date validityEndDate;
 	private double total;
@@ -29,6 +30,7 @@ public class Payment {
 		this.setMember(null);
 		this.setBoat(null);
 		this.setRaceRegistration(null);
+		this.setFee(null);
 		this.setValidityStartDate(null);
 		this.setValidityEndDate(null);
 		this.setTotal(0);
@@ -48,12 +50,13 @@ public class Payment {
 	 * @param total the total of the payment.
 	 * @param paymentService the payment service.
 	**/
-	public Payment(final int id, final Date date, final Member member, final Boat boat, final RaceRegistration raceRegistration, final Date validityStartDate, final Date validityEndDate, final double total, final PaymentService paymentService) {
+	public Payment(final int id, final Date date, final Member member, final Boat boat, final RaceRegistration raceRegistration, final Fee fee, final Date validityStartDate, final Date validityEndDate, final double total, final PaymentService paymentService) {
 		this.setId(id);
 		this.setDate(date);
 		this.setMember(member);
 		this.setBoat(boat);
 		this.setRaceRegistration(raceRegistration);
+		this.setFee(fee);
 		this.setValidityStartDate(validityStartDate);
 		this.setValidityEndDate(validityEndDate);
 		this.setTotal(total);
@@ -148,6 +151,22 @@ public class Payment {
 	**/
 	public void setRaceRegistration(final RaceRegistration raceRegistration) {
 		this.raceRegistration = raceRegistration;
+	}
+	
+	/**
+	 * 
+	 * @return
+	**/
+	public Fee getFee() {
+		return this.fee;
+	}
+	
+	/**
+	 * 
+	 * @param fee
+	**/
+	public void setFee(final Fee fee) {
+		this.fee = fee;
 	}
 	
 	/**

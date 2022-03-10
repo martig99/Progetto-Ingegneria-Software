@@ -5,6 +5,7 @@ import it.unipr.java.model.*;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -331,15 +332,15 @@ public class App extends Application {
 	/**
 	 * Initializes the dialog panel to register a boat to a race.
 	**/
-	public void initUpsertBoatRegistration(final int idRace, final Integer idRegistration) {
+	public void initUpsertRaceRegistration(final int idRace, final Integer idRegistration) {
         try {
         	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../../resources/UpsertBoatRegistrationLayout.fxml"));
+            loader.setLocation(getClass().getResource("../../resources/UpsertRaceRegistrationLayout.fxml"));
             
             VBox overview = (VBox) loader.load();
 			this.rootLayout.setCenter(overview);
             
-            UpsertBoatRegistrationController controller = loader.getController();
+            UpsertRaceRegistrationController controller = loader.getController();
             controller.setIdRace(idRace);
             controller.setIdRegistration(idRegistration);
             controller.setApp(this);
@@ -351,15 +352,15 @@ public class App extends Application {
 	/**
 	 * 
 	**/
-	public void initRegistrations(final int idRace) {
+	public void initRaceRegistrations(final int idRace) {
         try {
         	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../../resources/RegistrationsLayout.fxml"));
+            loader.setLocation(getClass().getResource("../../resources/RaceRegistrationsLayout.fxml"));
             
             VBox overview = (VBox) loader.load();
 			this.rootLayout.setCenter(overview);
             
-            RegistrationsController controller = loader.getController();
+            RaceRegistrationsController controller = loader.getController();
             controller.setIdRace(idRace);
             controller.setApp(this);
         } catch (IOException e) {
@@ -389,6 +390,23 @@ public class App extends Application {
 		String pattern = "dd/MM/yyyy";
 		DateFormat df = new SimpleDateFormat(pattern);
 		return df.format(date);		
+	}
+	
+	/**
+	 * 
+	 * @param date
+	 * @return
+	**/
+	public Date getZeroTimeDate(final Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		return calendar.getTime();
 	}
 	
 	/**

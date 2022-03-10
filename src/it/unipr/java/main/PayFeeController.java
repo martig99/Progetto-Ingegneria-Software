@@ -78,8 +78,7 @@ public class PayFeeController {
 		String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
 		PaymentService paymentService = this.app.getClub().getPaymentServiceByDescription(descriptionPaymentService);
 		if (paymentService != null) {
-			this.app.getClub().payFee(user, boat, null, this.feeType, paymentService);
-			
+			this.app.getClub().payFee(user, boat, null, this.feeType, paymentService, false);
 			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The membership fee has been paid correctly.");
 			
 			if (this.app.getClub().checkPaymentFee(user, null, FeeType.MEMBERSHIP)) {

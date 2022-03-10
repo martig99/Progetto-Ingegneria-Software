@@ -40,7 +40,6 @@ public class SailingClub {
 	public User login(final String email, final String password, final UserType type) {		
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "";
 			if (type == UserType.MEMBER) {
 				query = "SELECT * FROM Users JOIN Members ON IdUser = IdMember WHERE Email = ? AND Password = ? AND StatusCode <> ?";
@@ -161,7 +160,6 @@ public class SailingClub {
 			pstmt.setInt(5, StatusCode.ACTIVE.getValue());
 			
 			pstmt.executeUpdate();
-			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -176,7 +174,6 @@ public class SailingClub {
 	public User getUserById(final int id) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			Member member = (Member) this.getMemberById(id);
 			if (member != null) {
 				return member;
@@ -185,8 +182,7 @@ public class SailingClub {
 			Employee employee = (Employee) this.getEmployee(id);
 			if (employee != null) {
 				return employee;
-			}
-			
+			}		
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -203,8 +199,8 @@ public class SailingClub {
 	public Member getMemberById(final int id) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "SELECT * FROM Users JOIN Members ON IdUser = IdMember WHERE IdMember = ? AND StatusCode <> ?";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, id);
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
@@ -229,8 +225,8 @@ public class SailingClub {
 	public User getEmployee(final int id) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "SELECT * FROM Users JOIN Employees ON IdUser = IdEmployee WHERE IdEmployee = ? AND StatusCode <> ?";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, id);
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
@@ -256,7 +252,6 @@ public class SailingClub {
 		ArrayList<User> list = new ArrayList<User>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "";
 			if (type == UserType.MEMBER) {
 				query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE StatusCode <> ? ORDER BY IdUser";			
@@ -291,8 +286,8 @@ public class SailingClub {
 		ArrayList<String> list = new ArrayList<String>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE StatusCode <> ? ORDER BY Email";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);	
 			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
 			
@@ -313,7 +308,7 @@ public class SailingClub {
 	 * @param type the fee type.
 	 * @return the reference of the fee or <code>null</code>.
 	**/
-	public Fee getFee(FeeType type) {
+	public Fee getFee(final FeeType type) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			String query = "SELECT * FROM Fees WHERE Type = ? AND StatusCode <> ?";
@@ -384,11 +379,12 @@ public class SailingClub {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			String query = "UPDATE users SET StatusCode = ? WHERE IdUser = ?";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
 			pstmt.setInt(2, id);
-			pstmt.executeUpdate();
 			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -405,17 +401,16 @@ public class SailingClub {
 	public void updateUser(final int id, final String firstName, final String lastName, final String email, final String password) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {		
-			
 			String query = "UPDATE users SET FirstName = IfNull(?, FirstName), LastName = IfNull(?, LastName), Email = IfNull(?, Email), Password = ifNull (?,Password) WHERE IdUser = ?"; 			
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, firstName);
 			pstmt.setString(2, lastName);
 			pstmt.setString(3, email);
-			pstmt.setString(4, password);
-			
+			pstmt.setString(4, password);			
 			pstmt.setInt(5, id);
-			pstmt.executeUpdate();
 			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -431,15 +426,14 @@ public class SailingClub {
 	public void updateMember(final int id, final String fiscalCode, final String address) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {		
-			
 			String query = "UPDATE members SET FiscalCode = IfNull(?, FiscalCode), Address = IfNull(?, Address) WHERE IdMember = ?"; 			
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, fiscalCode);
-			pstmt.setString(2, address);
-			
+			pstmt.setString(2, address);			
 			pstmt.setInt(3, id);
-			pstmt.executeUpdate();
 			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -490,7 +484,6 @@ public class SailingClub {
 		ArrayList<String> list = new ArrayList<String>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "SELECT Boats.Name FROM Boats JOIN Users ON Users.IdUser = Boats.Owner WHERE Boats.Owner = ? AND Boats.StatusCode <> ? ORDER BY Boats.IdBoat";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
@@ -500,8 +493,7 @@ public class SailingClub {
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
 				list.add(rset.getString(1));
-			}
-			
+			}			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -583,8 +575,7 @@ public class SailingClub {
 			pstmt.setInt(3, owner.getId());
 			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 			
-			pstmt.executeUpdate();
-			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -601,8 +592,8 @@ public class SailingClub {
 	public void updateBoat(final int id, final String name, final Integer length) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {		
-			
 			String query = "UPDATE Boats SET Name = IfNull(?, Name), Length = IfNull(?, Length) WHERE IdBoat = ?"; 			
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, name);
 			
@@ -613,8 +604,8 @@ public class SailingClub {
 	        }
 			
 			pstmt.setInt(3, id);
-			pstmt.executeUpdate();
 			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -648,6 +639,7 @@ public class SailingClub {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			String query = "SELECT COUNT(DISTINCT Users.Email) FROM Boats JOIN Users ON Boats.Owner = Users.IdUser WHERE Boats.StatusCode <> ?";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
 			
@@ -671,8 +663,8 @@ public class SailingClub {
 		ArrayList<String> list = new ArrayList<String>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "SELECT * FROM PaymentServices ORDER BY IdPaymentService";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);			
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -694,16 +686,15 @@ public class SailingClub {
 	public PaymentService getPaymentServiceByDescription(final String description) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "SELECT * FROM PaymentServices WHERE Description = ?";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);			
 			pstmt.setString(1, description);
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
 				return new PaymentService(rset.getInt("IdPaymentService"), rset.getString("Description"));
-			}
-			
+			}			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -844,20 +835,18 @@ public class SailingClub {
 				PaymentService paymentService = new PaymentService(rset.getInt("PaymentServices.IdPaymentService"), rset.getString("PaymentServices.Description"));
 				
 				Boat boat = null;
-				Race race = null;
-				RaceRegistration raceRegistration = null;
-
 				if (feeType != FeeType.MEMBERSHIP) {
 					boat = new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * this.getFee(FeeType.STORAGE).getAmount()), member, StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
 				} 
 				
+				Race race = null;
+				RaceRegistration raceRegistration = null;
 				if (feeType == FeeType.RACE_REGISTRATION) {
 					race = new Race(rset.getInt("Races.IdRace"), rset.getString("Races.Name"), rset.getString("Races.Place"), rset.getDate("Races.Date"), rset.getInt("Races.BoatsNumber"), rset.getFloat("Races.RegistrationFee"), rset.getDate("Races.EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("Races.StatusCode")));
 					raceRegistration = new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode")));
 				}
 				
-				list.add(new Payment(rset.getInt("Payments.IdPayment"), rset.getDate("Payments.Date"), member, boat, raceRegistration, rset.getDate("Payments.ValidityStartDate"), rset.getDate("Payments.ValidityEndDate"), rset.getFloat("Payments.Total"), paymentService));
-
+				list.add(new Payment(rset.getInt("Payments.IdPayment"), rset.getDate("Payments.Date"), member, boat, raceRegistration, fee, rset.getDate("Payments.ValidityStartDate"), rset.getDate("Payments.ValidityEndDate"), rset.getFloat("Payments.Total"), paymentService));
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -874,7 +863,7 @@ public class SailingClub {
 	 * @param feeType
 	 * @param paymentService
 	**/
-	public void payFee(final User member, final Boat boat, final RaceRegistration raceRegistration, final FeeType feeType, final PaymentService paymentService) {
+	public void payFee(final User member, final Boat boat, final RaceRegistration raceRegistration, final FeeType feeType, final PaymentService paymentService, final Boolean repayment) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			Fee fee = this.getFee(feeType);
@@ -901,32 +890,35 @@ public class SailingClub {
 			pstmt.setInt(5, fee.getId());
 			
 			Date validityStartDate = new Date();
+			Date validityEndDate = validityStartDate;
 			if (feeType == FeeType.MEMBERSHIP || feeType == FeeType.STORAGE) {
 				Date dateLastPayment = this.getLastPaymentFee(member, boat, feeType);
 				if (dateLastPayment != null) {
 					if (dateLastPayment.after(validityStartDate)) {
 						validityStartDate = this.getEndDate(dateLastPayment, 1);
-						sqlDate = new java.sql.Date(validityStartDate.getTime());	
 					}
 				}
 				
-				pstmt.setDate(6, sqlDate);
-			
-				Date validityEndDate = this.getEndDate(validityStartDate, fee.getValidityPeriod());
-				pstmt.setDate(7, new java.sql.Date(validityEndDate.getTime()));
-			} else if (feeType == FeeType.RACE_REGISTRATION) {
-				pstmt.setDate(6, new java.sql.Date(validityStartDate.getTime()));
-				pstmt.setDate(7, new java.sql.Date(validityStartDate.getTime()));
-				
-				pstmt.setDouble(8, raceRegistration.getRace().getRegistrationFee());
+				validityEndDate = this.getEndDate(validityStartDate, fee.getValidityPeriod());
 			}
 			
+			pstmt.setDate(6, new java.sql.Date(validityStartDate.getTime()));
+			pstmt.setDate(7, new java.sql.Date(validityEndDate.getTime()));
+			
+			float total = 0;
 			if (feeType == FeeType.MEMBERSHIP) {
-				pstmt.setDouble(8, fee.getAmount());
+				total = fee.getAmount();
 			} else if (feeType == FeeType.STORAGE) {
-				pstmt.setDouble(8, (float)(boat.getLength() * fee.getAmount()));
+				total = boat.getLength() * fee.getAmount();
+			} else if (feeType == FeeType.RACE_REGISTRATION) {
+				total = raceRegistration.getRace().getRegistrationFee();
 			}
 			
+			if (repayment) {
+				total *= (-1);
+			}
+			
+			pstmt.setFloat(8, total);
 			pstmt.setInt(9, paymentService.getId());
 			
 			pstmt.executeUpdate();
@@ -944,10 +936,9 @@ public class SailingClub {
 		ArrayList<Race> list = new ArrayList<Race>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
-			PreparedStatement pstmt;
 			String query = "SELECT * FROM Races WHERE StatusCode <> ? ORDER BY IdRace";
-			pstmt = conn.prepareStatement(query);
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
@@ -970,8 +961,8 @@ public class SailingClub {
 	public Race getRaceByDate(final Date date) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
-			
 			String query = "SELECT * FROM Races WHERE Date = ? AND StatusCode <> ?";
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setDate(1, new java.sql.Date(date.getTime()));
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
@@ -1009,8 +1000,7 @@ public class SailingClub {
 			pstmt.setFloat(5, registrationFee);
 			pstmt.setInt(6, StatusCode.ACTIVE.getValue());
 			
-			pstmt.executeUpdate();
-			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1029,8 +1019,8 @@ public class SailingClub {
 	public void updateRace(final int id, final String name, final String place, final Date dateRace, final Integer boatsNumber, final Float registrationFee) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {		
-			
 			String query = "UPDATE Races SET Name = IfNull(?, Name), Place = IfNull(?, Place), DateRace = IfNull(?, DateRace), BoatsNumber = IfNull(?, BoatsNumber), RegistrationFee = IfNull(?, RegistrationFee) WHERE IdRace = ?"; 			
+			
 			PreparedStatement pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, name);
 			pstmt.setString(2, place);
@@ -1041,24 +1031,21 @@ public class SailingClub {
 	        	pstmt.setObject(3, dateRace);
 	        }
 			
-
 			if (boatsNumber == null) {
 	            pstmt.setNull(4, Types.INTEGER);
 	        } else {
 	        	pstmt.setInt(4, boatsNumber);
 	        }
 						
-
 			if (registrationFee == null) {
 	            pstmt.setNull(5, Types.FLOAT);
 	        } else {
 	        	pstmt.setFloat(5, registrationFee);
-	        }
-			
+	        }			
 			
 			pstmt.setInt(6, id);
-			pstmt.executeUpdate();
 			
+			pstmt.executeUpdate();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1132,8 +1119,7 @@ public class SailingClub {
 			pstmt.setDate(6, new java.sql.Date(endDateRegistration.getTime()));
 			pstmt.setInt(7, StatusCode.ACTIVE.getValue());
 			
-			pstmt.executeUpdate();
-			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1183,13 +1169,18 @@ public class SailingClub {
 			}
 			
 			pstmt.setInt(7, id);
-			pstmt.executeUpdate();
 			
+			pstmt.executeUpdate();			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 	}
 	
+	/**
+	 * 
+	 * @param race
+	 * @return
+	**/
 	public int getNumberParticipantsInRace(final Race race) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
@@ -1202,8 +1193,7 @@ public class SailingClub {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
 				return rset.getInt(1);
-			}
-			
+			}			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1260,7 +1250,6 @@ public class SailingClub {
 			if (rset.next()) {
 				return new RaceRegistration(rset.getInt("IdRegistration"), rset.getDate("Date"), race, boat, StatusCode.getStatusCode(rset.getInt("StatusCode")));
 			}
-			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1288,8 +1277,7 @@ public class SailingClub {
 				Race race = new Race(rset.getInt("Races.IdRace"), rset.getString("Races.Name"), rset.getString("Races.Place"), rset.getDate("Races.Date"), rset.getInt("Races.BoatsNumber"), rset.getFloat("Races.RegistrationFee"), rset.getDate("Races.EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("Races.StatusCode")));
 				Boat boat = new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
 				return new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode")));
-			}
-			
+			}			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1310,8 +1298,8 @@ public class SailingClub {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			String query = "INSERT INTO RaceRegistrations (Date, Race, Boat, StatusCode) VALUES (?,?,?,?)";
-			PreparedStatement pstmt = conn.prepareStatement(query);
 			
+			PreparedStatement pstmt = conn.prepareStatement(query);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 			pstmt.setDate(1, sqlDate);
 			pstmt.setInt(2, race.getId());
@@ -1322,13 +1310,18 @@ public class SailingClub {
 			
 			RaceRegistration registration = this.getRaceRegistration(race, boat);
 			if (registration != null) {
-				this.payFee(member, null, registration, FeeType.RACE_REGISTRATION, paymentService);
+				this.payFee(member, boat, registration, FeeType.RACE_REGISTRATION, paymentService, false);
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 	}
 	
+	/**
+	 * 
+	 * @param race
+	 * @return
+	**/
 	public ArrayList<RaceRegistration> getAllRegistrationsByRace(final Race race) {
 		ArrayList<RaceRegistration> list = new ArrayList<RaceRegistration>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
@@ -1345,8 +1338,7 @@ public class SailingClub {
 			while (rset.next()) {
 				Boat boat = new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * storageFee.getAmount()), (new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"))), StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
 				list.add(new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode"))));
-			}
-			
+			}			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1355,11 +1347,11 @@ public class SailingClub {
 	}
 	
 	/**
-	 * Removes a registration from the database.
+	 * Removes a registration from the database. 
 	 * 
 	 * @param id the unique identifier of the registration.
 	**/
-	public void removeRegistration(final int id) {
+	public void removeRaceRegistration(final int id) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			String query = "UPDATE RaceRegistrations SET StatusCode = ? WHERE IdRegistration = ?";
@@ -1369,6 +1361,8 @@ public class SailingClub {
 			pstmt.setInt(2, id);
 			
 			pstmt.executeUpdate();
+			
+			this.repayRegistrationFee(id);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -1376,6 +1370,48 @@ public class SailingClub {
 	
 	/**
 	 * 
+	 * @param id
+	**/
+	public Payment getPaymentByRaceRegistration(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN RaceRegistrations ON RaceRegistrations.IdRegistration = Payments.RaceRegistration JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService WHERE Payments.RaceRegistration = ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				Member member = new Member(rset.getInt("Users.IdUser"), rset.getString("Users.FirstName"), rset.getString("Users.LastName"), rset.getString("Users.Email"), rset.getString("Users.Password"), rset.getString("Members.FiscalCode"), rset.getString("Members.Address"));
+				Boat boat = new Boat(rset.getInt("Boats.IdBoat"), rset.getString("Boats.Name"), rset.getInt("Boats.Length"), (float)(rset.getInt("Boats.Length") * this.getFee(FeeType.STORAGE).getAmount()), member, StatusCode.getStatusCode(rset.getInt("Boats.StatusCode")));
+				Race race = new Race(rset.getInt("Races.IdRace"), rset.getString("Races.Name"), rset.getString("Races.Place"), rset.getDate("Races.Date"), rset.getInt("Races.BoatsNumber"), rset.getFloat("Races.RegistrationFee"), rset.getDate("Races.EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("Races.StatusCode")));
+				RaceRegistration raceRegistration = new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode")));
+				PaymentService paymentService = new PaymentService(rset.getInt("PaymentServices.IdPaymentService"), rset.getString("PaymentServices.Description"));
+				
+				return new Payment(rset.getInt("Payments.IdPayment"), rset.getDate("Payments.Date"), member, boat, raceRegistration, this.getFee(FeeType.RACE_REGISTRATION), rset.getDate("Payments.ValidityStartDate"), rset.getDate("Payments.ValidityEndDate"), rset.getFloat("Payments.Total"), paymentService);
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	**/
+	public void repayRegistrationFee(final int id) {
+		Payment previousPayment = this.getPaymentByRaceRegistration(id); 
+		if (previousPayment != null) {
+			this.payFee(previousPayment.getMember(), previousPayment.getBoat(), previousPayment.getRaceRegistration(), previousPayment.getFee().getType(), previousPayment.getPaymentService(), true);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param boat
 	**/
 	public void updateBoatRegistration(final int id, final Boat boat) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);

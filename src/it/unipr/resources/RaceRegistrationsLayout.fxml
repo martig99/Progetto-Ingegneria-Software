@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Text?>
 
 
-<VBox prefHeight="550.0" prefWidth="900.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.RegistrationsController">
+<VBox prefHeight="550.0" prefWidth="900.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.RaceRegistrationsController">
 	<children>
 		<Text fx:id="title" fill="#0093ed" strokeType="OUTSIDE" text="">
         	<font>

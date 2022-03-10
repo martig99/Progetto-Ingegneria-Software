@@ -1,9 +1,9 @@
 package it.unipr.java.main;
 
+import it.unipr.java.model.*;
+
 import java.util.Date;
 import java.util.Optional;
-
-import it.unipr.java.model.*;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,7 +23,7 @@ import javafx.scene.text.Text;
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
 **/
-public class RegistrationsController {
+public class RaceRegistrationsController {
 
 	private App app;
 	private int idRace;
@@ -67,20 +67,20 @@ public class RegistrationsController {
      * Removes a selected registration from the table. 
     **/
     public void removeRegistration(final int idRegistration) { 
+    	Boolean userResult = this.userCheck(idRegistration, "You cannot delete this race registration.");
+    	if (!userResult) {
+    		return;
+    	}
+    	
     	Boolean resultDate = this.dateCheck("It is no longer possible to remove the boat from the race.");
     	if (!resultDate) {
     		return;
     	}
 		
-    	Boolean userResult = this.userCheck(idRegistration, "You cannot delete this race registration.");
-    	if (!userResult) {
-    		return;
-    	}
-		
     	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a registration", "You are removing the registration with unique identifier " + idRegistration, "Are you sure?");
     	if (result.get() == ButtonType.OK){
-    		this.app.getClub().removeRegistration(idRegistration);
-    		
+    		this.app.getClub().removeRaceRegistration(idRegistration);
+    		    		
     		Race race = this.app.getClub().getRaceById(this.idRace);
     		this.setTableContent(race);
     		
@@ -91,18 +91,18 @@ public class RegistrationsController {
     /**
      * Updates a selected registration from the table. 
     **/
-    public void updateRegistration(final int idRegistration) {   
-    	Boolean resultDate = this.dateCheck("It is no longer possible to update the boat.");
-    	if (!resultDate) {
-    		return;
-    	}
-
+    public void updateRegistration(final int idRegistration) {
     	Boolean resultUser = this.userCheck(idRegistration, "You cannot update this race registration.");
     	if (!resultUser) {
     		return;
     	}
+    	
+    	Boolean resultDate = this.dateCheck("It is no longer possible to update the boat.");
+    	if (!resultDate) {
+    		return;
+    	}
 		
-		this.app.initUpsertBoatRegistration(this.idRace, idRegistration);    	
+		this.app.initUpsertRaceRegistration(this.idRace, idRegistration);    	
     }
     
     /**
@@ -113,8 +113,10 @@ public class RegistrationsController {
     public boolean dateCheck(final String message) {
     	Race race = this.app.getClub().getRaceById(this.idRace);
     	
-		Date currentDate = new Date();
-		if (race.getEndDateRegistration().after(currentDate)) { // ERRORE CONTROLLO DATE
+    	Date today = this.app.getZeroTimeDate(new Date());
+    	Date endDateRegistration = this.app.getZeroTimeDate(race.getEndDateRegistration());
+
+		if (endDateRegistration.before(today)) {
     		this.app.showAlert(Alert.AlertType.WARNING, "Attention", null, message);
     		return false; 
 		}

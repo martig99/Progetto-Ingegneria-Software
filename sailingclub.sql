@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mar 09, 2022 alle 11:08
+-- Creato il: Mar 06, 2022 alle 15:19
 -- Versione del server: 10.4.21-MariaDB
 -- Versione PHP: 7.3.31
 
@@ -41,21 +41,20 @@ CREATE TABLE `boats` (
 --
 
 INSERT INTO `boats` (`IdBoat`, `Name`, `Length`, `Owner`, `StatusCode`) VALUES
-(1, 'yacht', 1, 1, 0),
+(1, 'Yacht1', 200, 1, 0),
 (2, 'Crocera', 4000, 1, 9),
 (3, 'Crocera', 10, 1, 0),
-(4, 'Yacht', 1000, 4, 0),
-(5, 'Crocera2', 100, 4, 0),
+(4, 'Yacht', 1000, 4, 9),
+(5, 'Crocera2', 100, 4, 9),
 (6, 'Battello', 1500, 4, 0),
 (10, 'Battello', 200, 4, 9),
-(11, 'Battello', 100, 7, 0),
-(12, 'Nave', 55, 7, 0),
+(11, 'Battello', 100, 7, 9),
+(12, 'Nave', 55, 7, 9),
 (13, 'Nave', 5, 1, 0),
 (14, 'Super nave', 10, 7, 0),
 (15, 'Barca ilaria', 6, 1, 0),
 (16, 'b', 10, 1, 9),
-(17, 'Battello', 1, 6, 0),
-(18, 'Yacht', 10, 8, 0);
+(17, 'Battello', 1, 6, 0);
 
 -- --------------------------------------------------------
 
@@ -75,10 +74,7 @@ CREATE TABLE `employees` (
 
 INSERT INTO `employees` (`IdEmployee`, `Administrator`) VALUES
 (2, 1),
-(5, 0),
-(11, 0),
-(12, 1),
-(13, 0);
+(5, 0);
 
 -- --------------------------------------------------------
 
@@ -125,11 +121,8 @@ INSERT INTO `members` (`IdMember`, `FiscalCode`, `Address`) VALUES
 (1, 'RSSLRI95A41A944A', 'Via della Pace 11, Bologna'),
 (3, 'VRDSRA91T47A944V', 'Via Galilei 2, Milano'),
 (4, 'NRELRA99E43H501F', 'Via Roma 11, Bologna'),
-(6, 'aaaa', 'Via Roma 6, Padova'),
-(7, 'A', 'Via pero'),
-(8, 'abc', 'c'),
-(9, 'ciao', 'a'),
-(10, 'Club member', 'Via dei pini 11');
+(6, 'Prova', 'Questo è un vero socio'),
+(7, 'Test Registrazione', 'Via pero');
 
 -- --------------------------------------------------------
 
@@ -156,15 +149,8 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`IdPayment`, `Date`, `Member`, `Boat`, `RaceRegistration`, `Fee`, `ValidityStartDate`, `ValidityEndDate`, `Total`, `PaymentService`) VALUES
-(1, '2022-03-08', 1, NULL, 1, 3, '2022-03-08', '2022-03-08', 6, 2),
-(2, '2022-03-08', 4, NULL, 2, 3, '2022-03-08', '2022-03-08', 6, 2),
-(3, '2022-03-09', 1, NULL, NULL, 1, '2022-03-09', '2023-03-09', 100, 2),
-(4, '2022-03-09', 6, NULL, 3, 3, '2022-03-09', '2022-03-09', 6, 2),
-(5, '2022-03-09', 6, NULL, 4, 3, '2022-03-09', '2022-03-09', 12, 2),
-(6, '2022-03-09', 1, NULL, 5, 3, '2022-03-09', '2022-03-09', 12, 2),
-(7, '2022-03-09', 1, NULL, 6, 3, '2022-03-09', '2022-03-09', 50, 2),
-(8, '2022-03-09', 4, NULL, 7, 3, '2022-03-09', '2022-03-09', 50, 2),
-(9, '2022-03-09', 6, NULL, 8, 3, '2022-03-09', '2022-03-09', 50, 1);
+(1, '2022-03-04', 1, NULL, NULL, 1, '2022-03-04', '2023-03-04', 100, 2),
+(2, '2022-03-05', 4, NULL, NULL, 1, '2022-03-05', '2023-03-05', 100, 2);
 
 -- --------------------------------------------------------
 
@@ -195,25 +181,11 @@ INSERT INTO `paymentservices` (`IdPaymentService`, `Description`) VALUES
 DROP TABLE IF EXISTS `raceregistrations`;
 CREATE TABLE `raceregistrations` (
   `IdRegistration` int(11) NOT NULL,
-  `Date` date NOT NULL,
+  `DateRegistration` datetime NOT NULL,
   `Race` int(11) NOT NULL,
   `Boat` int(11) NOT NULL,
   `StatusCode` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dump dei dati per la tabella `raceregistrations`
---
-
-INSERT INTO `raceregistrations` (`IdRegistration`, `Date`, `Race`, `Boat`, `StatusCode`) VALUES
-(1, '2022-03-08', 2, 15, 0),
-(2, '2022-03-08', 2, 6, 0),
-(3, '2022-03-09', 2, 17, 0),
-(4, '2022-03-09', 4, 17, 0),
-(5, '2022-03-09', 4, 13, 0),
-(6, '2022-03-09', 3, 13, 0),
-(7, '2022-03-09', 3, 6, 0),
-(8, '2022-03-09', 3, 17, 0);
 
 -- --------------------------------------------------------
 
@@ -226,22 +198,11 @@ CREATE TABLE `races` (
   `IdRace` int(11) NOT NULL,
   `Name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `Place` varchar(70) COLLATE utf8_unicode_ci NOT NULL,
-  `Date` date NOT NULL,
+  `DateRace` datetime NOT NULL,
   `BoatsNumber` int(11) NOT NULL,
   `RegistrationFee` float NOT NULL,
-  `EndDateRegistration` date NOT NULL,
   `StatusCode` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dump dei dati per la tabella `races`
---
-
-INSERT INTO `races` (`IdRace`, `Name`, `Place`, `Date`, `BoatsNumber`, `RegistrationFee`, `EndDateRegistration`, `StatusCode`) VALUES
-(1, 'Gara 1', 'Roma', '2022-03-08', 3, 10, '2022-03-07', 0),
-(2, 'Gara 2', 'Milano', '2022-03-10', 5, 6, '2022-03-09', 0),
-(3, 'Gara 3', 'Torino', '2022-03-18', 3, 50, '2022-03-17', 0),
-(4, 'A', 'Genova', '2022-03-12', 2, 12, '2022-03-11', 0);
 
 -- --------------------------------------------------------
 
@@ -266,17 +227,11 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`IdUser`, `FirstName`, `LastName`, `Email`, `Password`, `StatusCode`) VALUES
 (1, 'Ilaria', 'Rossi', 'ilaria.rossi@gmail.com', 'aaaaaaaaa', 0),
 (2, 'Marco', 'Bianchi', 'marco.bianchi@gmail.com', '12345', 0),
-(3, 'Sara', 'Verdi', 'sara.verdi@gmail.com', '0000', 0),
+(3, 'Sara', 'Verdi', 'verdisara@gmail.com', '0000', 0),
 (4, 'Neri', 'Laura', 'neri.laura@gmail.com', '0000', 0),
-(5, 'A', 'Impiegato', 'prova@impiegato.it', '1234', 9),
+(5, 'Prova', 'Socio', 'prova@socio.it', '1234', 0),
 (6, 'Socio', 'Ciao', 'socio@ciao.it', 'aaa', 0),
-(7, 'Pippo', 'Utente', 'nuovo@utente.it', 'a', 9),
-(8, 'a', 'b', 'aaa@bbb.it', '1', 9),
-(9, 'a', 'b', 'ciao@ciao.it', 'd', 0),
-(10, 'Club', 'Member', 'club@member.it', 'a', 0),
-(11, 'Mario', 'Verdi', 'mario.verdi@gmail.com', '0000', 0),
-(12, 'Nuovo', 'Admin', 'nuovo@admin.it', 'a', 0),
-(13, 'Nuovo', 'Impiegato', 'nuovo@impiegato.it', 'a', 0);
+(7, 'Nuovo', 'Utente', 'nuovo@utente.it', 'a', 0);
 
 --
 -- Indici per le tabelle scaricate
@@ -331,8 +286,8 @@ ALTER TABLE `paymentservices`
 --
 ALTER TABLE `raceregistrations`
   ADD PRIMARY KEY (`IdRegistration`),
-  ADD KEY `raceregistrations_ibfk_1` (`Race`),
-  ADD KEY `raceregistrations_ibfk_2` (`Boat`);
+  ADD KEY `Race` (`Race`),
+  ADD KEY `Boat` (`Boat`);
 
 --
 -- Indici per le tabelle `races`
@@ -356,7 +311,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT per la tabella `boats`
 --
 ALTER TABLE `boats`
-  MODIFY `IdBoat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `IdBoat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT per la tabella `fees`
@@ -368,7 +323,7 @@ ALTER TABLE `fees`
 -- AUTO_INCREMENT per la tabella `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `IdPayment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `IdPayment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `paymentservices`
@@ -380,19 +335,19 @@ ALTER TABLE `paymentservices`
 -- AUTO_INCREMENT per la tabella `raceregistrations`
 --
 ALTER TABLE `raceregistrations`
-  MODIFY `IdRegistration` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `IdRegistration` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `races`
 --
 ALTER TABLE `races`
-  MODIFY `IdRace` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `IdRace` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `users`
 --
 ALTER TABLE `users`
-  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Limiti per le tabelle scaricate
@@ -430,8 +385,8 @@ ALTER TABLE `payments`
 -- Limiti per la tabella `raceregistrations`
 --
 ALTER TABLE `raceregistrations`
-  ADD CONSTRAINT `raceregistrations_ibfk_1` FOREIGN KEY (`Race`) REFERENCES `races` (`IdRace`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `raceregistrations_ibfk_2` FOREIGN KEY (`Boat`) REFERENCES `boats` (`IdBoat`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `raceregistrations_ibfk_1` FOREIGN KEY (`Race`) REFERENCES `races` (`IdRace`),
+  ADD CONSTRAINT `raceregistrations_ibfk_2` FOREIGN KEY (`Boat`) REFERENCES `boats` (`IdBoat`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

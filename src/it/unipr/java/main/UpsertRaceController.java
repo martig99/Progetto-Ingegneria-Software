@@ -1,8 +1,9 @@
 package it.unipr.java.main;
 
+import it.unipr.java.model.*;
+
 import java.util.Date;
 
-import it.unipr.java.model.Race;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -83,8 +84,10 @@ public class UpsertRaceController {
 			Date dateRace = this.dateRace.getValue() != null ? new java.util.Date(java.sql.Date.valueOf(this.dateRace.getValue()).getTime()) : null;
 			Date endDateRegistration = this.endDateRegistration.getValue() != null ? new java.util.Date(java.sql.Date.valueOf(this.endDateRegistration.getValue()).getTime()) : null;
 			
+			Date today = this.app.getZeroTimeDate(new Date());
+			
 			if (dateRace != null) {
-				if (dateRace.before(new Date())) {
+				if (dateRace.before(today)) {
 					this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "The date of the race must be greater than the current date.");
 					return;
 				}
@@ -96,6 +99,10 @@ public class UpsertRaceController {
 			}
 			
 			Boolean errorDate = false;
+			if (endDateRegistration != null && endDateRegistration.before(today)) {
+				errorDate = true;
+			}
+			
 			if ((this.idRace == null || (dateRace != null && endDateRegistration != null)) && !dateRace.after(endDateRegistration)) {
 				errorDate = true;
 			}
@@ -110,7 +117,7 @@ public class UpsertRaceController {
 			}
 			
 			if (errorDate) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "The date of the last registration day must be prior to the date of the race.");
+				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "The last date to register for the race must be greater than today and less than the race.");
 				return;
 			}
 			
@@ -151,7 +158,11 @@ public class UpsertRaceController {
     public void setApp(final App app) {
         this.app = app;
         
-        this.title.setText("ADD A NEW RACE");
+        if (this.idRace == null) {
+        	this.title.setText("ADD A NEW RACE");
+        } else {
+        	this.title.setText("UPDATE THE RACE");
+        }
     }
 	
 }
