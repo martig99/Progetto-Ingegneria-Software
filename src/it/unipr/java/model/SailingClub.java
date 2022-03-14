@@ -533,7 +533,7 @@ public class SailingClub {
 	/**
 	 * Gets a boat given the unique identifier.
 	 * 
-	 * @param name the unique identifier of the boat.
+	 * @param id the unique identifier of the boat.
 	 * @return the reference of the boat or <code>null</code>.
 	**/
 	public Boat getBoatById(final int id) {
@@ -1427,4 +1427,101 @@ public class SailingClub {
 			sqle.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Gets the list of all the fees.
+	 * 
+	 * @return the list.
+	**/
+	public ArrayList<Fee> getAllFees() {
+		ArrayList<Fee> list = new ArrayList<Fee>();
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "SELECT * FROM Fees WHERE StatusCode <> ? AND Type <> ? ORDER BY IdFee";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			pstmt.setString(2, FeeType.RACE_REGISTRATION.toString());
+			
+			ResultSet rset = pstmt.executeQuery();
+			while (rset.next()) {
+				list.add(new Fee(rset.getInt("IdFee"), FeeType.valueOf(rset.getString("Type").toUpperCase()), rset.getFloat("Amount"), rset.getInt("ValidityPeriod"), StatusCode.getStatusCode(rset.getInt("StatusCode"))));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Gets a fee given the unique identifier.
+	 * 
+	 * @param id the unique identifier of the fee.
+	 * @return the reference of the fee or <code>null</code>.
+	**/
+	public Fee getFeeById(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			
+			String query = "SELECT * FROM Fees WHERE IdFee = ? AND StatusCode <> ?";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return new Fee(rset.getInt("idFee"), FeeType.valueOf(rset.getString("Type").toUpperCase()), rset.getFloat("Amount"), rset.getInt("ValidityPeriod"), StatusCode.getStatusCode(rset.getInt("StatusCode")));
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Removes a fee from the database.
+	 * 
+	 * @param id the unique identifier of the fee.
+	**/
+	public void removeFee(final int id) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "UPDATE fees SET StatusCode = ? WHERE IdFee = ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
+			pstmt.setInt(2, id);
+			
+			pstmt.executeUpdate();			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Inserts a new user in the database.
+	 * 
+	 * @param type the type of the new fee.
+	 * @param amount the amount of the new fee.
+	 * @param validityPeriod the validity period of the new fee.
+	**/
+	public void insertFee(final String type, final int amount, final int validityPeriod) {
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {
+			String query = "INSERT INTO Fees (Type, Amount, ValidityPeriod, StatusCode) VALUES (?,?,?,?)";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, type);	
+			pstmt.setInt(2, amount);
+			pstmt.setInt(3, validityPeriod);
+			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
+			
+			pstmt.executeUpdate();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
 }

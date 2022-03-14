@@ -369,6 +369,43 @@ public class App extends Application {
     }
 	
 	/**
+	 * Initializes the dialog panel to show fees.
+	**/
+	public void initFees() {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/FeesLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            FeesController controller = loader.getController();
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes the dialog panel to update a fee.
+	**/
+	public void initUpdateFee(final int idFee) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/UpdateFeeLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            UpdateFeeController controller = loader.getController();
+            controller.setIdFee(idFee);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
 	 * Checks if the email matches the correct format.
 	 * 
 	 * @param email the email to check. 

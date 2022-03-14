@@ -44,6 +44,7 @@ public class MainController {
         });
     	
     	this.linkFees.setOnMouseClicked(clickEvent -> {
+    		this.app.initFees();
     		this.app.activeLinkMenu(this.menu, this.linkFees);
         });
     	
