@@ -54,10 +54,14 @@ public class SailingClub {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				if (type == UserType.MEMBER) {
-					return new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"));
-				} else if (type == UserType.EMPLOYEE) {
-					return new Employee(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getBoolean("Administrator"));
+				if (!password.contentEquals(rset.getString("Password"))) {
+					return null;
+				} else {
+					if (type == UserType.MEMBER) {
+						return new Member(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getString("FiscalCode"), rset.getString("Address"));
+					} else if (type == UserType.EMPLOYEE) {
+						return new Employee(rset.getInt("IdUser"), rset.getString("FirstName"), rset.getString("LastName"), rset.getString("Email"), rset.getString("Password"), rset.getBoolean("Administrator"));
+					}
 				}
 			}
 		} catch (SQLException sqle) {
@@ -447,7 +451,7 @@ public class SailingClub {
 	 * @param owner the owner of the boats. 
 	 * @return the list.
 	**/
-	public ArrayList<Boat> getAllBoats(final Member owner) {
+	public ArrayList<Boat> getAllBoats(final User owner) {
 		ArrayList<Boat> list = new ArrayList<Boat>();
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
@@ -892,9 +896,9 @@ public class SailingClub {
 			Date validityStartDate = new Date();
 			Date validityEndDate = validityStartDate;
 			if (feeType == FeeType.MEMBERSHIP || feeType == FeeType.STORAGE) {
-				Date dateLastPayment = this.getLastPaymentFee(member, boat, feeType);
-				if (dateLastPayment != null) {
-					if (dateLastPayment.after(validityStartDate)) {
+				if (this.getAllBoats(member).size() > 0) {
+					Date dateLastPayment = this.getLastPaymentFee(member, boat, feeType);
+					if (dateLastPayment != null) {
 						validityStartDate = this.getEndDate(dateLastPayment, 1);
 					}
 				}
@@ -1347,6 +1351,33 @@ public class SailingClub {
 	}
 	
 	/**
+	 * 
+	 * @param boat
+	 * @return
+	**/
+	public ArrayList<RaceRegistration> getAllRegistrationByBoat(final Boat boat) {
+		ArrayList<RaceRegistration> list = new ArrayList<RaceRegistration>();
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			String query = "SELECT * FROM RaceRegistrations JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Races ON Races.IdRace = RaceRegistrations.Race WHERE RaceRegistrations.Boat = ? AND RaceRegistrations.StatusCode <> ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, boat.getId());
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			while (rset.next()) {
+				Race race = new Race(rset.getInt("Races.IdRace"), rset.getString("Races.Name"), rset.getString("Races.Place"), rset.getDate("Races.Date"), rset.getInt("Races.BoatsNumber"), rset.getFloat("Races.RegistrationFee"), rset.getDate("Races.EndDateRegistration"), StatusCode.getStatusCode(rset.getInt("Races.StatusCode")));
+				list.add(new RaceRegistration(rset.getInt("RaceRegistrations.IdRegistration"), rset.getDate("RaceRegistrations.Date"), race, boat, StatusCode.getStatusCode(rset.getInt("RaceRegistrations.StatusCode"))));
+			}			
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	/**
 	 * Removes a registration from the database. 
 	 * 
 	 * @param id the unique identifier of the registration.
@@ -1429,6 +1460,49 @@ public class SailingClub {
 	}
 	
 	/**
+	 * 
+	 * @param user
+	 * @return
+	**/
+	public ArrayList<Boat> getAllUnpaidStorageFeeByUser(final User user) {
+		ArrayList<Boat> list = new ArrayList<Boat>();
+		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
+				Statement stmt = conn.createStatement()) {		
+			String query = "SELECT Boats.IdBoat FROM Boats JOIN Users ON Boats.Owner = Users.IdUser JOIN Payments ON Boats.IdBoat = Payments.Boat WHERE Users.IdUser = ? AND Payments.Fee = ? AND Payments.ValidityStartDate <= ? AND Payments.ValidityEndDate >= ? ORDER BY Boats.IdBoat";	
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, user.getId());
+			pstmt.setInt(2, this.getFee(FeeType.STORAGE).getId());
+			Date currentDate = new Date();
+			pstmt.setDate(3, new java.sql.Date(currentDate.getTime()));
+			pstmt.setDate(4, new java.sql.Date(currentDate.getTime()));
+			
+			ResultSet rset = pstmt.executeQuery();
+			ArrayList<Integer> listIdBoat = new ArrayList<Integer>(); 
+			while (rset.next()) {
+				listIdBoat.add(rset.getInt(1));
+			} 		
+			
+			list = this.getAllBoats(user);
+			
+			ArrayList<Boat> boatsToRemove = new ArrayList<Boat>();
+			for (Boat boat: list) {
+				for (Integer id: listIdBoat) {
+					if (boat.getId() == id) {
+						boatsToRemove.add(boat);
+					}
+				}
+			}
+			
+			list.removeAll(boatsToRemove);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	/**
 	 * Gets the list of all the fees.
 	 * 
 	 * @return the list.
@@ -1507,14 +1581,14 @@ public class SailingClub {
 	 * @param amount the amount of the new fee.
 	 * @param validityPeriod the validity period of the new fee.
 	**/
-	public void insertFee(final String type, final int amount, final int validityPeriod) {
+	public void insertFee(final String type, final double amount, final int validityPeriod) {
 		try (Connection conn = DriverManager.getConnection(DBURL + ARGS, LOGIN, PASSWORD);
 				Statement stmt = conn.createStatement()) {
 			String query = "INSERT INTO Fees (Type, Amount, ValidityPeriod, StatusCode) VALUES (?,?,?,?)";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, type);	
-			pstmt.setInt(2, amount);
+			pstmt.setString(1, type);
+			pstmt.setDouble(2, amount);
 			pstmt.setInt(3, validityPeriod);
 			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 			

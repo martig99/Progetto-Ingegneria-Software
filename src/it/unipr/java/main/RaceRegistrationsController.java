@@ -29,7 +29,7 @@ public class RaceRegistrationsController {
 	private int idRace;
 	
 	@FXML
-	private Text title, info, link;
+	private Text title, info;
 
 	@FXML
     private TableView<RaceRegistration> registrationsTable;
@@ -43,10 +43,6 @@ public class RaceRegistrationsController {
     @FXML
     private void initialize() {	
 		this.setTable();
-		
-		this.link.setOnMouseClicked(event -> {    		
-    		this.app.initRaces();
-        });
 		
 		this.registrationsTable.setOnMouseClicked(event -> {
 			if (this.registrationsTable.getSelectionModel().getSelectedItem() != null) {
@@ -113,8 +109,8 @@ public class RaceRegistrationsController {
     public boolean dateCheck(final String message) {
     	Race race = this.app.getClub().getRaceById(this.idRace);
     	
-    	Date today = this.app.getZeroTimeDate(new Date());
-    	Date endDateRegistration = this.app.getZeroTimeDate(race.getEndDateRegistration());
+    	Date today = this.app.getZeroTimeCalendar(new Date()).getTime();
+    	Date endDateRegistration = this.app.getZeroTimeCalendar(race.getEndDateRegistration()).getTime();
 
 		if (endDateRegistration.before(today)) {
     		this.app.showAlert(Alert.AlertType.WARNING, "Attention", null, message);
@@ -150,8 +146,28 @@ public class RaceRegistrationsController {
 	public void setTable() {
 		this.idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
 		this.dateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getDate())));	
-		this.boatColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBoat().getName()));
-		this.memberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBoat().getOwner().getEmail()));
+		
+		this.boatColumn.setCellValueFactory(cellData -> {
+			Boat boat = cellData.getValue().getBoat();
+			if (boat != null) {
+				String description = boat.getId() + " - " + boat.getName();
+				return new SimpleStringProperty(description);
+			}
+			
+			return null;
+		});
+		
+		this.memberColumn.setCellValueFactory(cellData -> {
+			Boat boat = cellData.getValue().getBoat();
+			if (boat != null) {
+				Member owner = boat.getOwner();
+				if (owner != null) {
+					return new SimpleStringProperty(owner.getEmail());
+				}
+			}
+			
+			return null;
+		});
 	}
     
     /**

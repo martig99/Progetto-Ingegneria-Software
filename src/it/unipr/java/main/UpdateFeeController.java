@@ -41,34 +41,38 @@ public class UpdateFeeController {
 	/**
 	 * 
 	**/
-	public void updateFee() {
-		Integer amount = null, validityPeriod = null;
-	
+	public void updateFee() {	
 		if (this.amount.getText().isEmpty() && this.validityPeriod.getText().isEmpty()) {
 			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please complete at least one field.");
 			return;
 		}
 		
-			
+		Fee fee = this.app.getClub().getFeeById(this.idFee);
+		
+		double amount;
 		if (!this.amount.getText().isEmpty()) {
-			amount = this.app.convertToInteger(this.amount.getText());			
+			amount = this.app.convertToDouble(this.amount.getText());			
 			if (amount <= 0) {
 				return;
 			}
+		} else {
+			amount = fee.getAmount();
 		}
+		
+		int validityPeriod;
 		if (!this.validityPeriod.getText().isEmpty()) {
 			validityPeriod = this.app.convertToInteger(this.validityPeriod.getText());			
 			if (validityPeriod <= 0) {
 				return;
 			}
+		} else {
+			validityPeriod = fee.getValidityPeriod();
 		}
 		
-		Fee fee = this.app.getClub().getFeeById(this.idFee);
-		//fee.setAmount(amount);
-		//fee.setValidityPeriod(validityPeriod);
+		
 		
 		this.app.getClub().removeFee(this.idFee);
-		this.app.getClub().insertFee(fee.getType().toString(),amount,validityPeriod);
+		this.app.getClub().insertFee(fee.getType().toString(), amount, validityPeriod);
 		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The fee has been updated correctly.");
 		this.app.initFees();
 		

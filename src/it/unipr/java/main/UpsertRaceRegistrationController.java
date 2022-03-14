@@ -1,5 +1,7 @@
 package it.unipr.java.main;
 
+import java.util.Date;
+
 import it.unipr.java.model.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -81,6 +83,11 @@ public class UpsertRaceRegistrationController {
 			}
 		}
 		
+		if(!this.app.getClub().checkPaymentFee(user, null, FeeType.MEMBERSHIP)) {
+    		this.app.showAlert(Alert.AlertType.INFORMATION, "Payments error.", "Cannot register the boat at this race.", "Unpaid membership fee.");
+    		return;
+		}
+		
 		Boat boat = null;
 		String nameBoat = this.boats.getSelectionModel().getSelectedItem().toString();
 		boat = this.app.getClub().getBoatByName(nameBoat, user);
@@ -90,7 +97,6 @@ public class UpsertRaceRegistrationController {
 		}
 		
 		String message = "";
-		
 		if (this.idRegistration == null) {
 			String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
 			PaymentService paymentService = this.app.getClub().getPaymentServiceByDescription(descriptionPaymentService);
@@ -100,8 +106,14 @@ public class UpsertRaceRegistrationController {
 			}
 			
 			Race race = this.app.getClub().getRaceById(this.idRace);
+			Date lastPayment = this.app.getClub().getLastPaymentFee(user, boat, FeeType.STORAGE);
+			if (!this.app.getClub().checkPaymentFee(user, boat, FeeType.STORAGE) || lastPayment.before(race.getDate()) || lastPayment.equals(race.getDate())) {
+				this.app.showAlert(Alert.AlertType.INFORMATION, "Payments error.", "Cannot register the boat at this race.",  "Unpaid storage fee for this boat.");
+				return;
+			}
+			
 			if (this.app.getClub().getBoatInRaceByMember(user, race) != null) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "A boat has already been registered for this race.");
+				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Only one boat per club member can be registered for a race.");
 				return;
 			} 
 			

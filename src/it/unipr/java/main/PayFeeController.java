@@ -1,6 +1,9 @@
 package it.unipr.java.main;
 
 import it.unipr.java.model.*;
+
+import java.util.Date;
+
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,7 +55,7 @@ public class PayFeeController {
 	/**
 	 * 
 	**/
-	public void payFee() {		
+	public void payFee() {	
 		User user = null;
 		if (this.app.getLoggedUser() instanceof Member) {
 			user = this.app.getLoggedUser();
@@ -77,21 +80,36 @@ public class PayFeeController {
 		
 		String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
 		PaymentService paymentService = this.app.getClub().getPaymentServiceByDescription(descriptionPaymentService);
-		if (paymentService != null) {
-			this.app.getClub().payFee(user, boat, null, this.feeType, paymentService, false);
-			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The membership fee has been paid correctly.");
-			
-			if (this.app.getClub().checkPaymentFee(user, null, FeeType.MEMBERSHIP)) {
-				if (this.app.getMainController() != null) {
-					this.app.toggleLinkMenu(this.app.getMainController().getMenu(), false);
-				}
-			}
-			
-			this.app.initPayments(this.feeType);
-		} else {
+		if (paymentService == null) {
 			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the payment service.");
 			return;
 		}
+		
+		Date today = this.app.getZeroTimeCalendar(new Date()).getTime();
+    	Date lastPayment = this.app.getClub().getLastPaymentFee(user, boat, this.feeType);
+		if (lastPayment == null || today.before(lastPayment) || today.equals(lastPayment) || this.app.getClub().getAllBoats(user).size() == 0) {
+			this.app.getClub().payFee(user, boat, null, this.feeType, paymentService, false);
+		} else {
+			if (this.app.getClub().getAllBoats(user).size() > 0) {
+				long diffTime = today.getTime() - lastPayment.getTime();
+				long diffDays = diffTime/(1000 * 60 * 60 * 24);
+				int period = (int) Math.ceil((float) diffDays/this.app.getClub().getFee(this.feeType).getValidityPeriod());
+				for (int i = 0; i < period; i++) {
+					this.app.getClub().payFee(user, boat, null, this.feeType, paymentService, false);
+				}
+			}
+		}
+		
+		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The " + this.feeType.toString().toLowerCase() + " fee has been paid correctly.");
+		
+		if (this.app.getClub().checkPaymentFee(user, null, FeeType.MEMBERSHIP)) {
+			if (this.app.getMainController() != null) {
+				this.app.toggleLinkMenu(this.app.getMainController().getMenu(), false);
+			}
+		}
+		
+		this.app.getMainController().updateNumberNotifications();
+		this.app.initPayments(this.feeType);
 			
 	}
 	

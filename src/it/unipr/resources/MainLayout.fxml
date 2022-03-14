@@ -8,6 +8,12 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.control.Label?>
 
 <BorderPane prefHeight="550.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unipr.java.main.MainController">
 	<top>
@@ -21,6 +27,32 @@
 						<Insets bottom="0.0" left="25.0" right="25.0" top="10.0" />
 					</HBox.margin>
 				</ImageView>
+				<ImageView fx:id="notificationsImage" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+					<image>
+						<Image url="@notifications.PNG" />
+					</image>
+					<HBox.margin>
+						<Insets bottom="0.0" left="15.0" right="35.0" top="50.0" />
+					</HBox.margin>
+				</ImageView>
+				<StackPane fx:id="notificationsBlock">
+			    	<children>
+			       		<Circle radius="10.0" stroke="#f4f4f4" strokeType="INSIDE">
+			            	<fill>
+			                	<RadialGradient centerX="0.5" centerY="0.5">
+			                    	<stops>
+			                        	<Stop color="#ff0000" />
+			                        	<Stop color="#ff0000" offset="1.0" />
+			                     	</stops>
+			                  	</RadialGradient>
+			               	</fill>
+			            </Circle>
+			           	<Label fx:id="numberNotifications" textFill="#ffffff"/>
+					</children>
+					<HBox.margin>
+	                  	<Insets top="5.0" left="-45.0" right="10.0" />
+	               </HBox.margin>
+			    </StackPane>
 				<Text fx:id="linkBoats" fill="#007ecc" strokeType="OUTSIDE" text="BOATS">
 					<font>
 						<Font name="Arial Black" size="18.0" />
@@ -66,7 +98,7 @@
 						<Image url="@exit.PNG" />
 					</image>
 					<HBox.margin>
-						<Insets bottom="0.0" left="25.0" right="25.0" top="40.0" />
+						<Insets bottom="0.0" left="15.0" right="25.0" top="40.0" />
 					</HBox.margin>
 				</ImageView>
 			</children>

@@ -42,13 +42,5 @@
 				<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 			</padding>
 		</TableView>
-		<Text fx:id="link" fill="#32e2d3" strokeType="OUTSIDE" text="ALL RACES">
-           	<font>
-           		<Font name="Arial Black" size="16.0" />
-           	</font>
-           	<VBox.margin>
-            	<Insets bottom="25.0" left="0.0" right="0.0" top="10.0" />
-            </VBox.margin>
-        </Text>
    </children>
 </VBox>

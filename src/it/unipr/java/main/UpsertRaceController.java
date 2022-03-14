@@ -50,7 +50,6 @@ public class UpsertRaceController {
 	**/
 	public void upsertRace() {		
 		if (this.app.getClub().getMaxBoatsNumber() > 1) {
-			
 			if (this.idRace == null) {
 				if (this.name.getText().isEmpty() || this.place.getText().isEmpty() || this.dateRace.getValue() == null || this.boatsNumber.getText().isEmpty() || this.registrationFee.getText().isEmpty() || this.endDateRegistration.getValue() == null) {
 					this.app.showAlert(Alert.AlertType.WARNING, "Error.", null, "Please complete all fields.");
@@ -84,10 +83,9 @@ public class UpsertRaceController {
 			Date dateRace = this.dateRace.getValue() != null ? new java.util.Date(java.sql.Date.valueOf(this.dateRace.getValue()).getTime()) : null;
 			Date endDateRegistration = this.endDateRegistration.getValue() != null ? new java.util.Date(java.sql.Date.valueOf(this.endDateRegistration.getValue()).getTime()) : null;
 			
-			Date today = this.app.getZeroTimeDate(new Date());
-			
+			Date today = this.app.getZeroTimeCalendar(new Date()).getTime();
 			if (dateRace != null) {
-				if (dateRace.before(today)) {
+				if (dateRace.before(today) || dateRace.equals(today)) {
 					this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "The date of the race must be greater than the current date.");
 					return;
 				}
@@ -99,11 +97,7 @@ public class UpsertRaceController {
 			}
 			
 			Boolean errorDate = false;
-			if (endDateRegistration != null && endDateRegistration.before(today)) {
-				errorDate = true;
-			}
-			
-			if ((this.idRace == null || (dateRace != null && endDateRegistration != null)) && !dateRace.after(endDateRegistration)) {
+			if ((endDateRegistration != null && endDateRegistration.before(today)) || ((this.idRace == null || (dateRace != null && endDateRegistration != null)) && !dateRace.after(endDateRegistration))) {
 				errorDate = true;
 			}
 			
@@ -161,7 +155,7 @@ public class UpsertRaceController {
         if (this.idRace == null) {
         	this.title.setText("ADD A NEW RACE");
         } else {
-        	this.title.setText("UPDATE THE RACE");
+        	this.title.setText("UPDATE THE RACE WITH ID " + this.idRace);
         }
     }
 	

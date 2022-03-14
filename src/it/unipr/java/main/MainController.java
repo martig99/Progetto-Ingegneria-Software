@@ -1,10 +1,14 @@
 package it.unipr.java.main;
 
+import java.util.ArrayList;
+
 import it.unipr.java.model.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
 /**
@@ -24,7 +28,13 @@ public class MainController {
 	private Text linkBoats, linkRaces, linkPayments, linkFees, linkUsers;
 	
 	@FXML
-	private ImageView logout;
+	private ImageView logout, notificationsImage;
+	
+	@FXML
+	private StackPane notificationsBlock;
+	
+	@FXML
+	private Label numberNotifications;
 
     @FXML
     private void initialize() {     	
@@ -56,6 +66,11 @@ public class MainController {
     	this.logout.setOnMouseClicked(clickEvent -> {
         	this.app.initLogout();
         });
+    	
+    	this.notificationsImage.setOnMouseClicked(clickEvent -> {
+    		this.app.activeLinkMenu(this.menu, null);
+        	this.app.initNotifications();
+        });
     }
     
     /**
@@ -64,6 +79,20 @@ public class MainController {
     **/
     public HBox getMenu() {
     	return this.menu;
+    }
+    
+    /**
+     * 
+    **/
+    public void updateNumberNotifications() {
+    	ArrayList<Boat> listBoatsUnpaidStorageFee = this.app.getClub().getAllUnpaidStorageFeeByUser(this.app.getLoggedUser());
+    	int num = listBoatsUnpaidStorageFee.size();
+    	
+    	if (!this.app.getClub().checkPaymentFee(this.app.getLoggedUser(), null, FeeType.MEMBERSHIP)) {
+    		num++;
+    	}
+    	
+		this.numberNotifications.setText(Integer.toString(num));
     }
     
 	/**
@@ -76,24 +105,27 @@ public class MainController {
         
         this.menu.setVisible(true);
     	
-        if (this.app.getLoggedUser() instanceof Employee) {        	
-        	this.linkFees.setVisible(true);
-    		this.linkFees.setManaged(true);
-    		
-        	this.linkUsers.setVisible(true);
-        	this.linkUsers.setManaged(true);
+        if (this.app.getLoggedUser() instanceof Employee) { 
+        	Employee employee = (Employee) this.app.getLoggedUser();
+        	if (employee.isAdministrator()) {
+        		this.app.setVisibleElement(this.linkFees, true);
+        	}
+        	
+        	this.app.setVisibleElement(this.linkUsers, true);
+        	
+        	this.app.setVisibleElement(this.notificationsImage, false);
+        	this.app.setVisibleElement(this.notificationsBlock, false);
         }	
         
         if (this.app.getLoggedUser() instanceof Member) {
-			Member member = (Member) this.app.getLoggedUser();
+			this.updateNumberNotifications();
 			
-    		if(!this.app.getClub().checkPaymentFee(member, null, FeeType.MEMBERSHIP)) {
-        		this.app.showAlert(Alert.AlertType.INFORMATION, "Payments error.", null, "Unpaid membership fee.");
-        		
+    		if(!this.app.getClub().checkPaymentFee(this.app.getLoggedUser(), null, FeeType.MEMBERSHIP)) {
         		this.app.activeLinkMenu(this.menu, this.linkPayments);
         		this.app.toggleLinkMenu(this.menu, true);
         		this.app.initPayments(FeeType.MEMBERSHIP);
         		
+        		this.app.showAlert(Alert.AlertType.INFORMATION, "Payments error.", null, "Unpaid membership fee.");       		
         		return;
         	} else {
         		this.app.toggleLinkMenu(this.menu, false);

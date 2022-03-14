@@ -34,7 +34,7 @@
 				<Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
 			</VBox.margin>
 		</ChoiceBox>
-		<Button fx:id="saveButton" minWidth="400.0" mnemonicParsing="false" text="Save" textFill="WHITE" style="-fx-background-color: linear-gradient(to bottom right, #0093ed, #32e2d3);">
+		<Button fx:id="saveButton" minWidth="400.0" mnemonicParsing="false" text="Save" textFill="#ffffff" style="-fx-background-color: linear-gradient(to bottom right, #0093ed, #32e2d3);">
         	<font>
 				<Font name="Arial" size="16.0" />
 			</font>

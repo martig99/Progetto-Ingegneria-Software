@@ -90,17 +90,16 @@ public class UsersController {
     	if(selectedUser.getId() != this.app.getLoggedUser().getId()) {
     		Employee employee = (Employee) this.app.getLoggedUser();
     		
-    		if((!employee.isAdministrator() && selectedUser instanceof Member) || employee.isAdministrator()) {
+    		if(employee.isAdministrator() && selectedUser instanceof Employee) {
 		    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove an user", "You are removing the user with unique identifier " + selectedUser.getId(), "Are you sure?");
 		    	if (result.get() == ButtonType.OK){
 		    		this.app.getClub().removeUser(selectedUser.getId());
-		    		//(modifica) aggiungere nel caso la rimozione anche delle barche collegate a quel socio
 		    		
 		    		this.setTableContent(this.userType);
 					this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The user has been removed correctly.");
 		    	}
 	    	} else {
-	    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot remove an employee.");
+	    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot remove a club " + this.userType.toString().toLowerCase());
 	    	}
     	} else {
     		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot remove yourself.");
@@ -184,13 +183,12 @@ public class UsersController {
 		this.addressColumn.setVisible(true);
 		this.administratorColumn.setVisible(false);
 		
+		this.info.setText("Right click to update an user.");
 		this.app.setVisibleElement(this.info, true);
 		
 		this.setUserType(UserType.MEMBER);
 		this.setTableContent(this.userType);
 		this.setTable();
-		
-		this.addButton.setText("ADD MEMBER");
     }
     
     /**
@@ -203,6 +201,7 @@ public class UsersController {
 		this.fiscalCodeColumn.setVisible(false);
 		this.addressColumn.setVisible(false);
 		
+        this.info.setText("Double click to delete an user.\nRight click to update an user.");
 		if (this.app.getLoggedUser() instanceof Employee) {
 			Employee employee = (Employee) this.app.getLoggedUser();
 			if (!employee.isAdministrator()) {
@@ -213,8 +212,6 @@ public class UsersController {
 		this.setUserType(UserType.EMPLOYEE);
 		this.setTableContent(this.userType);
 		this.setTable();
-		
-		this.addButton.setText("ADD EMPLOYEE");
     }
     
     /**
@@ -241,6 +238,6 @@ public class UsersController {
         	this.displayEmployeesTable();
         }
         
-        this.info.setText("Double click to delete an user.\nRight click to update an user.");
+        this.addButton.setText("ADD " + this.userType);
     }
 }

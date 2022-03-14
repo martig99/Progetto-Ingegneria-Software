@@ -1,6 +1,7 @@
 package it.unipr.java.main;
 
 import it.unipr.java.model.*;
+
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -75,15 +76,33 @@ public class PaymentsController {
 		this.dateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getDate())));
 		this.validityStartDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getValidityStartDate())));
 		this.validityEndDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getValidityEndDate())));
-		this.memberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMember().getEmail()));
+		this.memberColumn.setCellValueFactory(cellData -> {
+			Member member = cellData.getValue().getMember();
+			if (member != null) {
+				return new SimpleStringProperty(member.getEmail());
+			}
+			
+			return null;
+		});
+		
 		this.totalColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotal()));
-		this.paymentServiceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPaymentService().getDescription()));
+		this.paymentServiceColumn.setCellValueFactory(cellData -> {
+			PaymentService paymentService = cellData.getValue().getPaymentService();
+			if (paymentService != null) {
+				return new SimpleStringProperty(paymentService.getDescription());
+			}
+			
+			return null;
+		});
 		
 		this.raceColumn.setCellValueFactory(cellData -> {
 			RaceRegistration raceRegistration = cellData.getValue().getRaceRegistration();
 			if (raceRegistration != null) {
-				String raceDescription = raceRegistration.getRace().getName() + " - " + this.app.setDateFormat(raceRegistration.getRace().getDate());
-				return new SimpleStringProperty(raceDescription);
+				Race race = raceRegistration.getRace();
+				if (race != null) {
+					String raceDescription = race.getName() + " - " + this.app.setDateFormat(race.getDate());
+					return new SimpleStringProperty(raceDescription);
+				}
 			}
 			
 			return null;

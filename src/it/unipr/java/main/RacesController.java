@@ -62,15 +62,14 @@ public class RacesController {
 		
 		this.racesTable.setOnMouseClicked(event -> {
 			if (this.app.getLoggedUser() instanceof Employee) {
-				if (this.racesTable.getSelectionModel().getSelectedItem() != null) {
-					int id = this.racesTable.getSelectionModel().getSelectedItem().getId();
-
+				Race race = this.racesTable.getSelectionModel().getSelectedItem();
+				if (race != null) {	
 					if (event.getClickCount() == 2) {
-						this.removeRace(id);
+						this.removeRace(race);
 					}
 	    		
 					if (event.getButton() == MouseButton.SECONDARY) {
-						this.app.initUpsertRace(id);
+						this.app.initUpsertRace(race.getId());
 					}
 				}
 			}
@@ -82,17 +81,28 @@ public class RacesController {
             }
         });
     }
-    
+
     /**
      * Removes a selected race from the table. 
     **/
-    public void removeRace(final int id) {   	
-    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + id, "Are you sure?");
-    	if (result.get() == ButtonType.OK){
-    		this.app.getClub().removeRace(id);
-    		this.setTableContent();
-    		
-    		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The race has been removed correctly.");
+    public void removeRace(final Race race) {
+    	Date today = this.app.getZeroTimeCalendar(new Date()).getTime();
+    	if (race.getDate().before(today) || race.getDate().equals(today)) {
+    		this.app.showAlert(Alert.AlertType.ERROR, "Error", null, "A sailing race already completed cannot be eliminated.");
+    		return;
+    	} else {
+	    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + race.getId(), "Are you sure?");
+	    	if (result.get() == ButtonType.OK){
+	    		ArrayList<RaceRegistration> list = this.app.getClub().getAllRegistrationsByRace(race);
+	    		for (RaceRegistration registration: list) {
+	    			this.app.getClub().repayRegistrationFee(registration.getId());
+	    		}
+	    				
+	    		this.app.getClub().removeRace(race.getId());
+	
+	    		this.setTableContent();
+	    		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The race has been removed correctly.");
+	    	}
     	}
     }
     
@@ -102,8 +112,8 @@ public class RacesController {
     public void insertBoatRegistration() {
     	Race race = this.racesTable.getSelectionModel().getSelectedItem();
     	
-    	Date today = this.app.getZeroTimeDate(new Date());
-    	Date endDateRegistration = this.app.getZeroTimeDate(race.getEndDateRegistration());
+    	Date today = this.app.getZeroTimeCalendar(new Date()).getTime();
+    	Date endDateRegistration = this.app.getZeroTimeCalendar(race.getEndDateRegistration()).getTime();
     	
     	if (race != null) {
 			if (endDateRegistration.before(today)) {
@@ -175,21 +185,6 @@ public class RacesController {
         
         this.racesTable.refresh();
 		this.racesTable.setItems(races);
-    }
-    
-    /**
-     * Removes a selected race from the table. 
-    **/
-    public void removeRace() {
-    	int id = this.racesTable.getSelectionModel().getSelectedItem().getId();
-    	
-    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + id, "Are you sure?");
-    	if (result.get() == ButtonType.OK){
-    		this.app.getClub().removeRace(id);
-    		this.setTableContent();
-    		
-    		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The race has been removed correctly.");
-    	}
     }
     
     /**

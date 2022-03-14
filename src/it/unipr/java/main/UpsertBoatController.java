@@ -1,6 +1,7 @@
 package it.unipr.java.main;
 
 import it.unipr.java.model.*;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -47,9 +48,7 @@ public class UpsertBoatController {
 	/**
 	 * 
 	**/
-	public void upsertBoat() {
-		Integer length = null;
-		
+	public void upsertBoat() {		
 		if (this.idBoat == null) {
 			if (this.name.getText().isEmpty() || this.length.getText().isEmpty()) {
 				this.app.showAlert(Alert.AlertType.WARNING, "Error inserting new boat.", null, "Please complete all fields.");
@@ -61,7 +60,8 @@ public class UpsertBoatController {
 				return;
 			}
 		}
-			
+		
+		Integer length = null;
 		if (!this.length.getText().isEmpty()) {
 			length = this.app.convertToInteger(this.length.getText());			
 			if (length <= 0) {
@@ -71,40 +71,46 @@ public class UpsertBoatController {
 		
 		String name = !this.name.getText().isEmpty() ? this.name.getText() : null;
 			
-		User owner = new User();
+		User user = new User();
+		Boat boat = new Boat();
 		if (this.app.getLoggedUser() instanceof Member) {
-			owner = this.app.getLoggedUser(); 
+			user = this.app.getLoggedUser(); 
 		} else {
 			if (this.idBoat == null) {
 				String emailMember = this.users.getSelectionModel().getSelectedItem().toString();
-				owner = this.app.getClub().getUserByEmail(emailMember);
+				user = this.app.getClub().getUserByEmail(emailMember);
 				
-				if (owner == null) {
+				if (user == null) {
 					this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Select the email of the owner of the boat.");
 					return;
 				}
 			} else {
-				Boat boat = this.app.getClub().getBoatById(this.idBoat);
-				owner = boat.getOwner();
+				boat = this.app.getClub().getBoatById(this.idBoat);
+				user = boat.getOwner();
 			}
 		}
 		
-		if (this.app.getClub().getBoatByName(name, owner) != null) {
+		if(!this.app.getClub().checkPaymentFee(user, null, FeeType.MEMBERSHIP)) {
+    		this.app.showAlert(Alert.AlertType.INFORMATION, "Payments error.", "Cannot save changes of this boat.", "Unpaid membership fee.");
+    		return;
+		}
+		
+		if (this.app.getClub().getBoatByName(name, user) != null) {
 			this.app.showAlert(Alert.AlertType.WARNING, "Error", null,"Already exists a boat with entered name.");
 			return;
-		} else {				
-			String message = "";
-			if (this.idBoat == null) {
-				this.app.getClub().insertBoat(name, length, owner);
-				message = "The new boat has been added correctly.";
-			} else {
-				this.app.getClub().updateBoat(this.idBoat, name, length);
-				message = "The boat has been updated correctly.";
-			}
-			
-			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, message);
-			this.app.initBoats();
+		} 	
+		
+		String message = "";
+		if (this.idBoat == null) {
+			this.app.getClub().insertBoat(name, length, user);
+			message = "The new boat has been added correctly.";
+		} else {
+			this.app.getClub().updateBoat(this.idBoat, name, length);
+			message = "The boat has been updated correctly.";
 		}
+		
+		this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, message);
+		this.app.initBoats();
 	}
 	
 	/**
@@ -114,7 +120,7 @@ public class UpsertBoatController {
 	public void setIdBoat(final Integer idBoat) {
 		this.idBoat = idBoat;
 	}
-	
+
 	/**
      * Sets the reference to the application.
      * 

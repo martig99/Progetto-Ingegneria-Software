@@ -23,7 +23,7 @@
 			<columns>
 				<TableColumn fx:id="idColumn" prefWidth="50.0" resizable="false" text="Id" />
 				<TableColumn fx:id="nameColumn" prefWidth="225.0" resizable="false" text="Name" />
-				<TableColumn fx:id="lengthColumn" prefWidth="100.0" resizable="false" text="Length" />
+				<TableColumn fx:id="lengthColumn" prefWidth="100.0" resizable="false" text="Length (mt)" />
 				<TableColumn fx:id="storageFeeColumn" prefWidth="100.0" resizable="false" text="Storage Fee" />
 				<TableColumn fx:id="ownerColumn" prefWidth="200.0" resizable="false" text="Owner" visible="false" />
 			</columns>

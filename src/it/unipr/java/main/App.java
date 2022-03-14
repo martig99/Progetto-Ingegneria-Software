@@ -17,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -406,6 +407,29 @@ public class App extends Application {
     }
 	
 	/**
+	 * 
+	**/
+	public void initNotifications() {
+		try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../../resources/NotificationsLayout.fxml"));
+            
+            AnchorPane root = (AnchorPane) loader.load();
+            Scene scene = new Scene(root);
+
+            NotificationsController controller = loader.getController();
+            controller.setApp(this);
+
+            Stage dialogStage = new Stage();
+            dialogStage.setScene(scene);
+            dialogStage.setTitle("Notifications");
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	/**
 	 * Checks if the email matches the correct format.
 	 * 
 	 * @param email the email to check. 
@@ -434,7 +458,7 @@ public class App extends Application {
 	 * @param date
 	 * @return
 	**/
-	public Date getZeroTimeDate(final Date date) {
+	public Calendar getZeroTimeCalendar(final Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		
@@ -443,7 +467,25 @@ public class App extends Application {
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		
-		return calendar.getTime();
+		return calendar;
+	}
+	
+	/**
+	 * 
+	 * @param first
+	 * @param last
+	 * @return
+	**/
+	public int getDiffYears(final Date first, final Date last) {
+	    Calendar a = this.getZeroTimeCalendar(first);
+	    Calendar b = this.getZeroTimeCalendar(last);
+	    
+	    int diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR);
+	    if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) || (a.get(Calendar.MONTH) == b.get(Calendar.MONTH) && a.get(Calendar.DATE) > b.get(Calendar.DATE))) {
+	        diff--;
+	    }
+	    
+	    return diff;
 	}
 	
 	/**

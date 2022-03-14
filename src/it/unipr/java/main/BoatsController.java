@@ -1,5 +1,7 @@
 package it.unipr.java.main;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 import it.unipr.java.model.*;
@@ -52,17 +54,40 @@ public class BoatsController {
 		
 		this.boatsTable.setOnMouseClicked(event -> {
 			if (this.boatsTable.getSelectionModel().getSelectedItem() != null) {
-				int id = this.boatsTable.getSelectionModel().getSelectedItem().getId();
-	    		
-				if (event.getClickCount() == 2) {
-	    			this.removeBoat(id);
-				}
-	    		
-				if (event.getButton() == MouseButton.SECONDARY) {
-					this.app.initUpsertBoat(id);
-				}
+				Boat boat = this.boatsTable.getSelectionModel().getSelectedItem();
+	    		if (boat != null) {
+					if (event.getClickCount() == 2) {
+		    			this.removeBoat(boat);
+					}
+		    		
+					if (event.getButton() == MouseButton.SECONDARY) {
+						this.app.initUpsertBoat(boat.getId());
+					}
+	    		}
 			}
         });
+    }
+    
+    /**
+     * Removes a selected boat from the table. 
+    **/
+    public void removeBoat(final Boat boat) {  
+    	Date today = this.app.getZeroTimeCalendar(new Date()).getTime();
+
+    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + boat.getId(), "Are you sure?");
+    	if (result.get() == ButtonType.OK){
+    		this.app.getClub().removeBoat(boat.getId());
+    		
+    		ArrayList<RaceRegistration> list = this.app.getClub().getAllRegistrationByBoat(boat);
+    		for (RaceRegistration registration: list) {
+	    		if (registration.getRace().getDate().after(today)) {
+	        		this.app.getClub().removeRaceRegistration(registration.getId());
+	        	}
+    		}
+    		
+    		this.setTableContent();
+			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The boat has been removed correctly.");
+    	}
     }
     
     /**
@@ -73,7 +98,14 @@ public class BoatsController {
 		this.nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 		this.lengthColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getLength()));
 		this.storageFeeColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getStoragFee()));
-		this.ownerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner().getEmail()));		
+		this.ownerColumn.setCellValueFactory(cellData -> {
+			Member owner = cellData.getValue().getOwner();
+			if (owner != null) {
+				return new SimpleStringProperty(owner.getEmail());
+			}
+			
+			return null;
+		});		
 	}
     
     /**
@@ -91,19 +123,6 @@ public class BoatsController {
         
         this.boatsTable.refresh();
 		this.boatsTable.setItems(boats);
-    }
-    
-    /**
-     * Removes a selected boat from the table. 
-    **/
-    public void removeBoat(final int id) {   	
-    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + id, "Are you sure?");
-    	if (result.get() == ButtonType.OK){
-    		this.app.getClub().removeBoat(id);
-    		this.setTableContent();
-    		
-			this.app.showAlert(Alert.AlertType.INFORMATION, "Excellent!", null, "The boat has been removed correctly.");
-    	}
     }
 
     /**
