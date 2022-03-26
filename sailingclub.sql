@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mar 06, 2022 alle 15:19
+-- Creato il: Mar 26, 2022 alle 15:54
 -- Versione del server: 10.4.21-MariaDB
 -- Versione PHP: 7.3.31
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `sailingclub`
 --
+CREATE DATABASE IF NOT EXISTS `sailingclub` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+USE `sailingclub`;
 
 -- --------------------------------------------------------
 
@@ -28,33 +30,27 @@ SET time_zone = "+00:00";
 --
 
 DROP TABLE IF EXISTS `boats`;
-CREATE TABLE `boats` (
-  `IdBoat` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `boats` (
+  `IdBoat` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `Length` int(11) NOT NULL,
   `Owner` int(11) NOT NULL,
-  `StatusCode` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `StatusCode` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`IdBoat`),
+  KEY `boats_ibfk_1` (`Owner`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `boats`
+--
+
+TRUNCATE TABLE `boats`;
 --
 -- Dump dei dati per la tabella `boats`
 --
 
 INSERT INTO `boats` (`IdBoat`, `Name`, `Length`, `Owner`, `StatusCode`) VALUES
-(1, 'Yacht1', 200, 1, 0),
-(2, 'Crocera', 4000, 1, 9),
-(3, 'Crocera', 10, 1, 0),
-(4, 'Yacht', 1000, 4, 9),
-(5, 'Crocera2', 100, 4, 9),
-(6, 'Battello', 1500, 4, 0),
-(10, 'Battello', 200, 4, 9),
-(11, 'Battello', 100, 7, 9),
-(12, 'Nave', 55, 7, 9),
-(13, 'Nave', 5, 1, 0),
-(14, 'Super nave', 10, 7, 0),
-(15, 'Barca ilaria', 6, 1, 0),
-(16, 'b', 10, 1, 9),
-(17, 'Battello', 1, 6, 0);
+(1, 'Classica', 7, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -63,18 +59,23 @@ INSERT INTO `boats` (`IdBoat`, `Name`, `Length`, `Owner`, `StatusCode`) VALUES
 --
 
 DROP TABLE IF EXISTS `employees`;
-CREATE TABLE `employees` (
+CREATE TABLE IF NOT EXISTS `employees` (
   `IdEmployee` int(11) NOT NULL,
-  `Administrator` tinyint(1) NOT NULL
+  `Administrator` tinyint(1) NOT NULL,
+  PRIMARY KEY (`IdEmployee`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `employees`
+--
+
+TRUNCATE TABLE `employees`;
 --
 -- Dump dei dati per la tabella `employees`
 --
 
 INSERT INTO `employees` (`IdEmployee`, `Administrator`) VALUES
-(2, 1),
-(5, 0);
+(2, 1);
 
 -- --------------------------------------------------------
 
@@ -83,22 +84,28 @@ INSERT INTO `employees` (`IdEmployee`, `Administrator`) VALUES
 --
 
 DROP TABLE IF EXISTS `fees`;
-CREATE TABLE `fees` (
-  `IdFee` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `fees` (
+  `IdFee` int(11) NOT NULL AUTO_INCREMENT,
   `Type` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `Amount` float DEFAULT NULL,
   `ValidityPeriod` int(11) DEFAULT NULL,
-  `StatusCode` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `StatusCode` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`IdFee`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `fees`
+--
+
+TRUNCATE TABLE `fees`;
 --
 -- Dump dei dati per la tabella `fees`
 --
 
 INSERT INTO `fees` (`IdFee`, `Type`, `Amount`, `ValidityPeriod`, `StatusCode`) VALUES
-(1, 'Membership', 100, 365, 0),
-(2, 'Storage', 25, 365, 0),
-(3, 'Race_Registration', NULL, NULL, 0);
+(1, 'MEMBERSHIP', 20, 365, 9),
+(2, 'STORAGE', 10, 365, 0),
+(3, 'RACE_REGISTRATION', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -107,23 +114,50 @@ INSERT INTO `fees` (`IdFee`, `Type`, `Amount`, `ValidityPeriod`, `StatusCode`) V
 --
 
 DROP TABLE IF EXISTS `members`;
-CREATE TABLE `members` (
+CREATE TABLE IF NOT EXISTS `members` (
   `IdMember` int(11) NOT NULL,
   `FiscalCode` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
-  `Address` varchar(100) COLLATE utf8_unicode_ci NOT NULL
+  `Address` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`IdMember`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `members`
+--
+
+TRUNCATE TABLE `members`;
 --
 -- Dump dei dati per la tabella `members`
 --
 
 INSERT INTO `members` (`IdMember`, `FiscalCode`, `Address`) VALUES
-(1, 'RSSLRI95A41A944A', 'Via della Pace 11, Bologna'),
-(3, 'VRDSRA91T47A944V', 'Via Galilei 2, Milano'),
-(4, 'NRELRA99E43H501F', 'Via Roma 11, Bologna'),
-(6, 'Prova', 'Questo è un vero socio'),
-(7, 'Test Registrazione', 'Via pero');
+(1, 'RSSLRI95A41A944A', 'Via Roma 1, Reggio Emilia'),
+(3, 'CRVCST00S29F463B', 'Via Alcide de Gasperi, Reggio Emilia');
 
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `notifications`
+--
+
+DROP TABLE IF EXISTS `notifications`;
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `IdNotification` int(11) NOT NULL AUTO_INCREMENT,
+  `Member` int(11) NOT NULL,
+  `Boat` int(11) DEFAULT NULL,
+  `Fee` int(11) NOT NULL,
+  `ReadStatus` tinyint(1) NOT NULL,
+  PRIMARY KEY (`IdNotification`),
+  KEY `notifications_ibfk_1` (`Boat`),
+  KEY `notifications_ibfk_2` (`Member`),
+  KEY `notifications_ibfk_3` (`Fee`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `notifications`
+--
+
+TRUNCATE TABLE `notifications`;
 -- --------------------------------------------------------
 
 --
@@ -131,8 +165,8 @@ INSERT INTO `members` (`IdMember`, `FiscalCode`, `Address`) VALUES
 --
 
 DROP TABLE IF EXISTS `payments`;
-CREATE TABLE `payments` (
-  `IdPayment` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `payments` (
+  `IdPayment` int(11) NOT NULL AUTO_INCREMENT,
   `Date` date NOT NULL,
   `Member` int(11) NOT NULL,
   `Boat` int(11) DEFAULT NULL,
@@ -141,17 +175,20 @@ CREATE TABLE `payments` (
   `ValidityStartDate` date NOT NULL,
   `ValidityEndDate` date NOT NULL,
   `Total` float NOT NULL,
-  `PaymentService` int(11) NOT NULL
+  `PaymentService` int(11) NOT NULL,
+  PRIMARY KEY (`IdPayment`),
+  KEY `Member` (`Member`),
+  KEY `Boat` (`Boat`),
+  KEY `RaceRegistration` (`RaceRegistration`),
+  KEY `PaymentService` (`PaymentService`),
+  KEY `Fee` (`Fee`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Dump dei dati per la tabella `payments`
+-- Svuota la tabella prima dell'inserimento `payments`
 --
 
-INSERT INTO `payments` (`IdPayment`, `Date`, `Member`, `Boat`, `RaceRegistration`, `Fee`, `ValidityStartDate`, `ValidityEndDate`, `Total`, `PaymentService`) VALUES
-(1, '2022-03-04', 1, NULL, NULL, 1, '2022-03-04', '2023-03-04', 100, 2),
-(2, '2022-03-05', 4, NULL, NULL, 1, '2022-03-05', '2023-03-05', 100, 2);
-
+TRUNCATE TABLE `payments`;
 -- --------------------------------------------------------
 
 --
@@ -159,11 +196,18 @@ INSERT INTO `payments` (`IdPayment`, `Date`, `Member`, `Boat`, `RaceRegistration
 --
 
 DROP TABLE IF EXISTS `paymentservices`;
-CREATE TABLE `paymentservices` (
-  `IdPaymentService` int(11) NOT NULL,
-  `Description` varchar(50) COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE IF NOT EXISTS `paymentservices` (
+  `IdPaymentService` int(11) NOT NULL AUTO_INCREMENT,
+  `Description` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`IdPaymentService`) USING BTREE,
+  UNIQUE KEY `Description` (`Description`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `paymentservices`
+--
+
+TRUNCATE TABLE `paymentservices`;
 --
 -- Dump dei dati per la tabella `paymentservices`
 --
@@ -179,13 +223,28 @@ INSERT INTO `paymentservices` (`IdPaymentService`, `Description`) VALUES
 --
 
 DROP TABLE IF EXISTS `raceregistrations`;
-CREATE TABLE `raceregistrations` (
-  `IdRegistration` int(11) NOT NULL,
-  `DateRegistration` datetime NOT NULL,
+CREATE TABLE IF NOT EXISTS `raceregistrations` (
+  `IdRegistration` int(11) NOT NULL AUTO_INCREMENT,
+  `Date` date NOT NULL,
   `Race` int(11) NOT NULL,
   `Boat` int(11) NOT NULL,
-  `StatusCode` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `StatusCode` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`IdRegistration`),
+  KEY `raceregistrations_ibfk_1` (`Race`),
+  KEY `raceregistrations_ibfk_2` (`Boat`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `raceregistrations`
+--
+
+TRUNCATE TABLE `raceregistrations`;
+--
+-- Dump dei dati per la tabella `raceregistrations`
+--
+
+INSERT INTO `raceregistrations` (`IdRegistration`, `Date`, `Race`, `Boat`, `StatusCode`) VALUES
+(1, '2022-03-26', 1, 1, 9);
 
 -- --------------------------------------------------------
 
@@ -194,15 +253,29 @@ CREATE TABLE `raceregistrations` (
 --
 
 DROP TABLE IF EXISTS `races`;
-CREATE TABLE `races` (
-  `IdRace` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `races` (
+  `IdRace` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `Place` varchar(70) COLLATE utf8_unicode_ci NOT NULL,
-  `DateRace` datetime NOT NULL,
+  `Date` date NOT NULL,
   `BoatsNumber` int(11) NOT NULL,
   `RegistrationFee` float NOT NULL,
-  `StatusCode` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `EndDateRegistration` date NOT NULL,
+  `StatusCode` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`IdRace`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `races`
+--
+
+TRUNCATE TABLE `races`;
+--
+-- Dump dei dati per la tabella `races`
+--
+
+INSERT INTO `races` (`IdRace`, `Name`, `Place`, `Date`, `BoatsNumber`, `RegistrationFee`, `EndDateRegistration`, `StatusCode`) VALUES
+(1, 'Nettuno', 'Rimini', '2022-03-20', 7, 15, '2022-03-15', 0);
 
 -- --------------------------------------------------------
 
@@ -211,15 +284,22 @@ CREATE TABLE `races` (
 --
 
 DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `IdUser` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `users` (
+  `IdUser` int(11) NOT NULL AUTO_INCREMENT,
   `FirstName` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `LastName` varchar(70) COLLATE utf8_unicode_ci NOT NULL,
   `Email` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `Password` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-  `StatusCode` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `StatusCode` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`IdUser`),
+  UNIQUE KEY `IdUser` (`IdUser`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `users`
+--
+
+TRUNCATE TABLE `users`;
 --
 -- Dump dei dati per la tabella `users`
 --
@@ -227,127 +307,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`IdUser`, `FirstName`, `LastName`, `Email`, `Password`, `StatusCode`) VALUES
 (1, 'Ilaria', 'Rossi', 'ilaria.rossi@gmail.com', 'aaaaaaaaa', 0),
 (2, 'Marco', 'Bianchi', 'marco.bianchi@gmail.com', '12345', 0),
-(3, 'Sara', 'Verdi', 'verdisara@gmail.com', '0000', 0),
-(4, 'Neri', 'Laura', 'neri.laura@gmail.com', '0000', 0),
-(5, 'Prova', 'Socio', 'prova@socio.it', '1234', 0),
-(6, 'Socio', 'Ciao', 'socio@ciao.it', 'aaa', 0),
-(7, 'Nuovo', 'Utente', 'nuovo@utente.it', 'a', 0);
-
---
--- Indici per le tabelle scaricate
---
-
---
--- Indici per le tabelle `boats`
---
-ALTER TABLE `boats`
-  ADD PRIMARY KEY (`IdBoat`),
-  ADD KEY `boats_ibfk_1` (`Owner`);
-
---
--- Indici per le tabelle `employees`
---
-ALTER TABLE `employees`
-  ADD PRIMARY KEY (`IdEmployee`);
-
---
--- Indici per le tabelle `fees`
---
-ALTER TABLE `fees`
-  ADD PRIMARY KEY (`IdFee`);
-
---
--- Indici per le tabelle `members`
---
-ALTER TABLE `members`
-  ADD PRIMARY KEY (`IdMember`),
-  ADD UNIQUE KEY `FiscalCode` (`FiscalCode`);
-
---
--- Indici per le tabelle `payments`
---
-ALTER TABLE `payments`
-  ADD PRIMARY KEY (`IdPayment`),
-  ADD KEY `Member` (`Member`),
-  ADD KEY `Boat` (`Boat`),
-  ADD KEY `RaceRegistration` (`RaceRegistration`),
-  ADD KEY `PaymentService` (`PaymentService`),
-  ADD KEY `Fee` (`Fee`);
-
---
--- Indici per le tabelle `paymentservices`
---
-ALTER TABLE `paymentservices`
-  ADD PRIMARY KEY (`IdPaymentService`) USING BTREE,
-  ADD UNIQUE KEY `Description` (`Description`);
-
---
--- Indici per le tabelle `raceregistrations`
---
-ALTER TABLE `raceregistrations`
-  ADD PRIMARY KEY (`IdRegistration`),
-  ADD KEY `Race` (`Race`),
-  ADD KEY `Boat` (`Boat`);
-
---
--- Indici per le tabelle `races`
---
-ALTER TABLE `races`
-  ADD PRIMARY KEY (`IdRace`);
-
---
--- Indici per le tabelle `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`IdUser`),
-  ADD UNIQUE KEY `Email` (`Email`),
-  ADD UNIQUE KEY `IdUser` (`IdUser`);
-
---
--- AUTO_INCREMENT per le tabelle scaricate
---
-
---
--- AUTO_INCREMENT per la tabella `boats`
---
-ALTER TABLE `boats`
-  MODIFY `IdBoat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- AUTO_INCREMENT per la tabella `fees`
---
-ALTER TABLE `fees`
-  MODIFY `IdFee` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT per la tabella `payments`
---
-ALTER TABLE `payments`
-  MODIFY `IdPayment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT per la tabella `paymentservices`
---
-ALTER TABLE `paymentservices`
-  MODIFY `IdPaymentService` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT per la tabella `raceregistrations`
---
-ALTER TABLE `raceregistrations`
-  MODIFY `IdRegistration` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT per la tabella `races`
---
-ALTER TABLE `races`
-  MODIFY `IdRace` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT per la tabella `users`
---
-ALTER TABLE `users`
-  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+(3, 'Marco', 'Rossi', 'marco.rossi@gmail.com', '1234', 0);
 
 --
 -- Limiti per le tabelle scaricate
@@ -372,6 +332,14 @@ ALTER TABLE `members`
   ADD CONSTRAINT `members_ibfk_1` FOREIGN KEY (`IdMember`) REFERENCES `users` (`IdUser`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
+-- Limiti per la tabella `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`Boat`) REFERENCES `boats` (`IdBoat`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`Member`) REFERENCES `members` (`IdMember`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `notifications_ibfk_3` FOREIGN KEY (`Fee`) REFERENCES `fees` (`IdFee`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
 -- Limiti per la tabella `payments`
 --
 ALTER TABLE `payments`
@@ -385,8 +353,8 @@ ALTER TABLE `payments`
 -- Limiti per la tabella `raceregistrations`
 --
 ALTER TABLE `raceregistrations`
-  ADD CONSTRAINT `raceregistrations_ibfk_1` FOREIGN KEY (`Race`) REFERENCES `races` (`IdRace`),
-  ADD CONSTRAINT `raceregistrations_ibfk_2` FOREIGN KEY (`Boat`) REFERENCES `boats` (`IdBoat`);
+  ADD CONSTRAINT `raceregistrations_ibfk_1` FOREIGN KEY (`Race`) REFERENCES `races` (`IdRace`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `raceregistrations_ibfk_2` FOREIGN KEY (`Boat`) REFERENCES `boats` (`IdBoat`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

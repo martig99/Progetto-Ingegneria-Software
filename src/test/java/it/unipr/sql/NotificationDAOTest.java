@@ -33,8 +33,8 @@ public class NotificationDAOTest extends UtilTest {
 		assertTrue(result == true, result + " should equal " + true);
 	}
 	
-	@Test
-	public void updateReadStatusNotificationTest() {
+	@AfterAll
+	public static void updateReadStatusNotificationTest() {
 		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
 		Fee fee = UtilTest.getClub().getFeeDAO().getFeeByType(feeType);
 		

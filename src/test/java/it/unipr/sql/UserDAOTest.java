@@ -146,7 +146,7 @@ public class UserDAOTest extends UtilTest {
 	
 	@Test
 	public void updateFiscalCodeTest() {
-		fiscalCode = "CRVCST00S29F463B";
+		fiscalCode = "RSSMRC83C17F205Y";
 		
 		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
 		assertNull(member);
