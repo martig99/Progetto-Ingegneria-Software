@@ -11,7 +11,7 @@ public class PaymentDAOTest extends UtilTest {
 	private static String fiscalCode = "RSSLRI95A41A944A";
 		
 	@BeforeAll
-	public static void payFee() {
+	public static void payMembershipFee() {
 		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
 		PaymentService paymentService = UtilTest.getClub().getPaymentDAO().getPaymentServiceByDescription("Transfer Receipt");
 		Fee fee = UtilTest.getClub().getFeeDAO().getFeeByType(FeeType.MEMBERSHIP);

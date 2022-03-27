@@ -41,7 +41,7 @@ public class NotificationsController {
 
         String textStorageFees = "", textMembershipFee = "";
         
-		ArrayList<Notification> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NOTIFICATIONS, user), Notification.class);
+		ArrayList<Notification> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NOTIFICATIONS, user, null), Notification.class);
         if (list.size() > 0) {
         	for (Notification notification: list) {
         		if (notification.getFee().getType() == FeeType.MEMBERSHIP) {

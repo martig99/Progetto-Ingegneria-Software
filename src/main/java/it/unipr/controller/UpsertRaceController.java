@@ -89,7 +89,7 @@ public class UpsertRaceController {
 		Race race = new Race(idRace, name, place, dateRace, boatsNumber, registrationFee, endDateRegistration, StatusCode.ACTIVE);
 		RequestType type = this.race == null ? RequestType.INSERT_RACE : RequestType.UPDATE_RACE;
 		
-		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(type, race)));
+		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(type, race, null)));
 		if (result)
 			this.app.initRaces();
 	}

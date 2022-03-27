@@ -92,7 +92,7 @@ public class MainController {
      * @return
     **/
     public int getNumberNotifications() {
-		Request request = new Request(RequestType.GET_ALL_NOTIFICATIONS, this.app.getLoggedUser());
+		Request request = new Request(RequestType.GET_ALL_NOTIFICATIONS, this.app.getLoggedUser(), null);
 		request.setBackgroundRequest(true);
 		
 		ArrayList<Notification> list = ClientHelper.getListResponse(request, Notification.class);

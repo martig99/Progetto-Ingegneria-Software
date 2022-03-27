@@ -19,9 +19,6 @@ public class RaceDAOTest extends UtilTest {
 	
 	@BeforeAll
 	public static void insertRaceTest() {
-		Race race = UtilTest.getClub().getRaceDAO().getRaceByDate(date);		
-		assertNull(race);
-		
 		UtilTest.getClub().getRaceDAO().insertRace(name, place, date, boatsNumber, registrationFee, endDateRegistration);
 		
 		Race newRace = UtilTest.getClub().getRaceDAO().getRaceByDate(date);
@@ -78,9 +75,6 @@ public class RaceDAOTest extends UtilTest {
 	@Test
 	public void updateDateTest() {
 		date = Date.valueOf("2022-03-10");
-		
-		Race race = UtilTest.getClub().getRaceDAO().getRaceByDate(date);		
-		assertNull(race);
 		
 		UtilTest.getClub().getRaceDAO().updateRace(id, null, null, date, 0, null, null);
 		
@@ -152,9 +146,6 @@ public class RaceDAOTest extends UtilTest {
 		registrationFee = 15;
 		endDateRegistration = Date.valueOf("2022-03-15");
 		
-		Race race = UtilTest.getClub().getRaceDAO().getRaceByDate(date);		
-		assertNull(race);
-		
 		UtilTest.getClub().getRaceDAO().updateRace(id, name, place, date, boatsNumber, registrationFee, endDateRegistration);
 		
 		Race newRace = UtilTest.getClub().getRaceDAO().getRaceById(id);
@@ -172,7 +163,7 @@ public class RaceDAOTest extends UtilTest {
 	public static void removeRaceTest() {
 		UtilTest.getClub().getRaceDAO().removeRace(id);
 		
-		Race race = UtilTest.getClub().getRaceDAO().getRaceByDate(date);
+		Race race = UtilTest.getClub().getRaceDAO().getRaceById(id);
 		assertNull(race);
 	}
 

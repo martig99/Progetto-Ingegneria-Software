@@ -81,7 +81,7 @@ public class RacesController {
      * @return
     **/
     public boolean checkOpenRace(final Date date) {
-    	Object obj = ClientHelper.getResponse(new Request(RequestType.CHECK_OPEN_REGISTRATION, date));
+    	Object obj = ClientHelper.getResponse(new Request(RequestType.CHECK_OPEN_REGISTRATION, date, null));
 		if (obj instanceof Response) {
 			Response response = (Response) obj;
 			
@@ -101,7 +101,7 @@ public class RacesController {
     public void removeRace(final Race race) {
        	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + race.getId(), "Are you sure?");
     	if (result.get() == ButtonType.OK){
-    		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_RACE, race)));
+    		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_RACE, race, null)));
     		this.setTableContent();
     	}    	
     }
@@ -132,7 +132,7 @@ public class RacesController {
                         } else {
                         	Race race = this.getTableView().getItems().get(getIndex());                       	
                             btn.setOnAction(event -> {
-                            	ResponseType result = ClientHelper.getResponseType(new Request(RequestType.EXIST_REGISTRATIONS_FOR_RACE, race));
+                            	ResponseType result = ClientHelper.getResponseType(new Request(RequestType.EXIST_REGISTRATIONS_FOR_RACE, race, null));
                             	if (result == ResponseType.OK) {
                             		app.initRaceRegistrations(race);
                             	} else {

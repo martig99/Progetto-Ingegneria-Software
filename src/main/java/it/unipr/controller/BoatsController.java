@@ -68,7 +68,7 @@ public class BoatsController {
     public void removeBoat(final Boat boat) {  
     	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + boat.getId(), "Are you sure?");
     	if (result.get() == ButtonType.OK){
-    		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_BOAT, boat)));
+    		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_BOAT, boat, null)));
     		this.setTableContent();
     	}
     }
@@ -81,7 +81,7 @@ public class BoatsController {
 		this.nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 		this.lengthColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getLength()));
 		
-		Fee fee = ClientHelper.getObjectResponse(new Request(RequestType.GET_FEE_BY_TYPE, FeeType.STORAGE), Fee.class);
+		Fee fee = ClientHelper.getObjectResponse(new Request(RequestType.GET_FEE_BY_TYPE, FeeType.STORAGE, null), Fee.class);
 		this.storageFeeColumn.setCellValueFactory(cellData -> new SimpleFloatProperty(this.app.setFloatFormat(cellData.getValue().getLength() * fee.getAmount())));
 		
 		this.ownerColumn.setCellValueFactory(cellData -> {
@@ -104,7 +104,7 @@ public class BoatsController {
         }
 
     	ObservableList<Boat> boats = FXCollections.<Boat>observableArrayList();
-        boats.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_BOATS, user), Boat.class));
+        boats.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_BOATS, user, null), Boat.class));
 		this.boatsTable.setItems(boats);
     }
 

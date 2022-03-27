@@ -78,7 +78,7 @@ public class UpsertBoatController {
 		} else {
 			if (this.boat == null) {
 				String emailMember = this.users.getSelectionModel().getSelectedItem().toString();
-				user = ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember), User.class);
+				user = ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember, null), User.class);
 				
 				if (user == null) {
 					this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the user.");
@@ -89,7 +89,7 @@ public class UpsertBoatController {
 		
 		RequestType type = this.boat == null ? RequestType.INSERT_BOAT : RequestType.UPDATE_BOAT;	
 		Member member = new Member(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-		Request request = new Request(type, new Boat(idBoat, name, length, member, StatusCode.ACTIVE));
+		Request request = new Request(type, new Boat(idBoat, name, length, member, StatusCode.ACTIVE), null);
 		
 		boolean result = this.app.getMessage(ClientHelper.getResponseType(request));
 		if (result)

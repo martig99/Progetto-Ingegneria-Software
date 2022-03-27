@@ -2,6 +2,12 @@ package main.java.it.unipr.message;
 
 import java.io.Serializable;
 
+/**
+ * The class {@code Request} provides a simplified model of a request message.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class Request implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -24,22 +30,10 @@ public class Request implements Serializable {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param messageType
+	 * @param messageType the type of message requested.
 	**/
 	public Request(final RequestType messageType) {
 		this.setRequestType(messageType);
-		this.setBackgroundRequest(false);
-	}
-	
-	/**
-	 * Class constructor.
-	 * 
-	 * @param messageType
-	 * @param object
-	**/
-	public Request(final RequestType messageType, final Serializable primaryObject) {
-		this.setRequestType(messageType);
-		this.setPrimaryObject(primaryObject);
 		this.setBackgroundRequest(false);
 	}
 	

@@ -65,7 +65,7 @@ public class RaceRegistrationsController {
      * @return
     **/
     public boolean checkOpenRace(final Date date) {
-    	Object obj = ClientHelper.getResponse(new Request(RequestType.CHECK_OPEN_REGISTRATION, date));
+    	Object obj = ClientHelper.getResponse(new Request(RequestType.CHECK_OPEN_REGISTRATION, date, null));
 		if (obj instanceof Response) {
 			Response response = (Response) obj;
 			
@@ -145,7 +145,7 @@ public class RaceRegistrationsController {
 	**/
     public void setTableContent(final Race race) {    	
     	ObservableList<RaceRegistration> registrations = FXCollections.<RaceRegistration>observableArrayList();      	
-        registrations.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_REGISTRATION_BY_RACE, race), RaceRegistration.class));
+        registrations.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_REGISTRATION_BY_RACE, race, null), RaceRegistration.class));
 		this.registrationsTable.setItems(registrations);
     }
     

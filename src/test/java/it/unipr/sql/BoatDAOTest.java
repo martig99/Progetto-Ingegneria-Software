@@ -17,9 +17,6 @@ public class BoatDAOTest extends UtilTest {
 	public static void insertBoatTest() {
 		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
 		
-		Boat boat = UtilTest.getClub().getBoatDAO().getBoatByName(nameBoat, member);
-		assertNull(boat);
-		
 		UtilTest.getClub().getBoatDAO().insertBoat(nameBoat, lengthBoat, member);
 		
 		Boat newBoat = UtilTest.getClub().getBoatDAO().getBoatByName(nameBoat, member);
@@ -41,12 +38,8 @@ public class BoatDAOTest extends UtilTest {
 	}
 	
 	@Test
-	public void updateNameBoatTest() {
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
-		
+	public void updateNameBoatTest() {		
 		nameBoat = "Classica";
-		Boat boat = UtilTest.getClub().getBoatDAO().getBoatByName(nameBoat, member);
-		assertNull(boat);
 		
 		UtilTest.getClub().getBoatDAO().updateBoat(id, nameBoat, null);
 		
@@ -71,14 +64,9 @@ public class BoatDAOTest extends UtilTest {
 	}	
 	
 	@Test
-	public void updateBoatTest() {
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
-		
+	public void updateBoatTest() {	
 		nameBoat = "Yacht 100";
 		lengthBoat = 7;
-				
-		Boat boat = UtilTest.getClub().getBoatDAO().getBoatByName(nameBoat, member);
-		assertNull(boat);
 				
 		UtilTest.getClub().getBoatDAO().updateBoat(id, nameBoat, lengthBoat);
 		

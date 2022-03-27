@@ -44,7 +44,7 @@ public class UpsertRaceRegistrationController {
 					
 					if (newEmail != null) {
 						this.boats.setDisable(false);
-						this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, newEmail), User.class));
+						this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, newEmail, null), User.class));
 					}
 				}
 			});
@@ -72,7 +72,7 @@ public class UpsertRaceRegistrationController {
 		} else {
 			if (this.registration == null) {
 				String emailMember = this.members.getSelectionModel().getSelectedItem().toString();
-				user = (User) ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember), User.class);
+				user = (User) ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember, null), User.class);
 	    		if (user == null) {
 	    			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the club member.");
 	    			return;
@@ -95,7 +95,7 @@ public class UpsertRaceRegistrationController {
 		PaymentService paymentService = null;
 		if (this.registration == null) {
 			String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
-			paymentService = ClientHelper.getObjectResponse(new Request(RequestType.GET_PAYMENT_SERVICE_BY_DESCRIPTION, descriptionPaymentService), PaymentService.class);
+			paymentService = ClientHelper.getObjectResponse(new Request(RequestType.GET_PAYMENT_SERVICE_BY_DESCRIPTION, descriptionPaymentService, null), PaymentService.class);
 			if (paymentService == null) {
 				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the payment service.");
 				return;
@@ -124,7 +124,7 @@ public class UpsertRaceRegistrationController {
 	**/
 	public void setBoats(final User owner) {
 		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();
-    	listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, owner), String.class));
+    	listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, owner, null), String.class));
 		this.boats.setItems(listBoat);
 	}
 	

@@ -37,7 +37,7 @@ public class NotifyPaymentController {
 			.addListener((ObservableValue<? extends String> observable, String oldEmail, String newEmail) -> {
 				if (this.feeType == FeeType.STORAGE && newEmail != null) {
 					this.boats.setDisable(false);
-					this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, newEmail), User.class));
+					this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, newEmail, null), User.class));
 				}
 			});
 
@@ -59,7 +59,7 @@ public class NotifyPaymentController {
 			user = this.app.getLoggedUser();
 		} else {
 			String emailMember = this.members.getSelectionModel().getSelectedItem().toString();
-			user = ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember), User.class);
+			user = ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember, null), User.class);
 			if (user == null) {
     			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the user.");
     			return;
@@ -81,9 +81,9 @@ public class NotifyPaymentController {
 				
 		notification.setMember(new Member(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getEmail()));
 		notification.setBoat(boat);
-		notification.setFee(ClientHelper.getObjectResponse(new Request(RequestType.GET_FEE_BY_TYPE, this.feeType), Fee.class));
+		notification.setFee(ClientHelper.getObjectResponse(new Request(RequestType.GET_FEE_BY_TYPE, this.feeType, null), Fee.class));
 		
-		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.NOTIFY_PAYMENT, notification)));		
+		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.NOTIFY_PAYMENT, notification, null)));		
 		if (result)
 			this.app.initPayments(this.feeType);
 	}
@@ -102,7 +102,7 @@ public class NotifyPaymentController {
 	**/
 	public void setBoats(final User owner) {
 		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();
-        listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, owner), String.class));
+        listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, owner, null), String.class));
 		this.boats.setItems(listBoat);
 	}
 

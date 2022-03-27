@@ -97,7 +97,7 @@ public class UsersController {
 			
 	    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove an user", "You are removing the user with unique identifier " + selectedUser.getId(), "Are you sure?");
 	    	if (result.get() == ButtonType.OK) {
-	    		Request request = new Request(RequestType.REMOVE_USER, selectedUser.getId());
+	    		Request request = new Request(RequestType.REMOVE_USER, selectedUser.getId(), null);
 	    		this.app.getMessage(ClientHelper.getResponseType(request));
 	    		this.setTableContent(this.userType);
 	    	}
@@ -166,7 +166,7 @@ public class UsersController {
 	**/
     public void setTableContent(final UserType userType) { 
     	ObservableList<User> users = FXCollections.<User>observableArrayList(); 
-    	ArrayList<User> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_USERS, userType), User.class);
+    	ArrayList<User> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_USERS, userType, null), User.class);
     	users.addAll(list);
 		this.usersTable.setItems(users);
     }

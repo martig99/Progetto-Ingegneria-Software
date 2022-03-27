@@ -114,7 +114,7 @@ public class UpsertUserController {
 	}	
 	
 	public ResponseType updateUser(final int id, final String firstName, final String lastName, final String email, final String password) {
-		Request request = new Request(RequestType.UPDATE_USER, new User(id, firstName, lastName, email, password));
+		Request request = new Request(RequestType.UPDATE_USER, new User(id, firstName, lastName, email, password), null);
 		return ClientHelper.getResponseType(request);
 	}
 	

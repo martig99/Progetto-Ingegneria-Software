@@ -24,13 +24,15 @@ public class ServerThread implements Runnable {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param s  the server.
-	 * @param c  the client socket.
+	 * @param client the client socket.
 	**/
 	public ServerThread(final Socket client) {
 		this.socket = client;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	**/
 	@Override
 	public void run() {
 		try {

@@ -21,12 +21,6 @@ public class UserDAOTest extends UtilTest {
 	
 	@BeforeAll
 	public static void createUserTest() {
-		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email);
-		assertNull(user);
-		
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
-		assertNull(member);
-		
 		UtilTest.getClub().getUserDAO().createUser(firstName, lastName, email, password, fiscalCode, address, false, userType);
 		
 		Member newMember = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
@@ -94,9 +88,6 @@ public class UserDAOTest extends UtilTest {
 	public void updateEmailTest() {
 		email = "luigi.pisano@gmail.com";
 		
-		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email);
-		assertNull(user);
-		
 		UtilTest.getClub().getUserDAO().updateUser(id, null, null, email, null);
 		
 		User newUser = UtilTest.getClub().getUserDAO().getUserById(id);
@@ -130,9 +121,6 @@ public class UserDAOTest extends UtilTest {
 		email = "marco.rossi@gmail.com";
 		password = "1234";
 		
-		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email);
-		assertNull(user);
-		
 		UtilTest.getClub().getUserDAO().updateUser(id, firstName, lastName, email, password);
 		
 		User newUser = UtilTest.getClub().getUserDAO().getUserById(id);
@@ -147,9 +135,6 @@ public class UserDAOTest extends UtilTest {
 	@Test
 	public void updateFiscalCodeTest() {
 		fiscalCode = "RSSMRC83C17F205Y";
-		
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
-		assertNull(member);
 		
 		UtilTest.getClub().getUserDAO().updateMember(id, fiscalCode, null);
 		
@@ -177,9 +162,6 @@ public class UserDAOTest extends UtilTest {
 	public void updateMemberTest() {
 		fiscalCode = "ANRRSS97R12H223L";
 		address = "Via Roma 17, Parma";
-		
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
-		assertNull(member);
 		
 		UtilTest.getClub().getUserDAO().updateMember(id, fiscalCode, address);
 		

@@ -69,7 +69,7 @@ public class UpdateFeeController {
 		}
 		
 		Fee newFee = new Fee(this.fee.getId(), this.fee.getType(), amount, validityPeriod, StatusCode.ACTIVE);
-		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.UPDATE_FEE, newFee)));
+		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.UPDATE_FEE, newFee, null)));
 		if (result) {
 			this.app.initFees();
 		}
