@@ -1,7 +1,8 @@
 package main.java.it.unipr.model;
 
 /**
- * The class {@code Member} provides an implementation of a model of a club member and extends the class {@code User}.
+ * The class {@code Member} provides an implementation of a model of a club member.
+ * This class extends the class {@code User}.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -25,14 +26,15 @@ public class Member extends User {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param id the member's id.
-	 * @param firstName the member's first name.
-	 * @param lastName the member's last name.
-	 * @param email the member's email.
-	 * @param password the member's password.
+	 * @param id the unique identifier of the user.
+	 * @param firstName the first name of the user.
+	 * @param lastName the last name of the user.
+	 * @param email the email address of the user.
+	 * @param password the password of the user.
+	 * @param statusCode the status code of the user.
 	**/
-	public Member (final int id, final String firstName, final String lastName, final String email, final String password) {
-		super(id, firstName, lastName, email, password);
+	public Member(final int id, final String firstName, final String lastName, final String email, final String password, final StatusCode statusCode) {
+		super(id, firstName, lastName, email, password, statusCode);
 		this.setFiscalCode("");
 		this.setAddress("");
 	}
@@ -40,22 +42,23 @@ public class Member extends User {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param id the member's id.
-	 * @param firstName the member's first name.
-	 * @param lastName the member's last name.
-	 * @param email the member's email.
-	 * @param password the member's password.
-	 * @param fiscalCode the member's fiscal code.
-	 * @param address the member's address.
+	 * @param id the unique identifier of the user.
+	 * @param firstName the first name of the user.
+	 * @param lastName the last name of the user.
+	 * @param email the email address of the user.
+	 * @param password the password of the user.
+	 * @param fiscalCode the fiscal code of the member.
+	 * @param address the address of the member.
+	 * @param statusCode the status code of the user.
 	**/
-	public Member (final int id, final String firstName, final String lastName, final String email, final String password, final String fiscalCode, final String address) {
-		super(id, firstName, lastName, email, password);
+	public Member (final int id, final String firstName, final String lastName, final String email, final String password, final String fiscalCode, final String address, final StatusCode statusCode) {
+		super(id, firstName, lastName, email, password, statusCode);
 		this.setFiscalCode(fiscalCode);
 		this.setAddress(address);
 	}
 	
 	/**
-	 * Gets the member's fiscal code.
+	 * Gets the fiscal code of the member.
 	 *
 	 * @return the fiscal code.
 	**/
@@ -64,7 +67,7 @@ public class Member extends User {
 	}
 
 	/**
-	 * Sets the member's fiscal code.
+	 * Sets the fiscal code of the member.
 	 * 
 	 * @param fiscalCode the new fiscal code.
 	**/
@@ -73,7 +76,7 @@ public class Member extends User {
 	}
 	
 	/**
-	 * Gets the member's address.
+	 * Gets the address of the member.
 	 *
 	 * @return the address.
 	**/
@@ -82,7 +85,7 @@ public class Member extends User {
 	}
 
 	/**
-	 * Sets the member's address.
+	 * Sets the address of the member.
 	 * 
 	 * @param fiscalCode the new address.
 	**/

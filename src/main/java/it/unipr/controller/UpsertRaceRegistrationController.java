@@ -13,7 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.text.*;
 
 /**
- * The class {@code UpsertBoatRegisterController} supports registration of a boat at a race.
+ * The class {@code UpsertBoatRegisterController} supports the section for the insertion or updating of a race registration.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -33,6 +33,9 @@ public class UpsertRaceRegistrationController {
 	@FXML
 	private Text title, link;
 	
+	/**
+	 * {@inheritDoc}
+	**/
 	@FXML
     private void initialize() {	
 		this.members.getSelectionModel().selectedItemProperty()
@@ -44,13 +47,17 @@ public class UpsertRaceRegistrationController {
 					
 					if (newEmail != null) {
 						this.boats.setDisable(false);
-						this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, newEmail, null), User.class));
+						this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, Arrays.asList(newEmail, UserType.MEMBER)), Member.class));
 					}
 				}
 			});
 
-		this.saveButton.setOnMouseClicked(event -> {    		
-    		this.upsertRaceRegistration();
+		this.saveButton.setOnMouseClicked(event -> {    	
+			if (this.registration == null) {
+				this.insertRaceRegistration();
+			} else {
+				this.updateRaceRegistration();
+			}
         });
 		
 		this.link.setOnMouseClicked(event -> {  
@@ -63,55 +70,39 @@ public class UpsertRaceRegistrationController {
     }
 	
 	/**
-	 * 
+	 * Performs the insertion of the race registration.
 	**/
-	public void upsertRaceRegistration() {
-		User user = null;
-		if (this.app.getLoggedUser() instanceof Member) { 
-			user = (User) this.app.getLoggedUser();
-		} else {
-			if (this.registration == null) {
-				String emailMember = this.members.getSelectionModel().getSelectedItem().toString();
-				user = (User) ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember, null), User.class);
-	    		if (user == null) {
-	    			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the club member.");
-	    			return;
-	    		}
-			} else {
-				user = (User) this.registration.getBoat().getOwner();
-			}
-		}
-				
-		Boat boat = null;
+	public void insertRaceRegistration() {
+		String emailMember = (this.app.getLoggedUser() instanceof Member) ? this.app.getLoggedUser().getEmail() : this.members.getSelectionModel().getSelectedItem().toString();
 		String nameBoat = this.boats.getSelectionModel().getSelectedItem().toString();
-		boat = ClientHelper.getObjectResponse(new Request(RequestType.GET_BOAT_BY_NAME, nameBoat, user), Boat.class);
-		if (boat == null) {
-			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the boat.");
-			return;
-		}
-		
-		int idRegistration = this.registration == null ? 0 : this.registration.getId();
-		
-		PaymentService paymentService = null;
-		if (this.registration == null) {
-			String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
-			paymentService = ClientHelper.getObjectResponse(new Request(RequestType.GET_PAYMENT_SERVICE_BY_DESCRIPTION, descriptionPaymentService, null), PaymentService.class);
-			if (paymentService == null) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the payment service.");
-				return;
-			}
-		}
-		
-		RaceRegistration newRegistration = new RaceRegistration(idRegistration, new Date(), this.race, boat, StatusCode.ACTIVE);
-		RequestType type = this.registration == null ? RequestType.INSERT_RACE_REGISTRATION : RequestType.UPDATE_RACE_REGISTRATION;
+		String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
 
-		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(type, newRegistration, paymentService)));
+		boolean result = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.INSERT_RACE_REGISTRATION, Arrays.asList(emailMember, nameBoat, descriptionPaymentService, this.race))));
 		if (result)
 			this.app.initRaceRegistrations(this.race);
 	}
 	
 	/**
-	 * 
+	 * Performs the updating of the race registration.
+	**/
+	public void updateRaceRegistration() {
+		String emailMember;
+		if (this.app.getLoggedUser() instanceof Member) { 
+			emailMember = this.app.getLoggedUser().getEmail();
+		} else {
+			emailMember = this.registration.getBoat().getOwner().getEmail();
+		}
+		
+		String nameBoat = this.boats.getSelectionModel().getSelectedItem().toString();
+		
+		boolean result = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.UPDATE_RACE_REGISTRATION, Arrays.asList(this.registration.getId(), emailMember, nameBoat, this.race))));
+		if (result)
+			this.app.initRaceRegistrations(this.race);
+	}
+	
+	
+	/**
+	 * Sets the email address of all users in the list.
 	**/
 	public void setMembers() {
     	ObservableList<String> listUser = FXCollections.<String>observableArrayList();
@@ -120,16 +111,16 @@ public class UpsertRaceRegistrationController {
 	}
 	
 	/**
-	 * 
+	 * Sets the name of all the boats that belong to the logged in user or to a user selected from the list of members.
 	**/
 	public void setBoats(final User owner) {
-		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();
-    	listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, owner, null), String.class));
+		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();		
+    	listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, Arrays.asList(owner)), String.class));
 		this.boats.setItems(listBoat);
 	}
 	
 	/**
-	 * 
+	 * Sets the description of all payment services in the list.
 	**/
 	public void setPaymentServices() {
 		ObservableList<String> listPaymentService = FXCollections.<String>observableArrayList();
@@ -138,19 +129,21 @@ public class UpsertRaceRegistrationController {
 	}
 	
 	/**
+	 * Sets the race registration to insert or update.
 	 * 
-	 * @param idRace
-	**/
-	public void setRace(final Race race) {
-		this.race = race;
-	}
-	
-	/**
-	 * 
-	 * @param idRegistration
+	 * @param registration the race registration.
 	**/
 	public void setRegistration(final RaceRegistration registration) {
 		this.registration = registration;
+	}
+	
+	/**
+	 * Sets the race to which the registration refer.
+	 * 
+	 * @param race the race.
+	**/
+	public void setRace(final Race race) {
+		this.race = race;
 	}
 	
 	/**

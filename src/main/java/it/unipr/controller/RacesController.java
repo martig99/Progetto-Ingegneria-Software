@@ -42,6 +42,9 @@ public class RacesController {
     @FXML
     private Button addButton;
     
+    /**
+     * {@inheritDoc}
+    **/
     @FXML
     private void initialize() {	
 		this.setTable();
@@ -53,7 +56,7 @@ public class RacesController {
 		this.racesTable.setOnMouseClicked(event -> {
 			if (this.app.getLoggedUser() instanceof Employee) {
 				Race race = this.racesTable.getSelectionModel().getSelectedItem();
-				if (race != null && this.checkOpenRace(race.getEndDateRegistration())) {	
+				if (race != null) {	
 					if (event.getClickCount() == 2) {
 						this.removeRace(race);
 					}
@@ -68,7 +71,7 @@ public class RacesController {
 		this.racesTable.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
     		if (event.getCode() == KeyCode.SPACE) {
     			Race race = this.racesTable.getSelectionModel().getSelectedItem();
-    			if (race != null && this.checkOpenRace(race.getEndDateRegistration())) {		
+    			if (race != null) {		
     				this.app.initUpsertRaceRegistration(race, null);
     	    	}
             }
@@ -76,38 +79,19 @@ public class RacesController {
     }
     
     /**
-     * 
-     * @param race
-     * @return
-    **/
-    public boolean checkOpenRace(final Date date) {
-    	Object obj = ClientHelper.getResponse(new Request(RequestType.CHECK_OPEN_REGISTRATION, date, null));
-		if (obj instanceof Response) {
-			Response response = (Response) obj;
-			
-			if (response.getObject() != null && response.getObject() instanceof Boolean) {
-				return (boolean) response.getObject();
-			} else if (response.getResponseType() != null) {
-				return this.app.getMessage(response.getResponseType());
-			}
-		}
-		
-		return false;
-    }
-    
-    /**
      * Removes a selected race from the table. 
     **/
     public void removeRace(final Race race) {
        	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + race.getId(), "Are you sure?");
-    	if (result.get() == ButtonType.OK){
-    		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_RACE, race, null)));
+    	if (result.get() == ButtonType.OK){    		
+    		this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_RACE, Arrays.asList(race.getId()))));
     		this.setTableContent();
     	}    	
     }
     
     /**
-	 * Sets the races table with columns id, name, place, date, boats number and registration fee.
+	 * Sets the races table with columns id, name, place, date, boats number, end date for registration, 
+	 * registration fee and button to display race registrations.
 	**/
 	public void setTable() {
 		this.idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
@@ -132,11 +116,11 @@ public class RacesController {
                         } else {
                         	Race race = this.getTableView().getItems().get(getIndex());                       	
                             btn.setOnAction(event -> {
-                            	ResponseType result = ClientHelper.getResponseType(new Request(RequestType.EXIST_REGISTRATIONS_FOR_RACE, race, null));
+                            	ResponseType result = ClientHelper.getResponseType(new Request(RequestType.EXIST_REGISTRATIONS_FOR_RACE, Arrays.asList(race.getId())));
                             	if (result == ResponseType.OK) {
                             		app.initRaceRegistrations(race);
                             	} else {
-                            		app.getMessage(result);
+                            		app.isSuccessfulMessage(result);
                             	}
                             });
                             

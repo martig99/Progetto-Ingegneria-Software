@@ -25,8 +25,8 @@ public class Response implements Serializable {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param responseType
-	 * @param object
+	 * @param responseType the type of the response message.
+	 * @param object the object of the response message.
 	**/
 	public Response(final ResponseType responseType, final Serializable object) {
 		this.setResponseType(responseType);
@@ -34,41 +34,45 @@ public class Response implements Serializable {
 	}
 
 	/**
-	 * Gets the response type.
+	 * Gets the type of the response message.
 	 * 
-	 * @return the response type.
+	 * @return the type.
 	**/
 	public ResponseType getResponseType() {
 		return this.responseType;
 	}
 	
 	/**
-	 * Sets the response type.
+	 * Sets the type of the response message.
 	 * 
-	 * @param responseType the new response type.
+	 * @param responseType the new type.
 	**/
 	public void setResponseType(final ResponseType responseType) {
 		this.responseType = responseType;
 	}	
 	
 	/**
+	 * Gets the object of the response message.
 	 * 
-	 * @return
+	 * @return the object.
 	**/
 	public Serializable getObject() {
 		return this.object;
 	}
 	
 	/**
+	 * Sets the object of the response message.
 	 * 
-	 * @param object
+	 * @param object the new object.
 	**/
 	public void setObject(final Serializable object) {
 		this.object = object;
 	}
-
+	
 	/**
+	 * Gets a string that describes a response.
 	 * 
+	 * @return the string.
 	**/
 	@Override
 	public String toString() {

@@ -5,6 +5,12 @@ import main.java.it.unipr.model.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The class {@code FeeTest} defines the test for class {@code Fee}. 
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class FeeTest {
 	
 	private final static int id = 1;
@@ -15,11 +21,17 @@ public class FeeTest {
 	
 	private static String toString;
 	
+	/**
+	 * Configures some helpful elements for the following tests.
+	**/
 	@BeforeAll
 	public static void setUp() {
 		toString = "Id: " + id + " - Type: " + type.toString() + " - Amount: " + amount + " - Validity Period: " + validityPeriod + " - Status Code: " + statusCode.toString();
 	}
 	
+	/**
+	 * Performs the test for the setter methods.
+	**/
 	@Test
 	public void setterTest() {
 		Fee fee = new Fee();
@@ -40,6 +52,9 @@ public class FeeTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the constructor method.
+	**/
 	@Test
 	public void constructorTest() {
 		Fee fee = new Fee(id, type, amount, validityPeriod, statusCode);

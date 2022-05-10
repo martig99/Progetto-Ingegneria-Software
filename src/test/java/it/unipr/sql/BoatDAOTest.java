@@ -2,9 +2,16 @@ package test.java.it.unipr.sql;
 
 import main.java.it.unipr.model.*;
 
-import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.*;
 
+/**
+ * The class {@code BoatDAOTest} defines the test for class {@code BoatDAO}. 
+ * This class extends the class {@code UtilTest}.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class BoatDAOTest extends UtilTest {
 	
 	private final static String fiscalCode = "RSSLRI95A41A944A";
@@ -13,6 +20,9 @@ public class BoatDAOTest extends UtilTest {
 	private static String nameBoat = "Battello";
 	private static int lengthBoat = 2;
 
+	/**
+	 * Performs the test for the method of inserting a new boat.
+	**/
 	@BeforeAll
 	public static void insertBoatTest() {
 		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
@@ -29,14 +39,21 @@ public class BoatDAOTest extends UtilTest {
 		id = newBoat.getId();
 	}
 	
+	/**
+	 * Performs the test for the method that gets a boat given the name and the owner.
+	 * The test is successful if a boat is found.
+	**/
 	@Test
-	public static void getNoBoatByNameTest() {	
+	public static void getBoatByNameTest() {	
 		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
 		
 		Boat boat = UtilTest.getClub().getBoatDAO().getBoatByName(nameBoat, member);
 		assertNotNull(boat);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the name of the boat.
+	**/
 	@Test
 	public void updateNameBoatTest() {		
 		nameBoat = "Classica";
@@ -50,6 +67,9 @@ public class BoatDAOTest extends UtilTest {
 		);
 	}	
 	
+	/**
+	 * Performs the test for the method of updating the length of the boat.
+	**/
 	@Test
 	public void updateLengthBoatTest() {
 		lengthBoat = 5;
@@ -63,6 +83,9 @@ public class BoatDAOTest extends UtilTest {
 		);
 	}	
 	
+	/**
+	 * Performs the test for the method of updating the boat. 
+	**/
 	@Test
 	public void updateBoatTest() {	
 		nameBoat = "Yacht 100";
@@ -77,6 +100,9 @@ public class BoatDAOTest extends UtilTest {
 		);
 	}	
 	
+	/**
+	 * Performs the test for the method of removing the boat.
+	**/
 	@AfterAll
 	public static void removeBoatTest() {	
 		UtilTest.getClub().getBoatDAO().removeBoat(id);

@@ -35,7 +35,7 @@ public class RaceRegistration implements Serializable {
 	 * 
 	 * @param id the unique identifier of the registration for the race.
 	 * @param date the date of the registration for the race.
-	 * @param race the race to which the boat has registered.
+	 * @param race the race to which the registration refers.
 	 * @param boat the boat registered for the race.
 	 * @param statusCode the status code of the registration for the race.
 	**/
@@ -48,7 +48,7 @@ public class RaceRegistration implements Serializable {
 	}	
 	
 	/**
-	 * Gets the unique identifier of the race.
+	 * Gets the unique identifier of the registration for the race.
 	 * 
 	 * @return the unique identifier.
 	**/
@@ -57,7 +57,7 @@ public class RaceRegistration implements Serializable {
 	}
 	
 	/**
-	 * Sets the unique identifier of the race.
+	 * Sets the unique identifier of the registration for the race.
 	 *  
 	 * @param id the new unique identifier.
 	**/
@@ -75,7 +75,7 @@ public class RaceRegistration implements Serializable {
 	}
 	
 	/**
-	 * Sets the date of the registration for the race. 
+	 * Sets the date of the registration for the race.
 	 * 
 	 * @param date the new date.
 	**/
@@ -84,7 +84,7 @@ public class RaceRegistration implements Serializable {
 	}
 	
 	/**
-	 * Gets the race to which the boat has registered.
+	 * Gets the race to which the registration refers.
 	 * 
 	 * @return the race.
 	**/
@@ -93,7 +93,7 @@ public class RaceRegistration implements Serializable {
 	}
 	
 	/**
-	 * Sets the race to which the boat has registered.
+	 * Sets the race to which the registration refers.
 	 * 
 	 * @param race the new race.
 	**/
@@ -138,7 +138,7 @@ public class RaceRegistration implements Serializable {
 	}
 	
 	/**
-	 * Gets a string that describes a boat.
+	 * Gets a string that describes a registration for the race.
 	 * 
 	 * @return the string.
 	**/

@@ -5,6 +5,12 @@ import main.java.it.unipr.model.*;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * The class {@code BoatDAO} defines a model for the management of the query of the entity Boats of the database.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class BoatDAO {
 	
 	/**
@@ -42,9 +48,12 @@ public class BoatDAO {
 		
 		return list;
 	}
-	
+
 	/**
+	 * Gets a list with the name of all the boats owned by a member user.
 	 * 
+	 * @param owner the member user who owns the boats.
+	 * @return the list.
 	**/
 	public ArrayList<String> getAllNameBoatsByOwner(final User owner) {
 		ArrayList<String> list = new ArrayList<String>();
@@ -123,7 +132,7 @@ public class BoatDAO {
 	}
 	
 	/**
-	 * Inserts a boat in the database.
+	 * Inserts a new boat in the database.
 	 * 
 	 * @param name the name of the boat.
 	 * @param length the length of the boat.
@@ -147,10 +156,9 @@ public class BoatDAO {
 	}
 	
 	/**
-	 * Updates the boat information.
-	 * If the information has value <code>null</code> are not replaced.
+	 * Updates the information of a boat.
 	 * 
-	 * @param id the identification of the boat.
+	 * @param id the unique identifier of the boat.
 	 * @param name the new name of the boat.
 	 * @param length the new length of the boat.
 	**/
@@ -197,8 +205,10 @@ public class BoatDAO {
 	}
 	
 	/**
+	 * Gets the maximum number of boats.
+	 * Considers a boat for each user and then calculates the maximum number. 
 	 * 
-	 * @return
+	 * @return the maximum number of boats or 0.
 	**/
 	public int getMaxBoatsNumber() {
 		try {

@@ -1,6 +1,7 @@
 package main.java.it.unipr.message;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * The class {@code Request} provides a simplified model of a request message.
@@ -13,8 +14,7 @@ public class Request implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private RequestType requestType;
-	private Serializable primaryObject;
-	private Serializable secondaryObject;
+	private List<Serializable> object;	
 	private boolean backgroundRequest;
 	
 	/**
@@ -22,103 +22,104 @@ public class Request implements Serializable {
 	**/
 	public Request() {
 		this.setRequestType(null);
-		this.setPrimaryObject(null);
-		this.setSecondaryObject(null);
+		this.setObject(null);
 		this.setBackgroundRequest(false);
 	}
 	
 	/**
 	 * Class constructor.
 	 * 
-	 * @param messageType the type of message requested.
+	 * @param messageType the type of request message.
 	**/
 	public Request(final RequestType messageType) {
 		this.setRequestType(messageType);
+		this.setObject(null);
 		this.setBackgroundRequest(false);
 	}
 	
 	/**
 	 * Class constructor.
 	 * 
-	 * @param messageType
-	 * @param object
+	 * @param messageType the type of the request message.
+	 * @param object the object included in the request message.
 	**/
-	public Request(final RequestType messageType, final Serializable primaryObject, final Serializable secondaryObject) {
+	public Request(final RequestType messageType, final List<Serializable> object) {
 		this.setRequestType(messageType);
-		this.setPrimaryObject(primaryObject);
-		this.setSecondaryObject(secondaryObject);
+		this.setObject(object);
 		this.setBackgroundRequest(false);
 	}
 	
 	/**
+	 * Gets the type of the request message.
 	 * 
-	 * @return
+	 * @return the type.
 	**/
 	public RequestType getRequestType() {
 		return this.requestType;
 	}
 	
 	/**
+	 * Sets the type of the request message.
 	 * 
-	 * @param requestType
+	 * @param requestType the new type.
 	**/
 	public void setRequestType(final RequestType requestType) {
 		this.requestType = requestType;
 	}
 	
 	/**
+	 * Gets the object included in the request message.
 	 * 
-	 * @return
+	 * @return the object.
 	**/
-	public Serializable getPrimaryObject() {
-		return this.primaryObject;
+	public List<Serializable> getObject() {
+		return this.object;
 	}
 	
 	/**
+	 * Sets the object included in the request message.
 	 * 
-	 * @param primaryObject
+	 * @param object the new object.
 	**/
-	public void setPrimaryObject(final Serializable primaryObject) {
-		this.primaryObject = primaryObject;
+	public void setObject(final List<Serializable> object) {
+		this.object = object;
 	}
 	
 	/**
+	 * Gets whether the request should be executed in the background or not.
 	 * 
-	 * @return
-	**/
-	public Serializable getSecondaryObject() {
-		return this.secondaryObject;
-	}
-	
-	/**
-	 * 
-	 * @param primaryObject
-	**/
-	public void setSecondaryObject(final Serializable secondaryObject) {
-		this.secondaryObject = secondaryObject;
-	}
-	
-	/**
-	 * 
-	 * @return
+	 * @return <code>true</code> if the request is to be executed in the background.
 	**/
 	public boolean isBackgroundRequest() {
 		return this.backgroundRequest;
 	}
 	
 	/**
+	 * Sets whether the request should be executed in the background or not.
 	 * 
-	 * @param backgroundRequest
+	 * @param backgroundRequest the new value.
 	**/
 	public void setBackgroundRequest(final boolean backgroundRequest) {
 		this.backgroundRequest = backgroundRequest;
 	}
 	
 	/**
+	 * Gets a string that describes a request.
 	 * 
-	 * @return
+	 * @return the string.
 	**/
-	public static long getSerialversionUID() {
-		return serialVersionUID;
+	@Override
+	public String toString() {
+		String toString = "Request Type: " + this.requestType.toString();
+		
+		if (this.object != null) {
+			for (int i = 0; i < this.object.size(); i++) {
+				if (this.object.get(i) != null) {
+					toString += " - Object " + i + ": [" + this.object.get(i).toString() + "]";
+				}
+			}
+		}
+		
+		return toString;
 	}
 }

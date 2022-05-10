@@ -4,6 +4,8 @@ import main.java.it.unipr.client.*;
 import main.java.it.unipr.message.*;
 import main.java.it.unipr.model.*;
 
+import java.util.*;
+
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.text.*;
@@ -30,6 +32,9 @@ public class LoginController {
 	@FXML
 	private Text linkSignUp;
 	
+	/**
+	 * {@inheritDoc}
+	**/
 	@FXML
     private void initialize() {		
         this.button.setOnMouseClicked(clickEvent -> {
@@ -53,12 +58,10 @@ public class LoginController {
     	RadioButton selectedRadioButton = (RadioButton) group.getSelectedToggle();
     	String userType = selectedRadioButton.getText();
     	
-    	User user = new User();
-    	user.setEmail(this.email.getText());
-    	user.setPassword(this.password.getText());
-    	
-    	Request request = new Request(RequestType.LOGIN_USER, user, UserType.valueOf(userType.toUpperCase()));
-    	Object obj = ClientHelper.getResponse(request);
+    	User user = new User(this.email.getText(), this.password.getText());
+    			
+    	Request request = new Request(RequestType.LOGIN_USER, Arrays.asList(user, UserType.valueOf(userType.toUpperCase())));
+    	Object obj = ClientHelper.connection(request);
     	
     	if (obj instanceof Response) {
 			Response response = (Response) obj;
@@ -69,7 +72,7 @@ public class LoginController {
 				this.app.initMainPage();
 				
 			} else if (response.getResponseType() != null) {
-				this.app.getMessage(response.getResponseType());
+				this.app.isSuccessfulMessage(response.getResponseType());
 			}
     	}
 	}

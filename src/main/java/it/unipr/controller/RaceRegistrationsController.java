@@ -14,7 +14,7 @@ import javafx.scene.input.*;
 import javafx.scene.text.*;
 
 /**
- * The class {@code RegistrationsController} supports the display of all races. 
+ * The class {@code RegistrationsController} supports the display of all race registrations. 
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -36,6 +36,9 @@ public class RaceRegistrationsController {
     @FXML
     private TableColumn<RaceRegistration, String> dateColumn, boatColumn, memberColumn;
     
+    /**
+     * {@inheritDoc}
+    **/
     @FXML
     private void initialize() {	
 		this.setTable();
@@ -43,40 +46,18 @@ public class RaceRegistrationsController {
 		this.registrationsTable.setOnMouseClicked(event -> {
 			if (this.registrationsTable.getSelectionModel().getSelectedItem() != null) {
 				RaceRegistration registration = this.registrationsTable.getSelectionModel().getSelectedItem();
-		    	if (this.checkOpenRace(this.race.getEndDateRegistration())) {
-					if (event.getClickCount() == 2) {
-						this.removeRegistration(registration);
-					}
-				
-					if (event.getButton() == MouseButton.SECONDARY) {
-						if (!this.checkUser(registration))
-				    		return;
-						
-						this.app.initUpsertRaceRegistration(race, registration);
-					}
-		    	}
+				if (event.getClickCount() == 2) {
+					this.removeRegistration(registration);
+				}
+			
+				if (event.getButton() == MouseButton.SECONDARY) {
+					if (!this.checkUser(registration))
+			    		return;
+					
+					this.app.initUpsertRaceRegistration(race, registration);
+				}
 			}
         });
-    }
-    
-    /**
-     * 
-     * @param race
-     * @return
-    **/
-    public boolean checkOpenRace(final Date date) {
-    	Object obj = ClientHelper.getResponse(new Request(RequestType.CHECK_OPEN_REGISTRATION, date, null));
-		if (obj instanceof Response) {
-			Response response = (Response) obj;
-			
-			if (response.getObject() != null && response.getObject() instanceof Boolean) {
-				return (boolean) response.getObject();
-			} else if (response.getResponseType() != null) {
-				return this.app.getMessage(response.getResponseType());
-			}
-		}
-		
-		return false;
     }
     
     /**
@@ -87,16 +68,21 @@ public class RaceRegistrationsController {
     		return;
     	
     	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a registration", "You are removing the registration with unique identifier " + registration.getId(), "Are you sure?");
-    	if (result.get() == ButtonType.OK){
-    		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_RACE_REGISTRATION, registration, this.race)));
+    	if (result.get() == ButtonType.OK){    		
+    		boolean resultMessage = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_RACE_REGISTRATION, Arrays.asList(registration.getId(), this.race))));
+    		if (!resultMessage) {
+    			return;
+    		}
+    		
     		this.setTableContent(this.race);
     	}	
     }
     
     /**
+     * Checks if the logged in user is a club member and if so checks if it is equal to the member who registered for the race.
      * 
-     * @param registration
-     * @return
+     * @param registration the registration for the race to be considered.
+     * @return <code>true</code> if the logged-in user is the member who registered for the race.
     **/
     public boolean checkUser(final RaceRegistration registration) {
     	if (this.app.getLoggedUser() instanceof Member) {
@@ -111,7 +97,7 @@ public class RaceRegistrationsController {
     }
     
     /**
-	 * Sets the races table with columns id, name, place, date, boats number and registration fee.
+	 * Sets the race registrations table with columns id, date, description of the boat and email of the member.
 	**/
 	public void setTable() {
 		this.idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
@@ -130,7 +116,7 @@ public class RaceRegistrationsController {
 		this.memberColumn.setCellValueFactory(cellData -> {
 			Boat boat = cellData.getValue().getBoat();
 			if (boat != null) {
-				Member owner = boat.getOwner();
+				User owner = boat.getOwner();
 				if (owner != null) {
 					return new SimpleStringProperty(owner.getEmail());
 				}
@@ -141,17 +127,18 @@ public class RaceRegistrationsController {
 	}
     
     /**
-	 * Inserts the data of each race in the table.
+	 * Inserts the data of each race registration in the table.
 	**/
     public void setTableContent(final Race race) {    	
-    	ObservableList<RaceRegistration> registrations = FXCollections.<RaceRegistration>observableArrayList();      	
-        registrations.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_REGISTRATION_BY_RACE, race, null), RaceRegistration.class));
+    	ObservableList<RaceRegistration> registrations = FXCollections.<RaceRegistration>observableArrayList();   	
+        registrations.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_REGISTRATION_BY_RACE, Arrays.asList(race.getId())), RaceRegistration.class));
 		this.registrationsTable.setItems(registrations);
     }
     
     /**
+     * Sets the race to which the registration refer.
      * 
-     * @param idRace
+     * @param race the race.
     **/
     public void setRace(final Race race) {
     	this.race = race;

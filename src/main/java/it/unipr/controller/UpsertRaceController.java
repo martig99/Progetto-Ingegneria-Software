@@ -11,7 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.text.*;
 
 /**
- * The class {@code UpsertRaceController} supports the insertion of a new race. 
+ * The class {@code UpsertRaceController} supports the section for the insertion or updating of a race.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -33,6 +33,9 @@ public class UpsertRaceController {
 	@FXML
     private Button upsertButton;
 	
+	/**
+	 * {@inheritDoc}
+	**/
 	@FXML
     private void initialize() {	
 		this.upsertButton.setOnMouseClicked(event -> {    		
@@ -45,7 +48,7 @@ public class UpsertRaceController {
     }
 		
 	/**
-	 * 
+	 * Performs the insertion or updating of the race.
 	**/
 	public void upsertRace() {			
 		if (this.race == null) {
@@ -89,14 +92,15 @@ public class UpsertRaceController {
 		Race race = new Race(idRace, name, place, dateRace, boatsNumber, registrationFee, endDateRegistration, StatusCode.ACTIVE);
 		RequestType type = this.race == null ? RequestType.INSERT_RACE : RequestType.UPDATE_RACE;
 		
-		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(type, race, null)));
+		boolean result = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(type, Arrays.asList(race))));
 		if (result)
 			this.app.initRaces();
 	}
 	
 	/**
+	 * Sets the race to insert or update.
 	 * 
-	 * @param id
+	 * @param race the race.
 	**/
 	public void setRace(final Race race) {
 		this.race = race;
@@ -116,5 +120,4 @@ public class UpsertRaceController {
         	this.title.setText("UPDATE THE RACE WITH ID " + this.race.getId());
         }
     }
-	
 }

@@ -44,8 +44,8 @@ public class Race implements Serializable {
 	 * @param place the place of the race.
 	 * @param date the date of the race.
 	 * @param boatsNumber the number of boats participating in the race.
-	 * @param registrationFree the race registration fee.
-	 * @param endDateRegistration the end date registration of a boat at the race.
+	 * @param registrationFee the registration fee for the race.
+	 * @param endDateRegistration the end date of registration of a boat at the race.
 	 * @param statusCode the status code of the race.
 	**/
 	public Race(final int id, final String name, final String place, final Date date, final int boatsNumber, final float registrationFee, final Date endDateRegistration, final StatusCode statusCode) {
@@ -168,18 +168,18 @@ public class Race implements Serializable {
 	}
 	
 	/**
-	 * Gets the end date registration of a boat at the race.
+	 * Gets the end date of registration of a boat at the race.
 	 * 
-	 * @return the date.
+	 * @return the end date of registration.
 	**/
 	public Date getEndDateRegistration() {
 		return this.endDateRegistration;
 	}
 	
 	/**
-	 * Sets the end date registration of a boat at the race.
+	 * Sets the end date of registration of a boat at the race.
 	 * 
-	 * @param endDateRegistration the new date.
+	 * @param endDateRegistration the new end date of registration.
 	**/
 	public void setEndDateRegistration(final Date endDateRegistration) {
 		this.endDateRegistration = endDateRegistration;

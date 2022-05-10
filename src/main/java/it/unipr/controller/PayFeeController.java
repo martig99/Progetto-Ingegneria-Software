@@ -1,9 +1,10 @@
 package main.java.it.unipr.controller;
 
 import main.java.it.unipr.client.*;
-import main.java.it.unipr.message.Request;
-import main.java.it.unipr.message.RequestType;
+import main.java.it.unipr.message.*;
 import main.java.it.unipr.model.*;
+
+import java.util.*;
 
 import javafx.fxml.*;
 import javafx.beans.value.*;
@@ -12,7 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.text.*;
 
 /**
- * The class {@code PayFeeController} supports the payment of a fee.
+ * The class {@code PayFeeController} supports the section to pay a fee.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -31,13 +32,16 @@ public class PayFeeController {
 	@FXML
     private Button payButton;
 	
+	/**
+	 * {@inheritDoc}
+	**/
 	@FXML
     private void initialize() {	
 		this.members.getSelectionModel().selectedItemProperty()
 			.addListener((ObservableValue<? extends String> observable, String oldEmail, String newEmail) -> {
 				if (this.feeType == FeeType.STORAGE && newEmail != null) {
-					this.boats.setDisable(false);
-					this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, newEmail, null), User.class));
+					this.boats.setDisable(false);					
+					this.setBoats(ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, Arrays.asList(newEmail, UserType.MEMBER)), Member.class));
 				}
 			});
 
@@ -51,53 +55,26 @@ public class PayFeeController {
     }
 	
 	/**
-	 * 
+	 * Performs the payment of the fee.
 	**/
 	public void payFee() {	
-		User user = null;
+		String emailMember;
 		if (this.app.getLoggedUser() instanceof Member) {
-			user = this.app.getLoggedUser();
+			emailMember = this.app.getLoggedUser().getEmail();
 		} else {
-			String emailMember = this.members.getSelectionModel().getSelectedItem().toString();
-			user = ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember, null), User.class);
-			if (user == null) {
-    			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the user.");
-    			return;
-    		}
+			emailMember = this.members.getSelectionModel().getSelectedItem().toString();
 		}
 				
-		Boat boat = null;
-		if (this.feeType == FeeType.STORAGE) {
-			String nameBoat = this.boats.getSelectionModel().getSelectedItem().toString();
-			boat = ClientHelper.getObjectResponse(new Request(RequestType.GET_BOAT_BY_NAME, nameBoat, user), Boat.class);
-
-			if (boat == null) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the boat.");
-				return;
-			}
-		}
-		
+		String nameBoat = this.feeType == FeeType.STORAGE ? this.boats.getSelectionModel().getSelectedItem().toString() : "";
 		String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
-		PaymentService paymentService = ClientHelper.getObjectResponse(new Request(RequestType.GET_PAYMENT_SERVICE_BY_DESCRIPTION, descriptionPaymentService, null), PaymentService.class);		
-		if (paymentService == null) {
-			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the payment service.");
-			return;
-		}
-				
-		Payment payment = new Payment();
 		
-		payment.setMember(new Member(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getEmail()));
-		payment.setBoat(boat);
-		payment.setPaymentService(paymentService);
-		payment.setFee(ClientHelper.getObjectResponse(new Request(RequestType.GET_FEE_BY_TYPE, this.feeType, null), Fee.class));
-		
-		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.PAY_FEE, payment, null)));		
-		this.app.initPayments(this.feeType);
-			
+		boolean result = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.PAY_FEE, Arrays.asList(emailMember, nameBoat, descriptionPaymentService, this.feeType))));		
+		if (result) 
+			this.app.initPayments(this.feeType);
 	}
 	
 	/**
-	 * 
+	 * Sets the email address of all users in the list.
 	**/
 	public void setMembers() {
     	ObservableList<String> listUser = FXCollections.<String>observableArrayList();
@@ -106,16 +83,16 @@ public class PayFeeController {
 	}
 	
 	/**
-	 * 
+	 * Sets the name of all the boats that belong to the logged in user or to a user selected from the list of members.
 	**/
 	public void setBoats(final User owner) {
-		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();
-        listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, owner, null), String.class));
+		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();	
+        listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, Arrays.asList(owner)), String.class));
 		this.boats.setItems(listBoat);
 	}
 	
 	/**
-	 * 
+	 * Sets the description of all payment services in the list.
 	**/
 	public void setPaymentServices() {
 		ObservableList<String> listPaymentService = FXCollections.<String>observableArrayList();
@@ -124,13 +101,14 @@ public class PayFeeController {
 	}
 
 	/**
+	 * Sets the type of fee for which payment should be made.
 	 * 
-	 * @param type
+	 * @param type the type of fee.
 	**/
 	public void setFeeType(final FeeType type) {
 		this.feeType = type;
 	}
-	
+
 	/**
      * Sets the reference to the application.
      * 
@@ -138,8 +116,8 @@ public class PayFeeController {
     **/
     public void setApp(final App app) {
         this.app = app;
-        
-        if (this.app.getLoggedUser() instanceof Employee) {
+
+    	if (this.app.getLoggedUser() instanceof Employee) {
         	this.title.setText("PAY MEMBERSHIP FEE");
 
         	this.app.setVisibleElement(this.members, true);

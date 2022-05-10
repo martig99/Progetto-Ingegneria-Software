@@ -7,6 +7,13 @@ import java.sql.Date;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The class {@code RaceDAOTest} defines the test for class {@code RaceDAO}.
+ * This class extends the class {@code UtilTest}. 
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class RaceDAOTest extends UtilTest {
 
 	private static int id = 0;
@@ -17,6 +24,9 @@ public class RaceDAOTest extends UtilTest {
 	private static float registrationFee = 10;
 	private static Date endDateRegistration = Date.valueOf("2022-03-07");
 	
+	/**
+	 * Performs the test for the method of inserting a new race.
+	**/
 	@BeforeAll
 	public static void insertRaceTest() {
 		UtilTest.getClub().getRaceDAO().insertRace(name, place, date, boatsNumber, registrationFee, endDateRegistration);
@@ -34,12 +44,19 @@ public class RaceDAOTest extends UtilTest {
 		id = newRace.getId();
 	}
 	
+	/**
+	 * Performs the test for the method that gets a race given the date.
+	 * The test is successful if a race is found.
+	**/
 	@Test
 	public void getRaceByDateTest() {
 		Race race = UtilTest.getClub().getRaceDAO().getRaceByDate(date);		
 		assertNotNull(race);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the name of the race.
+	**/
 	@Test
 	public void updateNameTest() {
 		name = "Gara 100";		
@@ -56,6 +73,9 @@ public class RaceDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the place of the race.
+	**/
 	@Test
 	public void updatePlaceTest() {
 		place = "Genova";
@@ -72,6 +92,9 @@ public class RaceDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the date of the race.
+	**/
 	@Test
 	public void updateDateTest() {
 		date = Date.valueOf("2022-03-10");
@@ -89,6 +112,9 @@ public class RaceDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the number of boats participating in the race.
+	**/
 	@Test
 	public void updateBoatsNumberTest() {
 		boatsNumber = 5;
@@ -105,6 +131,9 @@ public class RaceDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the registration fee to the race
+	**/
 	@Test
 	public void updateRegistrationFeeTest() {
 		registrationFee = 22;	
@@ -121,6 +150,9 @@ public class RaceDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the date of end of registration to the race.
+	**/
 	@Test
 	public void updateEndDateRegistrationTest() {
 		endDateRegistration = Date.valueOf("2022-03-08");
@@ -137,6 +169,9 @@ public class RaceDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the race.
+	**/
 	@Test
 	public void updateRaceTest() {
 		name = "Nettuno";
@@ -159,6 +194,9 @@ public class RaceDAOTest extends UtilTest {
 		);
 	} 
 	
+	/**
+	 * Performs the test for the method of removing the race.
+	**/
 	@AfterAll
 	public static void removeRaceTest() {
 		UtilTest.getClub().getRaceDAO().removeRace(id);

@@ -8,6 +8,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterAll;
 
+/**
+ * The class {@code UserDAOTest} defines the test for class {@code UserDAO}. 
+ * This class extends the class {@code UtilTest}.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class UserDAOTest extends UtilTest {
 	
 	private static int id = 0; 
@@ -19,6 +26,9 @@ public class UserDAOTest extends UtilTest {
 	private static String address = "Via della Repubblica 1, Milano";
 	private static UserType userType = UserType.MEMBER;
 	
+	/**
+	 * Performs the test for the method of creating a new user.
+	**/
 	@BeforeAll
 	public static void createUserTest() {
 		UtilTest.getClub().getUserDAO().createUser(firstName, lastName, email, password, fiscalCode, address, false, userType);
@@ -36,24 +46,38 @@ public class UserDAOTest extends UtilTest {
 		id = newMember.getId();
 	}
 	
+	/**
+	 * Performs the test for the login method of a user.
+	**/
 	@Test
 	public void loginTest() {
 		User user = UtilTest.getClub().getUserDAO().login(email, password, userType);
 		assertNotNull(user);
 	}
 	
+	/**
+	 * Performs the test for the method that gets an user given the email.
+	 * The test is successful if an user is found.
+	**/
 	@Test
 	public void getUserByEmailTest() {
-		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email);
+		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email, userType);
 		assertNotNull(user);
 	}
 	
+	/**
+	 * Performs the test for the method that gets a member given the fiscal code.
+	 * The test is successful if a member is found.
+	**/
 	@Test
 	public void getMemberByFiscalCodeTest() {
 		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
 		assertNotNull(member);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the first name of the user.
+	**/
 	@Test
 	public void updateFirstNameTest() {
 		firstName = "Luigi";
@@ -69,6 +93,9 @@ public class UserDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the last name of the user.
+	**/
 	@Test
 	public void updateLastNameTest() {
 		lastName = "Pisano";
@@ -84,6 +111,9 @@ public class UserDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the email of the user.
+	**/
 	@Test
 	public void updateEmailTest() {
 		email = "luigi.pisano@gmail.com";
@@ -99,6 +129,9 @@ public class UserDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the password of the user.
+	**/
 	@Test
 	public void updatePasswordTest() {
 		password = "pisa123";
@@ -114,6 +147,9 @@ public class UserDAOTest extends UtilTest {
 		);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the user. 
+	**/
 	@Test
 	public void updateUserTest() {
 		firstName = "Marco";
@@ -132,6 +168,9 @@ public class UserDAOTest extends UtilTest {
 		);	
 	}
 	
+	/**
+	 * Performs the test for the method of updating the fiscal code of the member.
+	**/
 	@Test
 	public void updateFiscalCodeTest() {
 		fiscalCode = "RSSMRC83C17F205Y";
@@ -145,6 +184,9 @@ public class UserDAOTest extends UtilTest {
 		);	
 	}
 	
+	/**
+	 * Performs the test for the method of updating the address of the member.
+	**/
 	@Test
 	public void updateAddressTest() {
 		address = "Via Alcide de Gasperi, Reggio Emilia";
@@ -158,6 +200,9 @@ public class UserDAOTest extends UtilTest {
 		);	
 	}
 
+	/**
+	 * Performs the test for the method of updating the member. 
+	**/
 	@Test
 	public void updateMemberTest() {
 		fiscalCode = "ANRRSS97R12H223L";
@@ -172,6 +217,9 @@ public class UserDAOTest extends UtilTest {
 		);	
 	}
 	
+	/**
+	 * Performs the test for the method of removing the user.
+	**/
 	@AfterAll
 	public static void removeUserTest() {	
 		UtilTest.getClub().getUserDAO().removeUser(id);

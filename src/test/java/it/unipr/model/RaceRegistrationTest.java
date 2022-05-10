@@ -7,6 +7,12 @@ import java.sql.Date;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The class {@code RaceRegistrationTest} defines the test for class {@code RaceRegistration}. 
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class RaceRegistrationTest {
 	
 	private final static int id = 1;
@@ -17,15 +23,21 @@ public class RaceRegistrationTest {
 	private static Race race;
 	private static String toString;
 		
+	/**
+	 * Configures some helpful elements for the following tests.
+	**/
 	@BeforeAll
 	public static void setUp() {
-		Member member = new Member(1, "Ilaria", "Rossi", "ilaria.rossi@gmail.com", "aaaaaaaaa", "RSSLRI95A41A944A", "Via della Pace 11, Bologna");
+		Member member = new Member(1, "Ilaria", "Rossi", "ilaria.rossi@gmail.com", "aaaaaaaaa", "RSSLRI95A41A944A", "Via della Pace 11, Bologna", StatusCode.ACTIVE);
 		boat = new Boat(1, "Yacht", 1, member, StatusCode.ACTIVE);
 		race = new Race(1, "Gara 1", "Roma", Date.valueOf("2022-03-08"), 3, 10, Date.valueOf("2022-03-07"), StatusCode.ACTIVE);
 		
 		toString = "Id: " + id + " - Date: " + date + " - Race: [" + race.getDate() + ", " + race.getName() + "] - Boat: " + boat.getName() + " - Status Code: " + StatusCode.ACTIVE.toString();
 	}
 	
+	/**
+	 * Performs the test for the setter methods.
+	**/
 	@Test
 	public void setterTest() {
 		RaceRegistration registration = new RaceRegistration();
@@ -46,7 +58,9 @@ public class RaceRegistrationTest {
 		);
 	}
 	
-	
+	/**
+	 * Performs the test for the constructor method.
+	**/
 	@Test
 	public void constructorTest() {
 		RaceRegistration registration = new RaceRegistration(id, date, race, boat, statusCode);

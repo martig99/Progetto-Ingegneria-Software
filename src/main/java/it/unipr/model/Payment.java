@@ -45,10 +45,10 @@ public class Payment implements Serializable {
 	 * 
 	 * @param id the unique identifier of the payment.
 	 * @param date the date of the payment.
-	 * @param member the club member who made the payment.
-	 * @param boat the boat for which the storage fee was paid.
-	 * @param raceRegistration the registration to the race for which the registration fee was paid.
-	 * @param fee 
+	 * @param member the member who made the payment.
+	 * @param boat the boat associated with the payment of the storage fee.
+	 * @param raceRegistration the registration for the race associated with the payment of the registration fee.
+	 * @param fee the fee to pay.
 	 * @param validityStartDate the validity start date of the payment.
 	 * @param validityEndDate the validity end date of the payment.
 	 * @param total the total of the payment.
@@ -108,21 +108,21 @@ public class Payment implements Serializable {
 	 * 
 	 * @return the member.
 	**/
-	public Member getMember() {
+	public User getUser() {
 		return this.member;
 	}
 	
 	/**
 	 * Sets the member who made the payment.
 	 *  
-	 * @param member the new member.
+	 * @param user the new member.
 	**/
 	public void setMember(final Member member) {
 		this.member = member;
 	}
 	
 	/**
-	 * Gets the boat for which the storage fee has been paid.
+	 * Gets the boat associated with the payment of the storage fee.
 	 * 
 	 * @return the boat.
 	**/
@@ -131,7 +131,7 @@ public class Payment implements Serializable {
 	}
 	
 	/**
-	 * Sets the boat to pay the storage fee.
+	 * Sets the boat associated with the payment of the storage fee.
 	 *  
 	 * @param boat the new boat.
 	**/
@@ -140,34 +140,36 @@ public class Payment implements Serializable {
 	}
 	
 	/**
-	 * Gets the registration to the race for which the registration fee was paid.
+	 * Gets the registration for the race associated with the payment of the registration fee.
 	 * 
-	 * @return the race registration.
+	 * @return the registration for the race.
 	**/
 	public RaceRegistration getRaceRegistration() {
 		return this.raceRegistration;
 	}
 	
 	/**
-	 * Sets the registration to the race for which the registration fee was paid.
+	 * Sets the registration for the race associated with the payment of the registration fee.
 	 * 
-	 * @param raceRegistration the new race registration.
+	 * @param raceRegistration the new registration for the race.
 	**/
 	public void setRaceRegistration(final RaceRegistration raceRegistration) {
 		this.raceRegistration = raceRegistration;
 	}
 	
 	/**
+	 * Gets the fee to pay.
 	 * 
-	 * @return
+	 * @return the fee.
 	**/
 	public Fee getFee() {
 		return this.fee;
 	}
 	
 	/**
+	 * Sets the fee to pay.
 	 * 
-	 * @param fee
+	 * @param fee the new fee.
 	**/
 	public void setFee(final Fee fee) {
 		this.fee = fee;

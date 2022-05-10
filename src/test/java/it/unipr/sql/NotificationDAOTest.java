@@ -5,46 +5,63 @@ import main.java.it.unipr.model.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The class {@code NotificationDAOTest} defines the test for class {@code NotificationDAO}. 
+ * This class extends the class {@code UtilTest}.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class NotificationDAOTest extends UtilTest {
 	
-	private final static String fiscalCode = "RSSLRI95A41A944A"; 
+	private final static String email = "ilaria.rossi@gmail.com";
+	private final static UserType userType = UserType.MEMBER;
 	private final static FeeType feeType = FeeType.MEMBERSHIP;
 
+	/**
+	 * Performs the test for the method of inserting a new notification.
+	**/
 	@BeforeAll
 	public static void insertNotificationTest() {
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
+		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email, userType);
 		Fee fee = UtilTest.getClub().getFeeDAO().getFeeByType(feeType);
 		
-		UtilTest.getClub().getNotificationDAO().insertNotification(member, null, fee);
+		UtilTest.getClub().getNotificationDAO().insertNotification(user, null, fee);
 		
-		Notification newNotification = UtilTest.getClub().getNotificationDAO().getNotification(member, null, fee, false);
+		Notification newNotification = UtilTest.getClub().getNotificationDAO().getNotification(user, null, fee, StatusCode.ACTIVE);
 		assertAll(
-			() -> assertTrue(newNotification.getMember().getId() == member.getId(), newNotification.getMember().getId() + " should equal " + member.getId()),
+			() -> assertTrue(newNotification.getMember().getId() == user.getId(), newNotification.getMember().getId() + " should equal " + user.getId()),
 			() -> assertTrue(newNotification.getFee().getId() == fee.getId(), newNotification.getFee().getId() + " should equal " + fee.getId()),
-			() -> assertTrue(newNotification.isReadStatus() == false, newNotification.isReadStatus() + " should equal " + false)
+			() -> assertTrue(newNotification.getStatusCode() == StatusCode.ACTIVE, newNotification.getStatusCode() + " should equal " + StatusCode.ACTIVE)
 		);
 	}
 	
+	/**
+	 * Performs the test for the method that checks if a certain user has a payment notification for the membership fee.
+	**/
 	@Test
 	public void existNotificationMembershipFeeTest() {
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
+		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email, userType);
 		
-		boolean result = UtilTest.getClub().getNotificationDAO().existNotificationMembershipFee(member);
+		boolean result = UtilTest.getClub().getNotificationDAO().existNotificationMembershipFee(user);
 		assertTrue(result == true, result + " should equal " + true);
 	}
 	
+	/**
+	 * Performs the test for the method of updating the status code of the notification.
+	**/
 	@AfterAll
-	public static void updateReadStatusNotificationTest() {
-		Member member = UtilTest.getClub().getUserDAO().getMemberByFiscalCode(fiscalCode);
+	public static void updateStatusCodeNotificationTest() {
+		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email, userType);
 		Fee fee = UtilTest.getClub().getFeeDAO().getFeeByType(feeType);
 		
-		UtilTest.getClub().getNotificationDAO().updateReadStatusNotification(member, null, fee);
+		UtilTest.getClub().getNotificationDAO().updateStatusCodeNotification(user, null, fee);
 		
-		Notification newNotification = UtilTest.getClub().getNotificationDAO().getNotification(member, null, fee, true);
+		Notification newNotification = UtilTest.getClub().getNotificationDAO().getNotification(user, null, fee, StatusCode.ELIMINATED);
 		assertAll(
-			() -> assertTrue(newNotification.getMember().getId() == member.getId(), newNotification.getMember().getId() + " should equal " + member.getId()),
+			() -> assertTrue(newNotification.getMember().getId() == user.getId(), newNotification.getMember().getId() + " should equal " + user.getId()),
 			() -> assertTrue(newNotification.getFee().getId() == fee.getId(), newNotification.getFee().getId() + " should equal " + fee.getId()),
-			() -> assertTrue(newNotification.isReadStatus() == true, newNotification.isReadStatus() + " should equal " + true)
+			() -> assertTrue(newNotification.getStatusCode() == StatusCode.ELIMINATED, newNotification.getStatusCode() + " should equal " + StatusCode.ELIMINATED)
 		);
 	}
 }

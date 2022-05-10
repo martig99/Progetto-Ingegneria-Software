@@ -17,7 +17,7 @@ import javafx.scene.text.*;
 import javafx.stage.*;
 
 /**
- * The class {@code App} defines the creation of application pages using FXML files.
+ * The class {@code App} defines the management of application pages using FXML files.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -28,7 +28,7 @@ public class App extends Application {
 	private BorderPane rootLayout;
 	
 	private User loggedUser;
-	
+
 	/**
 	 * Gets the user who logged into the application.
 	 * 
@@ -51,7 +51,7 @@ public class App extends Application {
 	 * {@inheritDoc}
 	**/
 	@Override
-	public void start(Stage primaryStage) throws Exception {		
+	public void start(Stage primaryStage) throws Exception {
 		this.setLoggedUser(null);
 		
 		this.primaryStage = primaryStage;
@@ -62,7 +62,8 @@ public class App extends Application {
 	}
 	
 	/**
-	 * Initializes the first page with the login and sign up section.
+	 * Initializes the first page with the logo and the name of the application.
+	 * Also calls the {@link #initLogin} method to show the login section.
 	**/
 	public void initFirstPage() {
 		try {
@@ -82,7 +83,16 @@ public class App extends Application {
 	}
 	
 	/**
-	 * Initializes the login page.
+	 * Initializes the logout.
+	 * It sets the user to null and calls the login page initialization method.
+	**/
+	public void initLogout() {
+		this.setLoggedUser(null);
+		this.initFirstPage();
+	}
+	
+	/**
+	 * Initializes the login section.
 	**/
 	public void initLogin() {
 		try {
@@ -97,15 +107,6 @@ public class App extends Application {
 		} catch (IOException e){
             e.printStackTrace();
         }
-	}
-	
-	/**
-	 * Initializes the logout.
-	 * It sets the user to null and calls the login page initialization method.
-	**/
-	public void initLogout() {
-		this.setLoggedUser(null);
-		this.initFirstPage();
 	}
 	
 	/**
@@ -130,7 +131,7 @@ public class App extends Application {
 	}
 	
 	/**
-	 * Initializes the boats page.
+	 * Initializes the boats section.
 	**/
 	public void initBoats() {
         try {
@@ -148,7 +149,9 @@ public class App extends Application {
     }
 	
 	/**
-	 * Initializes the dialog panel to update or insert a boat.
+	 * Initializes the section in which to insert or update a boat.
+	 * 
+	 * @param boat the boat to insert or update.
 	**/
 	public void initUpsertBoat(final Boat boat) {
         try {
@@ -167,7 +170,9 @@ public class App extends Application {
     }
 	
 	/**
-	 * Initializes the users page.
+	 * Initializes the users section based on the type of user.
+	 * 
+	 * @param userType the type of user to be considered.
 	**/
 	public void initUsers(final UserType userType) {
         try {
@@ -186,7 +191,10 @@ public class App extends Application {
     }
 	
 	/**
-	 * Initializes the page to create a new user.
+	 * Initializes the section in which to insert or update an user.
+	 * 
+	 * @param user the user to insert or update.
+	 * @param userType the type of user.
 	**/
 	public void initUpsertUser(final User user, final UserType userType) {
         try {
@@ -207,7 +215,9 @@ public class App extends Application {
     }
 	
 	/**
-	 * Initializes the payments page.
+	 * Initializes the payments section based on the type of fee.
+	 * 
+	 * @param feeType the type of fee to be considered.
 	**/
 	public void initPayments(final FeeType feeType) {
         try {
@@ -226,8 +236,9 @@ public class App extends Application {
     }
 	
 	/**
+	 * Initializes the section where an employee can send a notification of payment of a particular type of fee.
 	 * 
-	 * @param feeType
+	 * @param feeType the type of fee to be considered.
 	**/
 	public void initNotifyPayment(final FeeType feeType) {
 		try {
@@ -246,140 +257,7 @@ public class App extends Application {
 	}
 	
 	/**
-	 * Initializes the dialog panel to pay a fee.
-	**/
-	public void initPayFee(final FeeType type) {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/main/resources/PayFeeLayout.fxml"));
-            
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-            
-            PayFeeController controller = loader.getController();
-            controller.setFeeType(type);
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-	/**
-	 * Initializes the races page.
-	**/
-	public void initRaces() {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/main/resources/RacesLayout.fxml"));
-
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-            
-            RacesController controller = loader.getController();
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	
-	/**
-	 * Initializes the dialog panel to add or update a race.
-	**/
-	public void initUpsertRace(final Race race) {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/main/resources/UpsertRaceLayout.fxml"));
-            
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-            
-            UpsertRaceController controller = loader.getController();
-            controller.setRace(race);
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
-	 * Initializes the dialog panel to register a boat to a race.
-	**/
-	public void initUpsertRaceRegistration(final Race race, final RaceRegistration registration) {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/main/resources/UpsertRaceRegistrationLayout.fxml"));
-            
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-            
-            UpsertRaceRegistrationController controller = loader.getController();
-            controller.setRace(race);
-            controller.setRegistration(registration);
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
-	 * 
-	**/
-	public void initRaceRegistrations(final Race race) {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/main/resources/RaceRegistrationsLayout.fxml"));
-            
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-            
-            RaceRegistrationsController controller = loader.getController();
-            controller.setRace(race);
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
-	 * Initializes the dialog panel to show fees.
-	**/
-	public void initFees() {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/main/resources/FeesLayout.fxml"));
-            
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-            
-            FeesController controller = loader.getController();
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
-	 * Initializes the dialog panel to update a fee.
-	**/
-	public void initUpdateFee(final Fee fee) {
-        try {
-        	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/main/resources/UpdateFeeLayout.fxml"));
-            
-            VBox overview = (VBox) loader.load();
-			this.rootLayout.setCenter(overview);
-            
-            UpdateFeeController controller = loader.getController();
-            controller.setFee(fee);
-            controller.setApp(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
-	 * 
+	 * Initializes the notification dialog box.
 	**/
 	public void initNotifications() {
 		try {
@@ -400,11 +278,155 @@ public class App extends Application {
             e.printStackTrace();
         }
 	}
+
+	/**
+	 * Initializes the section where to pay a type of fee.
+	 * 
+	 * @param feeType the type of fee to be considered.
+	**/
+	public void initPayFee(final FeeType feeType) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/main/resources/PayFeeLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            PayFeeController controller = loader.getController();
+            controller.setFeeType(feeType);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	/**
+	 * Initializes the races section.
+	**/
+	public void initRaces() {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/main/resources/RacesLayout.fxml"));
+
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            RacesController controller = loader.getController();
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	/**
+	 * Initializes the section in which to insert or update a race.
 	 * 
-	 * @param date
-	 * @return
+	 * @param race the race to insert or update.
+	**/
+	public void initUpsertRace(final Race race) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/main/resources/UpsertRaceLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            UpsertRaceController controller = loader.getController();
+            controller.setRace(race);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes the registrations section at a race.
+	 * 
+	 * @param race the race to be considered.
+	**/
+	public void initRaceRegistrations(final Race race) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/main/resources/RaceRegistrationsLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            RaceRegistrationsController controller = loader.getController();
+            controller.setRace(race);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes the section in which to insert or update a race registration.
+	 * 
+	 * @param race the race to be considered.
+	 * @param registration the registration to insert or update.
+	**/
+	public void initUpsertRaceRegistration(final Race race, final RaceRegistration registration) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/main/resources/UpsertRaceRegistrationLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            UpsertRaceRegistrationController controller = loader.getController();
+            controller.setRace(race);
+            controller.setRegistration(registration);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Initializes fees section.
+	**/
+	public void initFees() {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/main/resources/FeesLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            FeesController controller = loader.getController();
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	/**
+	 * Initializes the section in which to insert or update a fee.
+	 * 
+	 * @param fee the fee to insert or update.
+	**/
+	public void initUpdateFee(final Fee fee) {
+        try {
+        	FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/main/resources/UpdateFeeLayout.fxml"));
+            
+            VBox overview = (VBox) loader.load();
+			this.rootLayout.setCenter(overview);
+            
+            UpdateFeeController controller = loader.getController();
+            controller.setFee(fee);
+            controller.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Sets the format of the date.
+	 * 
+	 * @param date the date.
+	 * @return a string with the formatted date.
 	**/
 	public String setDateFormat(final Date date) {
 		String pattern = "dd/MM/yyyy";
@@ -443,9 +465,10 @@ public class App extends Application {
 	}
 	
 	/**
+	 * Sets the format of a float number.
 	 * 
-	 * @param val
-	 * @return
+	 * @param val the original float number.
+	 * @return the new formatted float number.
 	**/
 	public float setFloatFormat(final float val) {
 		DecimalFormat df = new DecimalFormat();
@@ -478,16 +501,19 @@ public class App extends Application {
 	}
 	
 	/**
+	 * Gets whether the message is successful or not.
+	 * Also calls the {@link #showAlert} method to open an alert box containing the message.
 	 * 
-	 * @param obj
+	 * @param messageType the type of message
+	 * @return <code>true</code> if the message is successful.
 	**/
-	public boolean getMessage(final ResponseType responseType) {
-		if (responseType != null) {
-			if (responseType.isSuccess()) {
-				this.showAlert(Alert.AlertType.INFORMATION, "Excellent!", ResponseType.OK.getValue(), responseType.getValue());        
+	public boolean isSuccessfulMessage(final ResponseType messageType) {
+		if (messageType != null) {
+			if (messageType.isSuccessful()) {
+				this.showAlert(Alert.AlertType.INFORMATION, "Excellent!", ResponseType.OK.getValue(), messageType.getValue());        
 				return true;
 			} else {
-				this.showAlert(Alert.AlertType.WARNING, "Error", ResponseType.ERROR.getValue(), responseType.getValue());  
+				this.showAlert(Alert.AlertType.WARNING, "Error", ResponseType.ERROR.getValue(), messageType.getValue());  
 				return false;
 			}
 		}
@@ -496,7 +522,10 @@ public class App extends Application {
     }
 	
 	/**
+	 * Sets the visibility of an element.
 	 * 
+	 * @param element the element to be considered.
+	 * @param visible <code>true</code> if the element is to be visible on the page.
 	**/
 	public void setVisibleElement(final Node element, final boolean visible) {
 	    element.setVisible(visible);
@@ -504,12 +533,14 @@ public class App extends Application {
 	}
 	
 	/**
-     * 
-     * @param clickedLink the link of the clicked menu.
-    **/
-    public void activeLinkMenu (final Parent parent, final Node clickedLink) {
-    	if (parent != null) {
-	    	for (Node child: parent.getChildrenUnmodifiable()) {
+	 * Activates a particular graphic style at the link clicked in the menu.
+	 * 
+	 * @param menu the menu.
+	 * @param clickedLink the link clicked in the menu.
+	**/
+    public void activateLinkMenu (final Parent menu, final Node clickedLink) {
+    	if (menu != null) {
+	    	for (Node child: menu.getChildrenUnmodifiable()) {
 	    		if (child instanceof Text) {
 	    			Text link = (Text) child;
 	    			

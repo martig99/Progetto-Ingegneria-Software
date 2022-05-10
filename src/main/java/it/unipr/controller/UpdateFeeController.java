@@ -4,12 +4,14 @@ import main.java.it.unipr.client.*;
 import main.java.it.unipr.message.*;
 import main.java.it.unipr.model.*;
 
+import java.util.*;
+
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.text.*;
 
 /**
- * The class {@code UpdateFeeController} supports the update a fee. 
+ * The class {@code UpdateFeeController} supports the section for the updating a fee.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -28,6 +30,9 @@ public class UpdateFeeController {
 	@FXML
     private Button updateButton;
 	
+	/**
+	 * {@inheritDoc}
+	**/
 	@FXML
     private void initialize() {	
 		this.updateButton.setOnMouseClicked(event -> {
@@ -40,7 +45,7 @@ public class UpdateFeeController {
 	}
 
 	/**
-	 * 
+	 * Performs the updating of the fee.
 	**/
 	public void updateFee() {	
 		if (this.amount.getText().isEmpty() && this.validityPeriod.getText().isEmpty()) {
@@ -67,17 +72,17 @@ public class UpdateFeeController {
 		} else {
 			validityPeriod = this.fee.getValidityPeriod();
 		}
-		
-		Fee newFee = new Fee(this.fee.getId(), this.fee.getType(), amount, validityPeriod, StatusCode.ACTIVE);
-		boolean result = this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.UPDATE_FEE, newFee, null)));
+				
+		boolean result = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.UPDATE_FEE, 		Arrays.asList(new Fee(this.fee.getId(), this.fee.getType(), amount, validityPeriod, StatusCode.ACTIVE)))));
 		if (result) {
 			this.app.initFees();
 		}
 	}
 	
 	/**
+	 * Sets the fee to be updated.
 	 * 
-	 * @param id
+	 * @param fee the fee.
 	**/
 	public void setFee(final Fee fee) {
 		this.fee = fee;

@@ -5,34 +5,14 @@ import main.java.it.unipr.model.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * The class {@code FeeDAO} defines a model for the management of the query of the entity Fees of the database.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class FeeDAO {
-	
-	/**
-	 * Gets the fee identification code given the fee type. 
-	 * 
-	 * @param type the fee type.
-	 * @return the reference of the fee or <code>null</code>.
-	**/
-	public Fee getFeeByType(final FeeType type) {
-		try {
-			String query = "SELECT * FROM Fees WHERE Type = ? AND StatusCode <> ?";
-			
-			PreparedStatement pstmt = DBUtil.prepareQuery(query);
-			pstmt.setString(1, type.toString());
-			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
-			
-			ResultSet rset = pstmt.executeQuery();
-			if (rset.next())
-				return DBUtil.setFeeFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		
-		return null;
-	}
-	
+
 	/**
 	 * Gets the list of all the fees.
 	 * 
@@ -58,6 +38,32 @@ public class FeeDAO {
 		}
 		
 		return list;
+	}
+	
+	/**
+	 * Gets the fee given the fee type. 
+	 * 
+	 * @param type the fee type.
+	 * @return the reference of the fee or <code>null</code>.
+	**/
+	public Fee getFeeByType(final FeeType type) {
+		try {
+			String query = "SELECT * FROM Fees WHERE Type = ? AND StatusCode <> ?";
+			
+			PreparedStatement pstmt = DBUtil.prepareQuery(query);
+			pstmt.setString(1, type.toString());
+			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
+			
+			ResultSet rset = pstmt.executeQuery();
+			if (rset.next())
+				return DBUtil.setFeeFromResultSet(rset);
+			
+			DBUtil.dbDisconnect(rset, pstmt);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -87,11 +93,18 @@ public class FeeDAO {
 	}
 	
 	/**
-	 * Updates a fee.
+	 * Updates the information of a fee.
+	 * In particular it removes the existing fee that has the specified type and 
+	 * then inserts a new fee of the same type with the new values.
+	 * 
+	 * @param id the unique identifier of the fee.
+	 * @param feeType the type of the fee.
+	 * @param amount the new amount of the fee.
+	 * @param period the new period of validity of the fee.
 	**/
-	public void updateFee(final int id, final FeeType feeType, final float amount, final int period) {
+	public void updateFee(final int id, final FeeType feeType, final float amount, final int validityPeriod) {
 		this.removeFee(id);
-		this.insertFee(feeType, amount, period);
+		this.insertFee(feeType, amount, validityPeriod);
 	}
 	
 	/**
@@ -117,9 +130,9 @@ public class FeeDAO {
 	/**
 	 * Inserts a new fee in the database.
 	 * 
-	 * @param type the type of the new fee.
+	 * @param type the type of the fee.
 	 * @param amount the amount of the new fee.
-	 * @param validityPeriod the validity period of the new fee.
+	 * @param validityPeriod the new validity period of the fee.
 	**/
 	public void insertFee(final FeeType type, final float amount, final int validityPeriod) {
 		try {

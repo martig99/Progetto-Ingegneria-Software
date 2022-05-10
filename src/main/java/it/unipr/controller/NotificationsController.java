@@ -10,7 +10,6 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-
 /**
  * The class {@code NotificationsController} supports the display of all notifications. 
  * 
@@ -31,17 +30,12 @@ public class NotificationsController {
     private void initialize() {}
     
     /**
-     * Sets the reference to the application.
-     * 
-     * @param app the reference to the app.
+     * Sets the list of notifications.
     **/
-    public void setApp(final App app) {
-        this.app = app;        
-        User user = this.app.getLoggedUser();
-
-        String textStorageFees = "", textMembershipFee = "";
-        
-		ArrayList<Notification> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NOTIFICATIONS, user, null), Notification.class);
+    public void setNotifications() {
+    	String textStorageFees = "", textMembershipFee = "";
+    	
+		ArrayList<Notification> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NOTIFICATIONS, Arrays.asList(this.app.getLoggedUser())), Notification.class);
         if (list.size() > 0) {
         	for (Notification notification: list) {
         		if (notification.getFee().getType() == FeeType.MEMBERSHIP) {
@@ -58,5 +52,16 @@ public class NotificationsController {
         	this.app.setVisibleElement(this.containerStorageFees, false);
         	this.app.setVisibleElement(this.noNotifications, true);
         }
+    }
+    
+    /**
+     * Sets the reference to the application.
+     * 
+     * @param app the reference to the app.
+    **/
+    public void setApp(final App app) {
+        this.app = app;        
+
+        this.setNotifications();
     }
 }

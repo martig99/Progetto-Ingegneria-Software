@@ -33,6 +33,9 @@ public class FeesController {
     @FXML
     private TableColumn<Fee, String> typeColumn;
     
+    /**
+     * {@inheritDoc}
+    **/
     @FXML
     private void initialize() {	
 		this.setTable();

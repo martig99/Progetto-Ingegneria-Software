@@ -1,22 +1,27 @@
 package main.java.it.unipr.message;
 
+/**
+ * The enum {@code RequestType} defines the type of the request message.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public enum RequestType {
 	LOGIN_USER,
 	INSERT_USER,
 	UPDATE_USER,
 	UPDATE_MEMBER,
+	UPDATE_EMPLOYEE,
 	REMOVE_USER,
 	GET_USER_BY_EMAIL,
 	GET_ALL_USERS,
 	GET_ALL_MEMBERS_EMAIL,
-	GET_BOAT_BY_NAME,
 	GET_ALL_BOATS,
 	INSERT_BOAT,
 	UPDATE_BOAT,
 	REMOVE_BOAT,
 	GET_ALL_NAME_BOATS_BY_OWNER,
 	GET_ALL_RACES,
-	CHECK_OPEN_REGISTRATION,
 	INSERT_RACE,
 	UPDATE_RACE,
 	REMOVE_RACE,

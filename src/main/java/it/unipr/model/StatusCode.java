@@ -1,10 +1,7 @@
 package main.java.it.unipr.model;
 
 /**
- * The enum {@code Status} defines the status 
- * 
- * {@link #ACTIVE}
- * {@link #ELIMINATED}
+ * The enum {@code StatusCode} defines the status of an instance.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -22,14 +19,30 @@ public enum StatusCode {
 	
 	private final int value;
 
-    StatusCode (final int newValue) {
-        this.value = newValue;
+	/**
+	 * Class constructor.
+	 * 
+	 * @param value the value.
+	**/
+    StatusCode (final int value) {
+        this.value = value;
     }
 
+    /**
+     * Gets the value.
+     * 
+     * @return the value.
+    **/
     public int getValue() { 
     	return value; 
     }
     
+    /**
+     * Gets the status corresponding to a value.
+     * 
+     * @param value the value.
+     * @return the status.
+    **/
     public static StatusCode getStatusCode(final int value) {
         for (StatusCode s: StatusCode.values()) {
             if (s.value == value) 

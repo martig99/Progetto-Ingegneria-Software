@@ -6,6 +6,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+/**
+ * The class {@code ClientHelper} defines a client that sends an object to a server and receives its answer.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class ClientHelper {
 	
 	private static final Integer SPORT = 4444;
@@ -20,7 +26,7 @@ public class ClientHelper {
      * Gets the input stream.
      * 
      * @return the input stream.
-     */
+    **/
     public static ObjectInputStream getInputStream() {
         return ClientHelper.inputStream;
     }
@@ -29,7 +35,7 @@ public class ClientHelper {
      * Sets the input stream.
      * 
      * @param inputStream the new input stream.
-     */
+    **/
     public static void setInputStream(final ObjectInputStream inputStream) {
     	ClientHelper.inputStream = inputStream;
     }
@@ -38,7 +44,7 @@ public class ClientHelper {
      * Gets the output stream.
      * 
      * @return the output stream.
-     */
+    **/
     public static ObjectOutputStream getOutputStream() {
         return ClientHelper.outputStream;
     }
@@ -47,30 +53,35 @@ public class ClientHelper {
      * Sets the output stream
      * 
      * @param outputStream the new output stream.
-     */
+    **/
     public static void setOutputStream(final ObjectOutputStream outputStream) {
     	ClientHelper.outputStream = outputStream;
     }
     
+    /**
+     * Gets the client socket.
+     * 
+     * @return the client socket.
+    **/
     public static Socket getClient() {
     	return ClientHelper.client;
     }
     
     /**
+     * Sets the connection between client and server, sends the request to the server and receives a response.
      * 
-     * @param request
-     * @return
+     * @param request the request sent by the client to the server.
+     * @return the server response.
     **/
-    public static Object getResponse(final Request request) {
+    public static Object connection(final Request request) {
     	try {
     		ClientHelper.client = new Socket(SHOST, SPORT);
         	
         	ClientHelper.outputStream = new ObjectOutputStream(ClientHelper.client.getOutputStream());
         	ClientHelper.outputStream.writeObject(request);
         	ClientHelper.outputStream.flush();
-
+        	
         	ClientHelper.inputStream = new ObjectInputStream(new BufferedInputStream(ClientHelper.client.getInputStream()));
-
             return ClientHelper.inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -80,12 +91,13 @@ public class ClientHelper {
     }
     
     /**
+     * Gets the type of the response received by the server.
      * 
-     * @param request
-     * @return
+     * @param request the request sent by the client to the server.
+     * @return the type of the response.
     **/
     public static ResponseType getResponseType(final Request request) {
-    	Object obj = ClientHelper.getResponse(request);
+    	Object obj = ClientHelper.connection(request);
     	if (obj instanceof Response) {
     		Response response = (Response) obj;
 			if (response.getResponseType() != null) {
@@ -97,13 +109,15 @@ public class ClientHelper {
     }
     
     /**
+     * Gets the object contained in the response received from the server.
      * 
-     * @param <T>
-     * @param request
-     * @param cls
+     * @param <T> the generic type 'T' of the object.
+     * @param request the request sent by the client to the server.
+     * @param cls the class of specific type 'T'.
+     * @return the object of type 'T' or <code>null</code>.
     **/
     public static <T extends Serializable> T getObjectResponse(final Request request, final Class<T> cls) {
-    	Object obj = ClientHelper.getResponse(request);
+    	Object obj = ClientHelper.connection(request);
     	if (obj instanceof Response) {
 			Response response = (Response) obj;
 			return cls.cast(response.getObject());
@@ -113,16 +127,17 @@ public class ClientHelper {
     }
     
     /**
+     * Gets the list of objects contained in the response received by the server.
      * 
-     * @param <T>
-     * @param request
-     * @param cls
-     * @return
+     * @param <T> the generic type 'T' of the list of objects.
+     * @param request the request sent by the client to the server.
+     * @param cls the class of specific type 'T'.
+     * @return the list.
     **/
     public static <T> ArrayList<T> getListResponse(final Request request, final Class<T> cls) {
     	ArrayList<T> list = new ArrayList<T>();
     	
-    	Object obj = ClientHelper.getResponse(request);
+    	Object obj = ClientHelper.connection(request);
 		if (obj instanceof Response) {
 			Response response = (Response) obj;
 			for (Object o: (ArrayList<?>) response.getObject()) {

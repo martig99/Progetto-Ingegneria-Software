@@ -7,6 +7,13 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * The class {@code FeeDAOTest} defines the test for class {@code FeeDAO}. 
+ * This class extends the class {@code UtilTest}.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class FeeDAOTest extends UtilTest {
 	
 	private final static FeeType type = FeeType.MEMBERSHIP;
@@ -15,14 +22,29 @@ public class FeeDAOTest extends UtilTest {
 	
 	private static int id = 0;
 	
+	/**
+	 * Performs the test for the method that gets a fee given the type.
+	**/
 	@BeforeAll
-	public static void getFee() {
+	public static void getFeeByType() {
 		Fee fee = UtilTest.getClub().getFeeDAO().getFeeByType(type);
 		assertNotNull(fee);
 		
 		id = fee.getId();
 	}
 	
+	/**
+	 * Performs the test for the method that gets a fee given the id.
+	**/
+	@Test
+	public static void getFeeById() {
+		Fee fee = UtilTest.getClub().getFeeDAO().getFeeById(id);
+		assertNotNull(fee);
+	}
+	
+	/**
+	 * Performs the test for the method of updating the fee.
+	**/
 	@Test
 	public void updateFeeTest() {
 		UtilTest.getClub().getFeeDAO().updateFee(id, type, amount, validityPeriod);

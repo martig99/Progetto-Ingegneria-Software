@@ -3,14 +3,16 @@ package main.java.it.unipr.controller;
 import main.java.it.unipr.client.*;
 import main.java.it.unipr.message.*;
 import main.java.it.unipr.model.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
+import java.util.*;
+
+import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.text.*;
 
 /**
- * The class {@code UpsertBoatController} supports the update or insert of a boat. 
+ * The class {@code UpsertBoatController} supports the section for the insertion or updating of a boat.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -32,10 +34,16 @@ public class UpsertBoatController {
 	@FXML
     private Button upsertButton;
 	
+	/**
+	 * {@inheritDoc}
+	**/
 	@FXML
     private void initialize() {	
 		this.upsertButton.setOnMouseClicked(event -> {
-			this.upsertBoat();
+			if (this.boat == null)
+				this.insertBoat();
+			else
+				this.updateBoat();
         });
 		
 		this.link.setOnMouseClicked(event -> {
@@ -44,21 +52,37 @@ public class UpsertBoatController {
 	}
 
 	/**
-	 * 
+	 * Performs the insertion of a boat.
 	**/
-	public void upsertBoat() {	
-		if (this.boat == null) {
-			if (this.name.getText().trim().isEmpty() || this.length.getText().trim().isEmpty()) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please complete all fields.");
-				return;
-			}
-		} else {
-			if (this.name.getText().trim().isEmpty() && this.length.getText().trim().isEmpty()) {
-				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please complete at least one field.");
-				return;
-			}
+	public void insertBoat() {
+		if (this.name.getText().trim().isEmpty() || this.length.getText().trim().isEmpty()) {
+			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please complete all fields.");
+			return;
 		}
+		
+		int length = this.app.convertToInteger(this.length.getText());			
+		if (length <= 0) {
+			return;
+		}
+		
+		Boat boat = new Boat(0, this.name.getText(), length, null, StatusCode.ACTIVE);
+		String emailMember = (this.app.getLoggedUser() instanceof Member) ? this.app.getLoggedUser().getEmail() : this.users.getSelectionModel().getSelectedItem().toString();
 
+		ResponseType responseType = ClientHelper.getResponseType(new Request(RequestType.INSERT_BOAT, Arrays.asList(boat, emailMember)));
+		boolean result = this.app.isSuccessfulMessage(responseType);
+		if (result)
+			this.app.initBoats();
+	}
+	
+	/**
+	 * Performs the updating of a boat.
+	**/
+	public void updateBoat() {
+		if (this.name.getText().trim().isEmpty() && this.length.getText().trim().isEmpty()) {
+			this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please complete at least one field.");
+			return;
+		}
+		
 		int length = 0;
 		if (!this.length.getText().isEmpty()) {
 			length = this.app.convertToInteger(this.length.getText());			
@@ -69,36 +93,19 @@ public class UpsertBoatController {
 			length = this.boat.getLength();
 		}
 		
-		int idBoat = this.boat == null ? 0 : this.boat.getId();
 		String name = !this.name.getText().isEmpty() ? this.name.getText() : null;
-			
-		User user = new User();
-		if (this.app.getLoggedUser() instanceof Member) {
-			user = this.app.getLoggedUser(); 
-		} else {
-			if (this.boat == null) {
-				String emailMember = this.users.getSelectionModel().getSelectedItem().toString();
-				user = ClientHelper.getObjectResponse(new Request(RequestType.GET_USER_BY_EMAIL, emailMember, null), User.class);
-				
-				if (user == null) {
-					this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "Please select the user.");
-	    			return;
-				}
-			}
-		}
-		
-		RequestType type = this.boat == null ? RequestType.INSERT_BOAT : RequestType.UPDATE_BOAT;	
-		Member member = new Member(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-		Request request = new Request(type, new Boat(idBoat, name, length, member, StatusCode.ACTIVE), null);
-		
-		boolean result = this.app.getMessage(ClientHelper.getResponseType(request));
+		Boat boat = new Boat(this.boat.getId(), name, length, this.boat.getOwner(), StatusCode.ACTIVE);
+
+		ResponseType responseType = ClientHelper.getResponseType(new Request(RequestType.UPDATE_BOAT, Arrays.asList(boat)));
+		boolean result = this.app.isSuccessfulMessage(responseType);
 		if (result)
 			this.app.initBoats();
 	}
 	
 	/**
+	 * Sets the boat to insert or update.
 	 * 
-	 * @param id
+	 * @param boat the boat.
 	**/
 	public void setBoat(final Boat boat) {
 		this.boat = boat;
@@ -112,13 +119,17 @@ public class UpsertBoatController {
     public void setApp(final App app) {
         this.app = app;
         
+        if (this.boat == null) {
+    		this.title.setText("ADD A NEW BOAT");
+    	} else {
+    		this.title.setText("UPDATE THE BOAT WITH ID " + this.boat.getId());
+    	}
+        
         if (this.app.getLoggedUser() instanceof Employee) {
         	if (this.boat == null) {
         		this.app.setVisibleElement(this.users, true);
-        		this.title.setText("ADD A NEW BOAT");
         	} else {
         		this.app.setVisibleElement(this.users, false);
-        		this.title.setText("UPDATE THE BOAT WITH ID " + this.boat.getId());
         	}
         	
         	ObservableList<String> listUser = FXCollections.<String>observableArrayList();

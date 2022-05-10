@@ -1,11 +1,7 @@
 package main.java.it.unipr.model;
 
 /**
- * The enum {@code FeeType} defines the type of fee that the user must pay.
- * 
- * {@link #MEMBERSHIP}
- * {@link #STORAGE}
- * {@link #STORAGE}
+ * The enum {@code FeeType} defines the type of fee.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>

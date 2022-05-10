@@ -1,4 +1,4 @@
 /**
- * Provides several classes for the management of a sailing club.
+ * Provides different classes used for describing the features of the application.
 **/
 package main.java.it.unipr.model;

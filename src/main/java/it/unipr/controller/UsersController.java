@@ -46,6 +46,9 @@ public class UsersController {
     @FXML
     private Button addButton;
     
+    /**
+     * {@inheritDoc} 
+    **/
     @FXML
     private void initialize() {	
 		this.setTable();
@@ -80,39 +83,42 @@ public class UsersController {
 	}
     
     /**
-     * Removes a selected user from the table
+     * Removes a selected user from the table.
+     * 
+     * @param user the user to be removed.
     **/
-    public void removeUser(final User selectedUser) {  	
-    	if(selectedUser.getId() == this.app.getLoggedUser().getId()) {
+    public void removeUser(final User user) {  	
+    	if(user.getId() == this.app.getLoggedUser().getId()) {
     		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot remove yourself.");
     	}
     	
     	if (this.app.getLoggedUser() instanceof Employee) {
     		Employee employee = (Employee) this.app.getLoggedUser();
 		
-			if(!employee.isAdministrator() || selectedUser instanceof Member) {
+			if(!employee.isAdministrator() || user instanceof Member) {
 				this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot remove a club " + this.userType.toString().toLowerCase());
 				return;
 			}
 			
-	    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove an user", "You are removing the user with unique identifier " + selectedUser.getId(), "Are you sure?");
-	    	if (result.get() == ButtonType.OK) {
-	    		Request request = new Request(RequestType.REMOVE_USER, selectedUser.getId(), null);
-	    		this.app.getMessage(ClientHelper.getResponseType(request));
+	    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove an user", "You are removing the user with unique identifier " + user.getId(), "Are you sure?");
+	    	if (result.get() == ButtonType.OK) {	    		
+	    		Request request = new Request(RequestType.REMOVE_USER, Arrays.asList(user.getId()));
+	    		this.app.isSuccessfulMessage(ClientHelper.getResponseType(request));
 	    		this.setTableContent(this.userType);
 	    	}
     	}
     }
     
     /**
+     * Updates a selected user from the table.
      * 
-     * @param selectedUser
+     * @param user the user to be updated.
     **/
-    public void updateUser(final User selectedUser) {
-    	if(selectedUser.getId() != this.app.getLoggedUser().getId()) { 
+    public void updateUser(final User user) {
+    	if(user.getId() != this.app.getLoggedUser().getId()) { 
 			Employee employee = (Employee) this.app.getLoggedUser();
-			if((!employee.isAdministrator() && selectedUser instanceof Member) || employee.isAdministrator()) {
-    			this.app.initUpsertUser(selectedUser, this.userType);
+			if((!employee.isAdministrator() && user instanceof Member) || employee.isAdministrator()) {
+    			this.app.initUpsertUser(user, this.userType);
     		} else {
 	    		this.app.showAlert(Alert.AlertType.WARNING, "Error", null, "You cannot update an employee.");
 	    	}		
@@ -122,7 +128,9 @@ public class UsersController {
     }
     
     /**
-	 * Sets the users table with columns id, fiscal code, first name, last name and email.
+	 * Sets the user table with the id, first name, last name and email address columns for all users. 
+	 * Then for the members table also sets the fiscal code and address.
+	 * Instead for the employee table sets a column where the value can be <code>true</code> or <code>false</code> depending on whether the employee is an administrator.
 	**/
 	public void setTable() {
 		this.idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
@@ -166,16 +174,16 @@ public class UsersController {
 	**/
     public void setTableContent(final UserType userType) { 
     	ObservableList<User> users = FXCollections.<User>observableArrayList(); 
-    	ArrayList<User> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_USERS, userType, null), User.class);
+    	ArrayList<User> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_USERS, Arrays.asList(userType)), User.class);
     	users.addAll(list);
 		this.usersTable.setItems(users);
     }
     
     /**
-     * 
+     * Displays items related to the members.
     **/
     public void displayMembersTable() {
-    	this.app.activeLinkMenu(this.menu, this.members);
+    	this.app.activateLinkMenu(this.menu, this.members);
 		
 		this.fiscalCodeColumn.setVisible(true);
 		this.addressColumn.setVisible(true);
@@ -187,13 +195,15 @@ public class UsersController {
 		this.setUserType(UserType.MEMBER);
 		this.setTableContent(this.userType);
 		this.setTable();
+		
+		this.addButton.setText("ADD " + this.userType);
     }
     
     /**
-     * 
+     * Displays items related to the employees.
     **/
     public void displayEmployeesTable() {
-    	this.app.activeLinkMenu(this.menu, this.employees);
+    	this.app.activateLinkMenu(this.menu, this.employees);
 		
 		this.administratorColumn.setVisible(true);
 		this.fiscalCodeColumn.setVisible(false);
@@ -210,11 +220,14 @@ public class UsersController {
 		this.setUserType(UserType.EMPLOYEE);
 		this.setTableContent(this.userType);
 		this.setTable();
+		
+		this.addButton.setText("ADD " + this.userType);
     }
     
     /**
+     * Sets the type of user to handle.
      * 
-     * @param feeType
+     * @param userType the type of user.
     **/
     public void setUserType(final UserType userType) {
     	this.userType = userType;
@@ -228,14 +241,20 @@ public class UsersController {
     public void setApp(final App app) {
         this.app = app;
         
-        if (this.userType == UserType.MEMBER) {
-	        this.app.activeLinkMenu(this.menu, this.members);
-	        this.displayMembersTable();
-        } else {
-        	this.app.activeLinkMenu(this.menu, this.employees);
-        	this.displayEmployeesTable();
-        }
+        if (this.app.getLoggedUser() instanceof Employee) {
+    		Employee employee = (Employee) this.app.getLoggedUser();
+		
+			if(!employee.isAdministrator()) {
+				this.app.setVisibleElement(this.employees, false);
+			}
+    	}
         
-        this.addButton.setText("ADD " + this.userType);
+        if (this.userType == UserType.EMPLOYEE) {
+        	this.app.activateLinkMenu(this.menu, this.employees);
+        	this.displayEmployeesTable();
+        } else {
+        	this.app.activateLinkMenu(this.menu, this.members);
+	        this.displayMembersTable();
+        }
     }
 }

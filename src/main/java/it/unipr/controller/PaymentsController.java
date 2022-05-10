@@ -1,23 +1,20 @@
 package main.java.it.unipr.controller;
 
 import main.java.it.unipr.client.*;
-import main.java.it.unipr.message.Request;
-import main.java.it.unipr.message.RequestType;
+import main.java.it.unipr.message.*;
 import main.java.it.unipr.model.*;
 
+import java.util.*;
+
 import javafx.fxml.*;
-
-import java.util.ArrayList;
-
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 
-
 /**
- * The class {@code UsersController} supports the display of all users. 
+ * The class {@code PaymentsController} supports the display of all payments. 
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -45,6 +42,9 @@ public class PaymentsController {
     @FXML
     private Button notifyPaymentButton, payFeeButton;
     
+    /**
+     * {@inheritDoc}
+    **/
     @FXML
     private void initialize() {	
 		this.setTable();
@@ -71,7 +71,8 @@ public class PaymentsController {
     }
     
     /**
-	 * Sets the users table with columns id, fiscal code, first name, last name and email.
+	 * Sets the payments table with columns id, date, start of validity date, end of validity date, email address of the member, 
+	 * total, description of the payment service, description of the race, name of the boat.
 	**/
 	public void setTable() {
 		this.idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
@@ -79,7 +80,7 @@ public class PaymentsController {
 		this.validityStartDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getValidityStartDate())));
 		this.validityEndDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(this.app.setDateFormat(cellData.getValue().getValidityEndDate())));
 		this.memberColumn.setCellValueFactory(cellData -> {
-			Member member = cellData.getValue().getMember();
+			User member = cellData.getValue().getUser();
 			if (member != null) {
 				return new SimpleStringProperty(member.getEmail());
 			}
@@ -121,34 +122,30 @@ public class PaymentsController {
 	}
 	
     /**
-	 * Inserts the data of each user in the table.
+	 * Inserts the data of each payment in the table.
 	**/
-    public void setTableContent() { 	
+    public void setTableContent() {
     	User user = null;
-    	if (this.app.getLoggedUser() instanceof Member) {
-        	user = this.app.getLoggedUser();
-        }
-    	
-    	ObservableList<Payment> payments = FXCollections.<Payment>observableArrayList();    
-    	ArrayList<Payment> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_PAYMENTS, user, this.feeType), Payment.class);
+		if (this.app.getLoggedUser() instanceof Member) {
+			user = this.app.getLoggedUser();
+		}
+		
+    	ObservableList<Payment> payments = FXCollections.<Payment>observableArrayList();  
+    	ArrayList<Payment> list = ClientHelper.getListResponse(new Request(RequestType.GET_ALL_PAYMENTS, Arrays.asList(user, this.feeType)), Payment.class);
     	payments.addAll(list);
 		this.paymentsTable.setItems(payments);
     }
     
     /**
-     * 
+     * Displays items related to the payments of membership fee.
     **/
     public void displayPaymentsMembershipFeesTable() {
-    	this.app.activeLinkMenu(this.menu, this.membershipFees);	
+    	this.app.activateLinkMenu(this.menu, this.membershipFees);	
     	
     	this.validityStartDateColumn.setVisible(true);
     	this.validityEndDateColumn.setVisible(true);
     	this.raceColumn.setVisible(false);
     	this.boatColumn.setVisible(false);
-    	
-    	if (this.app.getLoggedUser() instanceof Employee) {
-    		this.app.setVisibleElement(this.notifyPaymentButton, true);
-    	}
     	
     	this.app.setVisibleElement(this.payFeeButton, true);
     	this.payFeeButton.setText("PAY MEMBERSHIP FEE");
@@ -159,19 +156,15 @@ public class PaymentsController {
     }
     
     /**
-     * 
+     * Displays items related to the payments of storage fee. 
     **/
     public void displayPaymentsStorageFeesTable() {
-    	this.app.activeLinkMenu(this.menu, this.storageFees);	
+    	this.app.activateLinkMenu(this.menu, this.storageFees);	
     	
     	this.validityStartDateColumn.setVisible(true);
     	this.validityEndDateColumn.setVisible(true);
     	this.raceColumn.setVisible(false);
     	this.boatColumn.setVisible(true);
-    	
-    	if (this.app.getLoggedUser() instanceof Employee) {
-    		this.app.setVisibleElement(this.notifyPaymentButton, true);
-    	}
     	
     	this.app.setVisibleElement(this.payFeeButton, true);
     	this.payFeeButton.setText("PAY STORAGE FEE");
@@ -182,10 +175,10 @@ public class PaymentsController {
     }
     
     /**
-     * 
+     * Displays items related to the payments of race registration fee. 
     **/
     public void displayPaymentsRaceRegistrationFeesTable() {
-    	this.app.activeLinkMenu(this.menu, this.raceRegistrationFees);
+    	this.app.activateLinkMenu(this.menu, this.raceRegistrationFees);
     	
     	this.validityStartDateColumn.setVisible(false);
     	this.validityEndDateColumn.setVisible(false);
@@ -201,8 +194,9 @@ public class PaymentsController {
     }
     
     /**
+     * Sets the type of fee for which payments should be handled.
      * 
-     * @param feeType
+     * @param feeType the type of fee.
     **/
     public void setFeeType(final FeeType feeType) {
     	this.feeType = feeType;
@@ -216,16 +210,17 @@ public class PaymentsController {
     public void setApp(final App app) {
         this.app = app;
         
+        if (this.app.getLoggedUser() instanceof Employee) {
+    		this.app.setVisibleElement(this.notifyPaymentButton, true);
+        	this.memberColumn.setVisible(true);
+        }
+        
         if (this.feeType == FeeType.MEMBERSHIP) {
         	this.displayPaymentsMembershipFeesTable();
         } else if (this.feeType == FeeType.STORAGE) {
         	this.displayPaymentsStorageFeesTable();
         } else if (this.feeType == FeeType.RACE_REGISTRATION) {
         	this.displayPaymentsRaceRegistrationFeesTable();
-        }
-        
-        if (this.app.getLoggedUser() instanceof Employee) {
-        	this.memberColumn.setVisible(true);
         }
     }
 }

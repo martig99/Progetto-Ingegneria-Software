@@ -17,6 +17,7 @@ public class User implements Serializable {
 	private String lastName;
 	private String email;
 	private String password;
+	private StatusCode statusCode;
 	
 	/**
 	 * Class constructor.
@@ -27,45 +28,59 @@ public class User implements Serializable {
 		this.setLastName("");
 		this.setEmail("");
 		this.setPassword("");
+		this.setStatusCode(null);
 	}
 	
 	/**
 	 * Class constructor.
 	 * 
-	 * @param id the user's id.
-	 * @param firstName the user's first name.
-	 * @param lastName the user's last name.
-	 * @param email the user's email.
-	 * @param password the user's password.
+	 * @param id the unique identifier of the user.
+	 * @param firstName the first name of the user.
+	 * @param lastName the last name of the user.
+	 * @param email the email address of the user.
+	 * @param password the password of the user.
+	 * @param statusCode the status code of the user.
 	**/
-	public User(final int id, final String firstName, final String lastName, final String email, final String password) {
+	public User(final int id, final String firstName, final String lastName, final String email, final String password, final StatusCode statusCode) {
 		this.setId(id);
 		this.setFirstName(firstName);
 		this.setLastName(lastName);
 		this.setEmail(email);
 		this.setPassword(password);
+		this.setStatusCode(statusCode);
 	}
 	
 	/**
-	 * Gets the user's identifier.
+	 * Class constructor.
 	 * 
-	 * @return the identifier.
+	 * @param email the email address of the user.
+	 * @param password the password of the user.
+	**/
+	public User(final String email, final String password) {
+		this.setEmail(email);
+		this.setPassword(password);
+	}
+	
+	/**
+	 * Gets the unique identifier of the user.
+	 * 
+	 * @return the unique identifier.
 	**/
 	public int getId() {
 		return this.id;
 	}
 
 	/**
-	 * Sets the user's identifier.
+	 * Sets the unique identifier of the user.
 	 *
-	 * @param id the new identifier.
+	 * @param id the new unique identifier.
 	**/
 	public void setId(final int id) {
 		this.id = id;
 	}
 	
 	/**
-	 * Gets the user's first name.
+	 * Gets the first name of the user.
 	 *
 	 * @return the first name.
 	**/
@@ -74,7 +89,7 @@ public class User implements Serializable {
 	}
 
 	/**
-	 * Sets the user's first name.
+	 * Sets the first name of the user.
 	 * 
 	 * @param firstName the new first name.
 	**/
@@ -83,7 +98,7 @@ public class User implements Serializable {
 	}
 	 
 	/**
-	 * Gets the user's last name.
+	 * Gets the last name of the user.
 	 *
 	 * @return the last name.
 	**/
@@ -92,7 +107,7 @@ public class User implements Serializable {
 	}
 
 	/**
-	 * Sets the user's last name.
+	 * Sets the last name of the user.
 	 * 
 	 * @param lastName the new last name.
 	**/
@@ -101,7 +116,7 @@ public class User implements Serializable {
 	}
 	 
 	/**
-	 * Gets the user's email address.
+	 * Gets the email address of the user.
 	 * 
 	 * @return the email address.
 	**/
@@ -110,16 +125,16 @@ public class User implements Serializable {
 	}
 	
 	/**
-	 * Sets the user's email address.
+	 * Sets the email address of the user.
 	 * 
-	 * @param email the new user's email address.
+	 * @param email the new email address.
 	**/
 	public void setEmail(final String email) {
 		this.email = email;
 	}
 	
 	/**
-	 * Gets the user's password.
+	 * Gets the password of the user.
 	 * 
 	 * @return the password.
 	**/
@@ -128,14 +143,32 @@ public class User implements Serializable {
 	}
 	
 	/**
-	 * Sets the user's password.
+	 * Sets the password of the user.
 	 * 
-	 * @param password the new user's password.
+	 * @param password the new password.
 	**/
 	public void setPassword(final String password) {
 		this.password = password;
 	}
-
+	
+	/**
+	 * Gets the status code of the boat.
+	 * 
+	 * @return the status code.
+	**/
+	public StatusCode getStatusCode() {
+		return this.statusCode;
+	}
+	
+	/**
+	 * Sets the status code of the boat.
+	 * 
+	 * @param statusCode the new status code.
+	**/
+	public void setStatusCode(final StatusCode statusCode) {
+		this.statusCode = statusCode;
+	}
+	
 	/**
 	 * Gets a string that describes an user.
 	 * 

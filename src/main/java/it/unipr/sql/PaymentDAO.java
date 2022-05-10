@@ -6,6 +6,12 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
+/**
+ * The class {@code PaymentDAO} defines a model for the management of the query of the entity Payments of the database.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class PaymentDAO {
 	
 	/**
@@ -58,11 +64,11 @@ public class PaymentDAO {
 	}
 	
 	/**
-	 * Gets the last payment of the fee made by the club member.
+	 * Gets the last payment made given the type of the fee and other parameters.
 	 * 
-	 * @param idMember the club member's unique identifier.
-	 * @param fee
-	 * @param idBoat
+	 * @param member the member for which the last membership fee has been paid
+	 * @param boat the boat for which the last storage fee has been paid
+	 * @param feeType the type of fee for which the last payment is due.
 	 * @return the date of the last payment or <code>null</code>.
 	**/
 	public Date getLastPaymentFee(final User member, final Boat boat, final FeeType feeType) {
@@ -92,13 +98,8 @@ public class PaymentDAO {
 		
 		return null;
 	}
-	
-	/**
-	 * 
-	 * @param member
-	 * @return
-	**/
-	public Date getEndDate(final Date startDate, final int period) {		
+
+	private Date getEndDate(final Date startDate, final int period) {		
 		if (startDate != null) {
 			Calendar c = Calendar.getInstance();
 			c.setTime(startDate);
@@ -110,8 +111,9 @@ public class PaymentDAO {
 	}
 	
 	/**
+	 * Check if the payment of the storage fee of a boat is still valid.
 	 * 
-	 * @param boat
+	 * @param boat the boat.
 	 * @return <code>true</code> if the last payment is valid.
 	**/
 	public boolean checkPaymentStorageFee(final Boat boat) {
@@ -144,7 +146,7 @@ public class PaymentDAO {
 	 * @param member the club member.
 	 * @return <code>true</code> if the last payment is valid.
 	**/
-	public boolean checkPaymentMembershipFee(final Member member) {
+	public boolean checkPaymentMembershipFee(final User member) {
 		try {			
 			String query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Fees ON Fees.IdFee = Payments.Fee WHERE Payments.Member = ? AND Fees.Type = ? AND Payments.ValidityStartDate <= ? AND Payments.ValidityEndDate >= ?";
 			
@@ -176,14 +178,7 @@ public class PaymentDAO {
 	public ArrayList<Payment> getAllPayments(final User user, final FeeType feeType) {
 		ArrayList<Payment> list = new ArrayList<Payment>();
 		try {			
-			String query = "";			
-			if (feeType == FeeType.MEMBERSHIP) {
-				query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService JOIN Fees ON Fees.IdFee = Payments.Fee WHERE (? IS NULL OR Payments.Member = ?) AND Fees.Type = ? ORDER BY Payments.IdPayment";
-			} else if (feeType == FeeType.STORAGE) {
-				query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN Boats ON Boats.IdBoat = Payments.Boat JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService JOIN Fees ON Fees.IdFee = Payments.Fee WHERE (? IS NULL OR Payments.Member = ?) AND Fees.Type = ? ORDER BY Payments.IdPayment";
-			} else if (feeType == FeeType.RACE_REGISTRATION) {
-				query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN RaceRegistrations ON RaceRegistrations.IdRegistration = Payments.RaceRegistration JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService JOIN Fees ON Fees.IdFee = Payments.Fee WHERE (? IS NULL OR Payments.Member = ?) AND Fees.Type = ? ORDER BY Payments.IdPayment";
-			}
+			String query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember LEFT JOIN Boats ON Boats.IdBoat = Payments.Boat LEFT JOIN RaceRegistrations ON RaceRegistrations.IdRegistration = Payments.RaceRegistration LEFT JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService JOIN Fees ON Fees.IdFee = Payments.Fee WHERE (? IS NULL OR Payments.Member = ?) AND Fees.Type = ? ORDER BY Payments.IdPayment";
 			
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
 			if(user != null) {
@@ -197,24 +192,8 @@ public class PaymentDAO {
 			pstmt.setString(3, feeType.toString());
 						
 			ResultSet rset = pstmt.executeQuery();
-			while (rset.next()) {
-				Member member = DBUtil.setMemberFromResultSet(rset);
-				PaymentService paymentService = DBUtil.setPaymentServiceFromResultSet(rset);
-				Fee fee = DBUtil.setFeeFromResultSet(rset);
-				
-				Boat boat = null;
-				if (feeType != FeeType.MEMBERSHIP) {
-					boat = DBUtil.setBoatFromResultSet(rset);
-				} 
-				
-				Race race = null;
-				RaceRegistration raceRegistration = null;
-				if (feeType == FeeType.RACE_REGISTRATION) {
-					race = DBUtil.setRaceFromResultSet(rset);
-					raceRegistration = DBUtil.setRaceRegistrationFromResultSet(rset, race, boat);
-				}
-				
-				list.add(DBUtil.setPaymentFromResultSet(rset, member, boat, raceRegistration, fee, paymentService));
+			while (rset.next()) {				
+				list.add(DBUtil.setPaymentFromResultSet(rset));
 			}
 			
 			DBUtil.dbDisconnect(rset, pstmt);
@@ -226,14 +205,17 @@ public class PaymentDAO {
 	}
 	
 	/**
+	 * Pays a fee, that is, inserts a payment in the database.
 	 * 
-	 * @param member
-	 * @param boat
-	 * @param raceRegistration
-	 * @param feeType
-	 * @param paymentService
+	 * @param member the club member who pays the fee.
+	 * @param boat the boat of which it is necessary to pay the storage fee or null if the type of fee to be paid is different.
+	 * @param raceRegistration the race registration of which it is necessary to pay the race registration fee or null if the type of fee to be paid is different.
+	 * @param fee the fee to be paid.
+	 * @param paymentService the type of service used to pay.
+	 * @param atLeastOneBoat <code>true</code> if the member owns at least one boat.
+	 * @param refund <code>true</code> if the payment is a refund.
 	**/
-	public void payFee(final User member, final Boat boat, final RaceRegistration raceRegistration, final Fee fee, final PaymentService paymentService, final Boolean atLeastOneBoat, final Boolean repayment) {
+	public void payFee(final User member, final Boat boat, final RaceRegistration raceRegistration, final Fee fee, final PaymentService paymentService, final Boolean atLeastOneBoat, final Boolean refund) {
 		try {
 			String query = "INSERT INTO Payments (Date, Member, Boat, RaceRegistration, Fee, ValidityStartDate, ValidityEndDate, Total, PaymentService) VALUES (?,?,?,?,?,?,?,?,?)";
 			
@@ -282,7 +264,7 @@ public class PaymentDAO {
 				total = raceRegistration.getRace().getRegistrationFee();
 			}
 			
-			if (repayment) {
+			if (refund) {
 				total *= (-1);
 			}
 			
@@ -297,8 +279,9 @@ public class PaymentDAO {
 	}
 	
 	/**
+	 * Gets the payment given a registration to a race.
 	 * 
-	 * @param id
+	 * @param id the unique identifier of the registration for the race.
 	**/
 	public Payment getPaymentByRaceRegistration(final int id) {
 		try {
@@ -309,14 +292,7 @@ public class PaymentDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				Member member = DBUtil.setMemberFromResultSet(rset);
-				Boat boat = DBUtil.setBoatFromResultSet(rset);
-				Race race = DBUtil.setRaceFromResultSet(rset);
-				RaceRegistration raceRegistration = DBUtil.setRaceRegistrationFromResultSet(rset, race, boat);
-				PaymentService paymentService = DBUtil.setPaymentServiceFromResultSet(rset);
-				Fee fee = DBUtil.setFeeFromResultSet(rset);
-
-				return DBUtil.setPaymentFromResultSet(rset, member, boat, raceRegistration, fee, paymentService);
+				return DBUtil.setPaymentFromResultSet(rset);
 			}
 			
 			DBUtil.dbDisconnect(rset, pstmt);
@@ -328,13 +304,14 @@ public class PaymentDAO {
 	}
 	
 	/**
+	 * Refunds the payment of the registration for a race.
 	 * 
-	 * @param id
+	 * @param id the unique identifier of the registration for the race.
 	**/
-	public void repayRegistrationFee(final int id) {
+	public void refundRegistrationFee(final int id) {
 		Payment previousPayment = this.getPaymentByRaceRegistration(id); 
 		if (previousPayment != null) {
-			this.payFee(previousPayment.getMember(), previousPayment.getBoat(), previousPayment.getRaceRegistration(), previousPayment.getFee(), previousPayment.getPaymentService(), false, true);
+			this.payFee(previousPayment.getUser(), previousPayment.getBoat(), previousPayment.getRaceRegistration(), previousPayment.getFee(), previousPayment.getPaymentService(), false, true);
 		}
 	}
 }

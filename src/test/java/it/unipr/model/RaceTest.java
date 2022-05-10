@@ -7,6 +7,12 @@ import java.sql.Date;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The class {@code RaceTest} defines the test for class {@code Race}. 
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class RaceTest {
 	
 	private final static int id = 1;
@@ -20,11 +26,17 @@ public class RaceTest {
 	
 	private static String toString;
 	
+	/**
+	 * Configures some helpful elements for the following tests.
+	**/
 	@BeforeAll
 	public static void setUp() {
 		toString = "Id: " + id + " - Name: " + name + " - Place: " + place + " - Date: " + date + " - Boats Number: " + boatsNumber + " - Registration Fee: " + registrationFee + " - End Date Registration: " + endDateRegistration + " - Status Code: " + statusCode.toString();
 	}
 	
+	/**
+	 * Performs the test for the setter methods.
+	**/
 	@Test
 	public void setterTest() {
 		Race race = new Race();
@@ -51,6 +63,9 @@ public class RaceTest {
 		);		
 	}
 	
+	/**
+	 * Performs the test for the constructor method.
+	**/
 	@Test
 	public void constructorTest() {
 		Race race = new Race(id, name, place, date, boatsNumber, registrationFee, endDateRegistration, statusCode);

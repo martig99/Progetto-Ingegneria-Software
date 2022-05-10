@@ -31,10 +31,10 @@ public class Fee implements Serializable {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param id the id of the fee.
+	 * @param id the unique identifier of the fee.
 	 * @param type the type of the fee.
 	 * @param amount the amount of the fee.
-	 * @param validityPeriod the validity period of the fee in days.
+	 * @param validityPeriod the validity period for the fee in days.
 	 * @param statusCode the status code of the fee.
 	**/
 	public Fee(final int id, final FeeType type, final float amount, final int validityPeriod, final StatusCode statusCode) {
@@ -46,18 +46,18 @@ public class Fee implements Serializable {
 	}	
 	
 	/**
-	 * Gets the id of the fee.
+	 * Gets the unique identifier of the fee.
 	 * 
-	 * @return the id.
+	 * @return the unique identifier.
 	**/
 	public int getId() {
 		return this.id;
 	}
 	
 	/**
-	 * Sets the id of the fee.
+	 * Sets the unique identifier of the fee.
 	 * 
-	 * @param id the new id.
+	 * @param id the new unique identifier.
 	**/
 	public void setId(final int id) {
 		this.id = id;
@@ -100,7 +100,7 @@ public class Fee implements Serializable {
 	}
 	
 	/**
-	 * Gets the validity period of the fee in days.
+	 * Gets the validity period for the fee in days.
 	 * 
 	 * @return the validity period.
 	**/
@@ -109,7 +109,7 @@ public class Fee implements Serializable {
 	}
 	
 	/**
-	 * Sets the validity period of the fee in days.
+	 * Sets the validity period for the fee in days.
 	 * 
 	 * @param validityPeriod the new validity period.
 	**/

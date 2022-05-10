@@ -6,7 +6,6 @@ import java.io.*;
 import java.net.*;
 
 /**
- *
  * The class {@code ServerThread} manages the interaction with a client of the server.
  *
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
@@ -58,7 +57,7 @@ public class ServerThread implements Runnable {
 						this.outputStream.writeObject(response);
 
 						if (!request.isBackgroundRequest()) {
-							System.out.println("Thread " + id + " receives: " + request.getRequestType() + " from its client");
+							System.out.println("Thread " + id + " receives: " + request.toString() + " from its client");
 							System.out.format("Thread " + id + " sends: " + response.toString() + "\n\n");
 						}
 						
@@ -80,6 +79,4 @@ public class ServerThread implements Runnable {
 			return;
 		}
 	}
-	
-	
 }

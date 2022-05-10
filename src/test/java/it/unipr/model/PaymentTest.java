@@ -7,6 +7,12 @@ import java.sql.Date;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The class {@code PaymentTest} defines the test for class {@code Payment}. 
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class PaymentTest {
 	
 	private final static int id = 1;
@@ -24,9 +30,12 @@ public class PaymentTest {
 	
 	private static String toString;
 	
+	/**
+	 * Configures some helpful elements for the following tests.
+	**/
 	@BeforeAll
 	public static void setUp() {
-		member = new Member(1, "Ilaria", "Rossi", "ilaria.rossi@gmail.com", "aaaaaaaaa", "RSSLRI95A41A944A", "Via della Pace 11, Bologna");
+		member = new Member(1, "Ilaria", "Rossi", "ilaria.rossi@gmail.com", "aaaaaaaaa", "RSSLRI95A41A944A", "Via della Pace 11, Bologna", StatusCode.ACTIVE);
 		boat = new Boat(1, "Yacht", 1, member, StatusCode.ACTIVE);
 		race = new Race(1, "Gara 1", "Roma", Date.valueOf("2022-03-08"), 3, total, Date.valueOf("2022-03-07"), StatusCode.ACTIVE);
 		registration = new RaceRegistration(1, Date.valueOf("2022-03-06"), race, boat, StatusCode.ACTIVE);
@@ -36,6 +45,9 @@ public class PaymentTest {
 		toString = "Id: " + id + " - Date: " + date + " - Member: " + member.getEmail() + " - Boat: " + boat.getId() + " - Race Registration: " + registration.getId() + " - Validity Start Date: " + validityStartDate + " - Validity End Date: " + validityEndDate + " - Total: " + total + " - Payment Service: " + paymentService.getDescription();
 	}
 	
+	/**
+	 * Performs the test for the setter methods.
+	**/
 	@Test
 	public void setterTest() {	
 		Payment payment = new Payment();
@@ -54,7 +66,7 @@ public class PaymentTest {
 		assertAll(
 			() -> assertTrue(payment.getId() == id, payment.getId() + " should equal " + id),
 			() -> assertTrue(payment.getDate() == date, payment.getDate() + " should equal " + date),
-			() -> assertTrue(payment.getMember() == member, payment.getMember().toString() + " should equal " + member.toString()), 
+			() -> assertTrue(payment.getUser() == member, payment.getUser().toString() + " should equal " + member.toString()), 
 			() -> assertTrue(payment.getBoat() == boat, payment.getBoat().toString() + " should equal " + boat.toString()),
 			() -> assertTrue(payment.getRaceRegistration() == registration, payment.getRaceRegistration().toString() + " should equal " + registration.toString()),
 			() -> assertTrue(payment.getFee() == fee, payment.getFee().toString() + " should equal " + fee.toString()),
@@ -66,6 +78,9 @@ public class PaymentTest {
 		);		
 	}
 	
+	/**
+	 * Performs the test for the constructor method.
+	**/
 	@Test
 	public void constructorTest() {
 		Payment payment = new Payment(id, date, member, boat, registration, fee, validityStartDate,validityEndDate, total, paymentService);
@@ -73,7 +88,7 @@ public class PaymentTest {
 		assertAll(
 				() -> assertTrue(payment.getId() == id, payment.getId() + " should equal " + id),
 				() -> assertTrue(payment.getDate() == date, payment.getDate() + " should equal " + date),
-				() -> assertTrue(payment.getMember() == member, payment.getMember().toString() + " should equal " + member.toString()), 
+				() -> assertTrue(payment.getUser() == member, payment.getUser().toString() + " should equal " + member.toString()), 
 				() -> assertTrue(payment.getBoat() == boat, payment.getBoat().toString() + " should equal " + boat.toString()),
 				() -> assertTrue(payment.getRaceRegistration() == registration, payment.getRaceRegistration().toString() + " should equal " + registration.toString()),
 				() -> assertTrue(payment.getFee() == fee, payment.getFee().toString() + " should equal " + fee.toString()),

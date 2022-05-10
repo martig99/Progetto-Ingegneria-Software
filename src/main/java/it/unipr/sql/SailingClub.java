@@ -1,7 +1,7 @@
 package main.java.it.unipr.sql;
 
 /**
- * The class {@code SailingClub} describes a sailing club and its properties.
+ * The class {@code SailingClub} defines a model for the implementation of DAO classes.
  * 
  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
@@ -30,112 +30,126 @@ public class SailingClub {
 	}
 	
 	/**
+	 * Gets the data access object used to manage users in the database.
 	 * 
-	 * @return
+	 * @return the reference of the object.
 	**/
 	public UserDAO getUserDAO() {
 		return this.userDAO;
 	}
 	
 	/**
+	 * Sets the data access object used to manage users in the database.
 	 * 
-	 * @param userDAO
+	 * @param userDAO the new object.
 	**/
 	public void setUserDAO(final UserDAO userDAO) {
 		this.userDAO = userDAO;
 	}
 	
 	/**
+	 * Gets the data access object used to manage boats in the database.
 	 * 
-	 * @return
+	 * @return the reference of the object.
 	**/
 	public BoatDAO getBoatDAO() {
 		return this.boatDAO;
 	}
 	
 	/**
+	 * Sets the data access object used to manage boats in the database.
 	 * 
-	 * @param boatDAO
+	 * @param boatDAO the new object.
 	**/
 	public void setBoatDAO(final BoatDAO boatDAO) {
 		this.boatDAO = boatDAO;
 	}
 	
 	/**
+	 * Gets the data access object used to manage fees in the database.
 	 * 
-	 * @return
+	 * @return the reference of the object.
 	**/
 	public FeeDAO getFeeDAO() {
 		return this.feeDAO;
 	}
 	
 	/**
+	 * Sets the data access object used to manage fees in the database.
 	 * 
-	 * @param feeDAO
+	 * @param feeDAO the new object.
 	**/
 	public void setFeeDAO(final FeeDAO feeDAO) {
 		this.feeDAO = feeDAO;
 	}
 	
 	/**
+	 * Gets the data access object used to manage payments in the database.
 	 * 
-	 * @return
+	 * @return the reference of the object.
 	**/
 	public PaymentDAO getPaymentDAO() {
 		return this.paymentDAO;
 	}
 	
 	/**
+	 * Sets the data access object used to manage payments in the database.
 	 * 
-	 * @param paymentDAO
+	 * @param paymentDAO the new object.
 	**/
 	public void setPaymentDAO(final PaymentDAO paymentDAO) {
 		this.paymentDAO = paymentDAO;
 	}
 	
 	/**
+	 * Gets the data access object used to manage races in the database.
 	 * 
-	 * @return
+	 * @return the reference of the object.
 	**/
 	public RaceDAO getRaceDAO() {
 		return this.raceDAO;
 	}
 	
 	/**
+	 * Sets the data access object used to manage races in the database.
 	 * 
-	 * @param raceDAO
+	 * @param raceDAO the new object.
 	**/
 	public void setRaceDAO(final RaceDAO raceDAO) {
 		this.raceDAO = raceDAO;
 	}
 	
 	/**
+	 * Gets the data access object used to manage race registrations in the database.
 	 * 
-	 * @return
+	 * @return the reference of the object.
 	**/
 	public RaceRegistrationDAO getRaceRegistrationDAO() {
 		return this.raceRegistrationDAO;
 	}
 	
 	/**
+	 * Sets the data access object used to manage race registrations in the database.
 	 * 
-	 * @param raceRegistrationDAO
+	 * @param raceRegistrationDAO the new object.
 	**/
 	public void setRaceRegistrationDAO(final RaceRegistrationDAO raceRegistrationDAO) {
 		this.raceRegistrationDAO = raceRegistrationDAO;
 	}
 	
 	/**
+	 * Gets the data access object used to manage notifications in the database.
 	 * 
-	 * @return
+	 * @return the reference of the object.
 	**/
 	public NotificationDAO getNotificationDAO() {
 		return this.notificationDAO;
 	}
 	
 	/**
+	 * Sets the data access object used to manage notifications in the database.
 	 * 
-	 * @param notificationDAO
+	 * @param notificationDAO the new object.
 	**/
 	public void setNotificationDAO(final NotificationDAO notificationDAO) {
 		this.notificationDAO = notificationDAO;

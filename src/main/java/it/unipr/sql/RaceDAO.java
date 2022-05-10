@@ -6,6 +6,12 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
+/**
+ * The class {@code RaceDAO} defines a model for the management of the query of the entity Races of the database.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+**/
 public class RaceDAO {
 	
 	/**
@@ -35,9 +41,9 @@ public class RaceDAO {
 	}
 	
 	/**
-	 * Gets a race of a club member given the date.
+	 * Gets a race given the date.
 	 * 
-	 * @param date the date of the race.
+	 * @param date the date.
 	 * @return the reference of the race or <code>null</code>.
 	**/
 	public Race getRaceByDate(final Date date) {
@@ -61,13 +67,14 @@ public class RaceDAO {
 	}
 	
 	/**
-	 * Inserts a boat in the database.
+	 * Inserts a race in the database.
 	 * 
 	 * @param name the name of the race.
 	 * @param place the place of the race.
 	 * @param dateRace the date of the race.
 	 * @param boatsNumber the number of the participating boats.
 	 * @param registrationFee the registration fee of the race.
+	 * @param endDateRegistration the end date registration of a boat at the race.
 	**/
 	public void insertRace(final String name, final String place, final Date dateRace, final int boatsNumber, final float registrationFee, final Date endDateRegistration) {
 		try {			
@@ -90,14 +97,15 @@ public class RaceDAO {
 	}
 	
 	/**
-	 * Updates the race information.
-	 * If the information has value <code>null</code> are not replaced.
+	 * Updates the information of a race.
 	 * 
-	 * @param name the name of the race.
-	 * @param place the place of the race.
-	 * @param dateRace the date of the race.
-	 * @param boatsNumber the number of the participating boats.
-	 * @param registrationFee the registration fee of the race.
+	 * @param id the unique identifier of the race.
+	 * @param name the new name of the race.
+	 * @param place the new place of the race.
+	 * @param dateRace the new date of the race.
+	 * @param boatsNumber the new number of the participating boats.
+	 * @param registrationFee the new registration fee of the race.
+	 * @param endDateRegistration the new end date registration of a boat at the race.
 	**/
 	public void updateRace(final int id, final String name, final String place, final Date dateRace, final int boatsNumber, final Float registrationFee, final Date endDateRegistration) {
 		try {		
@@ -143,15 +151,15 @@ public class RaceDAO {
 	/**
 	 * Removes a race from the database.
 	 * 
-	 * @param id the unique identifier of the race.
+	 * @param idRace the unique identifier of the race.
 	**/
-	public void removeRace(final int id) {
+	public void removeRace(final int idRace) {
 		try {
 			String query = "UPDATE Races SET StatusCode = ? WHERE IdRace = ?";
 			
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
 			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
-			pstmt.setInt(2, id);
+			pstmt.setInt(2, idRace);
 
 			pstmt.executeUpdate();
 			DBUtil.dbDisconnect(null, pstmt);

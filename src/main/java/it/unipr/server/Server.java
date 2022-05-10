@@ -60,7 +60,6 @@ public class Server {
 	
 	/**
 	 * Closes the server execution.
-	 * 
 	**/
 	public void close() {
 		try {
@@ -73,7 +72,7 @@ public class Server {
 	/**
 	 * Starts the demo.
 	 * 
-	 * @param args  the method does not requires arguments.
+	 * @param args the method does not requires arguments.
 	 * @throws IOException if the execution fails.
 	**/
 	public static void main(final String[] args) throws IOException {

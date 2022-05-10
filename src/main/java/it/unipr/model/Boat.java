@@ -3,10 +3,10 @@ package main.java.it.unipr.model;
 import java.io.Serializable;
 
 /**
-  * The class {@code Boat} provides an implementation of a model of a boat.
-  * 
-  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
-  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * The class {@code Boat} provides an implementation of a model of a boat.
+ * 
+ * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
+ * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
 **/
 public class Boat implements Serializable {
 
@@ -35,7 +35,6 @@ public class Boat implements Serializable {
 	 * @param id the unique identifier of the boat.
 	 * @param name the name of the boat.
 	 * @param length the length of the boat.
-	 * @param storageFee the storage fee of the boat.
 	 * @param owner the owner of the boat.
 	 * @param statusCode the status code of the boat.
 	**/

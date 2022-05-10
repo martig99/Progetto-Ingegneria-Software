@@ -37,7 +37,10 @@ public class BoatsController {
     
     @FXML
     private Button addButton;
-    
+
+    /**
+     * {@inheritDoc} 
+    **/
     @FXML
     private void initialize() {	
 		this.setTable();
@@ -64,28 +67,31 @@ public class BoatsController {
     
     /**
      * Removes a selected boat from the table. 
+     * 
+     * @param boat the boat to be removed.
     **/
     public void removeBoat(final Boat boat) {  
     	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a boat", "You are removing the boat with unique identifier " + boat.getId(), "Are you sure?");
     	if (result.get() == ButtonType.OK){
-    		this.app.getMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_BOAT, boat, null)));
+    		this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.REMOVE_BOAT, Arrays.asList(boat.getId()))));
     		this.setTableContent();
     	}
     }
     
     /**
-	 * Sets the boats table with columns id, name, length, storage fee and owner's email.
+	 * Sets the boats table with columns id, name, length, storage fee and email address of the member.
 	**/
 	public void setTable() {
 		this.idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
 		this.nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 		this.lengthColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getLength()));
+
 		
-		Fee fee = ClientHelper.getObjectResponse(new Request(RequestType.GET_FEE_BY_TYPE, FeeType.STORAGE, null), Fee.class);
+		Fee fee = ClientHelper.getObjectResponse(new Request(RequestType.GET_FEE_BY_TYPE, Arrays.asList(FeeType.STORAGE)), Fee.class);
 		this.storageFeeColumn.setCellValueFactory(cellData -> new SimpleFloatProperty(this.app.setFloatFormat(cellData.getValue().getLength() * fee.getAmount())));
 		
 		this.ownerColumn.setCellValueFactory(cellData -> {
-			Member owner = cellData.getValue().getOwner();
+			User owner = cellData.getValue().getOwner();
 			if (owner != null) {
 				return new SimpleStringProperty(owner.getEmail());
 			}
@@ -99,12 +105,12 @@ public class BoatsController {
 	**/
     public void setTableContent() {
     	User user = null;
-    	if (this.app.getLoggedUser() instanceof Member) {
-        	user = this.app.getLoggedUser();
-        }
-
-    	ObservableList<Boat> boats = FXCollections.<Boat>observableArrayList();
-        boats.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_BOATS, user, null), Boat.class));
+		if (this.app.getLoggedUser() instanceof Member) {
+			user = this.app.getLoggedUser();
+		}
+		
+    	ObservableList<Boat> boats = FXCollections.<Boat>observableArrayList();		
+        boats.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_BOATS, Arrays.asList(user)), Boat.class));
 		this.boatsTable.setItems(boats);
     }
 
