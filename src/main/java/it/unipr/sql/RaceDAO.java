@@ -9,8 +9,8 @@ import java.util.Date;
 /**
  * The class {@code RaceDAO} defines a model for the management of the query of the entity Races of the database.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class RaceDAO {
 	

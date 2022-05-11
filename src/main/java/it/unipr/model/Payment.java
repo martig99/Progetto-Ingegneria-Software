@@ -6,22 +6,61 @@ import java.util.Date;
 /**
   * The class {@code Payment} provides an implementation of a model of a payment.
   * 
-  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
-  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+  * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+  * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Payment implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The unique identifier of the payment. 
+	**/
 	private int id;
+	
+	/**
+	 * The date of the payment.
+	**/
 	private Date date;
+	
+	/**
+	 * The member who made the payment.
+	**/
 	private Member member;
+	
+	/**
+	 * The boat associated with the payment of the storage fee.
+	**/
 	private Boat boat;
+	
+	/**
+	 * The registration to the race associated with the payment of the registration fee.
+	**/
 	private RaceRegistration raceRegistration;
+	
+	/**
+	 * The fee to pay.
+	**/
 	private Fee fee;
+	
+	/**
+	 * The validity start date of the payment. 
+	**/
 	private Date validityStartDate;
+	
+	/**
+	 * The validity end date of the payment. 
+	**/
 	private Date validityEndDate;
+	
+	/**
+	 * The total of the payment.
+	**/
 	private float total;
+	
+	/**
+	 * The payment service. 
+	**/
 	private PaymentService paymentService;
 	
 	/**
@@ -47,7 +86,7 @@ public class Payment implements Serializable {
 	 * @param date the date of the payment.
 	 * @param member the member who made the payment.
 	 * @param boat the boat associated with the payment of the storage fee.
-	 * @param raceRegistration the registration for the race associated with the payment of the registration fee.
+	 * @param raceRegistration the registration to the race associated with the payment of the registration fee.
 	 * @param fee the fee to pay.
 	 * @param validityStartDate the validity start date of the payment.
 	 * @param validityEndDate the validity end date of the payment.
@@ -115,7 +154,7 @@ public class Payment implements Serializable {
 	/**
 	 * Sets the member who made the payment.
 	 *  
-	 * @param user the new member.
+	 * @param member the new member.
 	**/
 	public void setMember(final Member member) {
 		this.member = member;
@@ -140,18 +179,18 @@ public class Payment implements Serializable {
 	}
 	
 	/**
-	 * Gets the registration for the race associated with the payment of the registration fee.
+	 * Gets the registration to the race associated with the payment of the registration fee.
 	 * 
-	 * @return the registration for the race.
+	 * @return the registration to the race.
 	**/
 	public RaceRegistration getRaceRegistration() {
 		return this.raceRegistration;
 	}
 	
 	/**
-	 * Sets the registration for the race associated with the payment of the registration fee.
+	 * Sets the registration to the race associated with the payment of the registration fee.
 	 * 
-	 * @param raceRegistration the new registration for the race.
+	 * @param raceRegistration the new registration to the race.
 	**/
 	public void setRaceRegistration(final RaceRegistration raceRegistration) {
 		this.raceRegistration = raceRegistration;
@@ -187,7 +226,7 @@ public class Payment implements Serializable {
 	/**
 	 * Sets the validity start date of the payment.
 	 *  
-	 * @param date the new validity start date.
+	 * @param validityStartDate the new validity start date.
 	**/
 	public void setValidityStartDate(final Date validityStartDate) {
 		this.validityStartDate = validityStartDate;
@@ -205,7 +244,7 @@ public class Payment implements Serializable {
 	/**
 	 * Sets the validity end date of the payment.
 	 *  
-	 * @param date the new validity end date.
+	 * @param validityEndDate the new validity end date.
 	**/
 	public void setValidityEndDate(final Date validityEndDate) {
 		this.validityEndDate = validityEndDate;

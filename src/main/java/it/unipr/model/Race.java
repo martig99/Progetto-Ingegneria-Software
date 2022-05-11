@@ -6,20 +6,51 @@ import java.util.Date;
 /**
  * The class {@code Race} provides an implementation of a model of a race.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Race implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The unique identifier of the race.
+	**/
 	private int id;
+	
+	/**
+	 * The name of the race.
+	**/
 	private String name;
+	
+	/**
+	 * The place of the race.
+	**/
 	private String place;
+	
+	/**
+	 * The date of the race.
+	**/
 	private Date date;
+	
+	/**
+	 * The number of boats participating in the race.
+	**/
 	private int boatsNumber;
+	
+	/**
+	 * The registration fee for the race.
+	**/
 	private float registrationFee;
+	
+	/**
+	 * The end date of registration of a boat at the race.
+	**/
 	private Date endDateRegistration;
+	
+	/**
+	 * The status code of the race.
+	**/
 	private StatusCode statusCode;
 		
 	/**

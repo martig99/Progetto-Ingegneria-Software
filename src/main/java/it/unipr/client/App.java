@@ -19,8 +19,8 @@ import javafx.stage.*;
 /**
  * The class {@code App} defines the management of application pages using FXML files.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class App extends Application {
 	
@@ -486,7 +486,9 @@ public class App extends Application {
 	 * 
 	 * @param type the type of the alert.
 	 * @param title the title of the alert.
+	 * @param header the header of the alert.
 	 * @param text the content of the alert.
+	 * @return the alert.
 	**/
 	public Optional<ButtonType> showAlert(final Alert.AlertType type, final String title, final String header, final String text) {
 		Alert alert = new Alert(type);

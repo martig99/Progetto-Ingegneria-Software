@@ -4,13 +4,16 @@ package main.java.it.unipr.model;
  * The class {@code Employee} provides an implementation of a model of a club employee.
  * This class extends the class {@code User}.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Employee extends User {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * An attribute that is <code>true</code> if the employee is administrator.
+	**/
 	private boolean administrator;
 	
 	/**

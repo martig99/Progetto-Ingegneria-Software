@@ -6,15 +6,26 @@ import java.util.List;
 /**
  * The class {@code Request} provides a simplified model of a request message.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Request implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * The type of the request message.
+	**/
 	private RequestType requestType;
-	private List<Serializable> object;	
+	
+	/**
+	 * The object included in the request message.
+	**/
+	private List<Serializable> object;
+	
+	/**
+	 * An attribute that is <code>true</code> if the request is to be executed in the background.
+	**/
 	private boolean backgroundRequest;
 	
 	/**
@@ -40,11 +51,11 @@ public class Request implements Serializable {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param messageType the type of the request message.
+	 * @param requestType the type of the request message.
 	 * @param object the object included in the request message.
 	**/
-	public Request(final RequestType messageType, final List<Serializable> object) {
-		this.setRequestType(messageType);
+	public Request(final RequestType requestType, final List<Serializable> object) {
+		this.setRequestType(requestType);
 		this.setObject(object);
 		this.setBackgroundRequest(false);
 	}

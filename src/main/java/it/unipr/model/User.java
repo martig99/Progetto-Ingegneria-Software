@@ -5,18 +5,41 @@ import java.io.Serializable;
 /**
  * The class {@code User} provides an implementation of a model of an user.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class User implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * The unique identifier of the user.
+	**/
 	private int id;
+	
+	/**
+	 * The first name of the user. 
+	**/
 	private String firstName;
+	
+	/**
+	 * The last name of the user. 
+	**/
 	private String lastName;
+	
+	/**
+	 * The email address of the user. 
+	**/
 	private String email;
+	
+	/**
+	 * The password of the user. 
+	**/
 	private String password;
+	
+	/**
+	 * The status code of the user.
+	**/
 	private StatusCode statusCode;
 	
 	/**

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 /**
  * The class {@code FeeDAO} defines a model for the management of the query of the entity Fees of the database.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class FeeDAO {
 
@@ -100,7 +100,7 @@ public class FeeDAO {
 	 * @param id the unique identifier of the fee.
 	 * @param feeType the type of the fee.
 	 * @param amount the new amount of the fee.
-	 * @param period the new period of validity of the fee.
+	 * @param validityPeriod the new period of validity of the fee.
 	**/
 	public void updateFee(final int id, final FeeType feeType, final float amount, final int validityPeriod) {
 		this.removeFee(id);

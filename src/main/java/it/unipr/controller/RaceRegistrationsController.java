@@ -16,8 +16,8 @@ import javafx.scene.text.*;
 /**
  * The class {@code RegistrationsController} supports the display of all race registrations. 
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class RaceRegistrationsController {
 
@@ -62,6 +62,8 @@ public class RaceRegistrationsController {
     
     /**
      * Removes a selected registration from the table. 
+     * 
+     * @param registration the selected registration.
     **/
     public void removeRegistration(final RaceRegistration registration) { 
     	if (!this.checkUser(registration))
@@ -127,11 +129,13 @@ public class RaceRegistrationsController {
 	}
     
     /**
-	 * Inserts the data of each race registration in the table.
+	 * Inserts the data of each registration of a race in the table.
+	 * 
+	 * @param race the race.
 	**/
     public void setTableContent(final Race race) {    	
     	ObservableList<RaceRegistration> registrations = FXCollections.<RaceRegistration>observableArrayList();   	
-        registrations.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_REGISTRATION_BY_RACE, Arrays.asList(race.getId())), RaceRegistration.class));
+        registrations.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_REGISTRATIONS_BY_RACE, Arrays.asList(race.getId())), RaceRegistration.class));
 		this.registrationsTable.setItems(registrations);
     }
     

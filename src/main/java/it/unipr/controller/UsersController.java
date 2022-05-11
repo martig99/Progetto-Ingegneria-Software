@@ -17,8 +17,8 @@ import javafx.scene.text.*;
 /**
  * The class {@code UsersController} supports the display of all users. 
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class UsersController {
 
@@ -171,6 +171,8 @@ public class UsersController {
 	
     /**
 	 * Inserts the data of each user in the table.
+	 * 
+	 * @param userType the type of user.
 	**/
     public void setTableContent(final UserType userType) { 
     	ObservableList<User> users = FXCollections.<User>observableArrayList(); 

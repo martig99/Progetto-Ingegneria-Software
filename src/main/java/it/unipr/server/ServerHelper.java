@@ -12,8 +12,8 @@ import java.util.regex.*;
 /**
  * The class {@code ServerHelper} manages the request sent by the client to the server.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class ServerHelper {
 	
@@ -936,7 +936,7 @@ public class ServerHelper {
 			case REMOVE_RACE:
 				this.removeRace();
 				break;
-			case GET_ALL_REGISTRATION_BY_RACE:
+			case GET_ALL_REGISTRATIONS_BY_RACE:
 				this.getAllRegistrationByRace();
 				break;
 			case EXIST_REGISTRATIONS_FOR_RACE:

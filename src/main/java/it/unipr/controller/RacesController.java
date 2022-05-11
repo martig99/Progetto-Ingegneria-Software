@@ -17,8 +17,8 @@ import javafx.scene.text.*;
 /**
  * The class {@code RacesController} supports the display of all races. 
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class RacesController {
 
@@ -80,6 +80,8 @@ public class RacesController {
     
     /**
      * Removes a selected race from the table. 
+     * 
+     * @param race the selected race.
     **/
     public void removeRace(final Race race) {
        	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove a race", "You are removing the race with unique identifier " + race.getId(), "Are you sure?");

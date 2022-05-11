@@ -9,8 +9,8 @@ import java.util.Date;
 /**
  * The class {@code PaymentDAO} defines a model for the management of the query of the entity Payments of the database.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class PaymentDAO {
 	
@@ -173,6 +173,8 @@ public class PaymentDAO {
 	/**
 	 * Gets the list of all the payments.
 	 * 
+	 * @param user the user who has paid.
+	 * @param feeType the type of fee paid.
 	 * @return the list.
 	**/
 	public ArrayList<Payment> getAllPayments(final User user, final FeeType feeType) {
@@ -282,6 +284,7 @@ public class PaymentDAO {
 	 * Gets the payment given a registration to a race.
 	 * 
 	 * @param id the unique identifier of the registration for the race.
+	 * @return the reference of the payment or <code>null</code>.
 	**/
 	public Payment getPaymentByRaceRegistration(final int id) {
 		try {

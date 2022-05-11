@@ -5,16 +5,23 @@ import java.io.Serializable;
 /**
   * The class {@code PaymentService} provides an implementation of a model of a payment service.
   * 
-  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
-  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+  * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+  * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class PaymentService implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The unique identifier of the payment service.
+	**/
 	private int id;
-	private String description;
 	
+	/**
+	 * The description of the payment service.
+	**/
+	private String description;
+
 	/**
 	 * Class constructor.
 	**/

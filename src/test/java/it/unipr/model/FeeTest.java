@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * The class {@code FeeTest} defines the test for class {@code Fee}. 
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class FeeTest {
 	

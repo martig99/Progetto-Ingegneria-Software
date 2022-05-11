@@ -5,17 +5,36 @@ import java.io.Serializable;
 /**
  * The class {@code Fee} provides an implementation of a model of a fee.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Fee implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * The unique identifier of the fee.0
+	**/
 	private int id;
+	
+	/**
+	 * The type of the fee. 
+	**/
 	private FeeType type;
+	
+	/**
+	 * The amount of the fee.
+	**/
 	private float amount;
+	
+	/**
+	 * The validity period for the fee in days.
+	**/
 	private int validityPeriod;
+	
+	/**
+	 * The status code of the fee.
+	**/
 	private StatusCode statusCode;
 	
 	/**

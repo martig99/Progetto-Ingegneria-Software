@@ -1,0 +1,9 @@
+main.java.it.unipr.client
+main.java.it.unipr.controller
+main.java.it.unipr.message
+main.java.it.unipr.model
+main.java.it.unipr.server
+main.java.it.unipr.sql
+main.resources
+test.java.it.unipr.model
+test.java.it.unipr.sql

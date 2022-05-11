@@ -5,14 +5,21 @@ import java.io.Serializable;
 /**
  * The class {@code Response} provides a simplified model of a response message.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Response implements Serializable {
-  
+	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * The type of the response message.
+	**/
 	private ResponseType responseType;
+	
+	/**
+	 * The object included in the response message.
+	**/
 	private Serializable object;
 	
 	/**
@@ -26,7 +33,7 @@ public class Response implements Serializable {
 	 * Class constructor.
 	 * 
 	 * @param responseType the type of the response message.
-	 * @param object the object of the response message.
+	 * @param object the object included in the response message.
 	**/
 	public Response(final ResponseType responseType, final Serializable object) {
 		this.setResponseType(responseType);
@@ -52,7 +59,7 @@ public class Response implements Serializable {
 	}	
 	
 	/**
-	 * Gets the object of the response message.
+	 * Gets the object included in the response message.
 	 * 
 	 * @return the object.
 	**/
@@ -61,7 +68,7 @@ public class Response implements Serializable {
 	}
 	
 	/**
-	 * Sets the object of the response message.
+	 * Sets the object included in the response message.
 	 * 
 	 * @param object the new object.
 	**/

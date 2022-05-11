@@ -5,17 +5,36 @@ import java.io.Serializable;
 /**
   * The class {@code Notification} provides an implementation of a model of a notification.
   * 
-  * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
-  * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+  * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+  * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Notification implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The unique identifier of the notification.
+	**/
 	private int id;
+	
+	/**
+	 * The member who received the notification.
+	**/
 	private Member member;
+	
+	/**
+	 * The boat to which the notification of payment of the storage fee refers.
+	**/
 	private Boat boat;
+	
+	/**
+	 * The fee to which the notification relates.
+	**/
 	private Fee fee;
+	
+	/**
+	 * The status code of the notification.
+	**/
 	private StatusCode statusCode;
 	
 	/**
@@ -76,7 +95,7 @@ public class Notification implements Serializable {
 	/**
 	 * Sets the member who received the notification.
 	 * 
-	 * @param user the new member.
+	 * @param member the new member.
 	**/
 	public void setMember(final Member member) {
 		this.member = member;

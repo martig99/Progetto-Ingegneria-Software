@@ -4,14 +4,21 @@ package main.java.it.unipr.model;
  * The class {@code Member} provides an implementation of a model of a club member.
  * This class extends the class {@code User}.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Member extends User {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * The fiscal code of the member.
+	**/
 	private String fiscalCode;
+	
+	/**
+	 * The address of the member.
+	**/
 	private String address;
 	
 	/**
@@ -87,7 +94,7 @@ public class Member extends User {
 	/**
 	 * Sets the address of the member.
 	 * 
-	 * @param fiscalCode the new address.
+	 * @param address the new address.
 	**/
 	public void setAddress(final String address) {
 		this.address = address;

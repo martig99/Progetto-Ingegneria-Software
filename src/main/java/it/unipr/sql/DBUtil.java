@@ -6,8 +6,8 @@ import main.java.it.unipr.model.*;
 /**
  * The class {@code DBUtil} defines a model for connection and interactions with the SQL database.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class DBUtil {
 	

@@ -5,18 +5,38 @@ import java.io.Serializable;
 /**
  * The class {@code Boat} provides an implementation of a model of a boat.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class Boat implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The unique identifier of the boat. 
+	**/
 	private int id;
+	
+	/**
+	 * The name of the boat.
+	**/
 	private String name;
+	
+	/**
+	 * The length of the boat.
+	**/
 	private int length;
+	
+	/**
+	 * The owner of the boat.
+	**/
 	private Member owner;
+	
+	/**
+	 * The status code of the boat.
+	**/
 	private StatusCode statusCode;
+
 	
 	/**
 	 * Class constructor.

@@ -8,8 +8,8 @@ import java.net.*;
 /**
  * The class {@code ServerThread} manages the interaction with a client of the server.
  *
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 
 public class ServerThread implements Runnable {

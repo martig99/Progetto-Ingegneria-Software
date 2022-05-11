@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeAll;
 /**
  * The class {@code UtilTest} defines general methods for testing.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class UtilTest {
 	

@@ -3,15 +3,17 @@ package main.java.it.unipr.model;
 /**
  * The enum {@code StatusCode} defines the status of an instance.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 
 public enum StatusCode {
+	
 	/**
 	 * The active state.
 	**/
 	ACTIVE(0),
+	
 	/**
 	 * The eliminated state.
 	**/

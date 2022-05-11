@@ -15,8 +15,8 @@ import javafx.scene.text.*;
 /**
  * The class {@code PayFeeController} supports the section to pay a fee.
  * 
- * @author Martina Gualtieri <martina.gualtieri@studenti.unipr.it>
- * @author Cristian Cervellera <cristian.cervellera@studenti.unipr.it>
+ * @author Martina Gualtieri {@literal <martina.gualtieri@studenti.unipr.it>}
+ * @author Cristian Cervellera {@literal <cristian.cervellera@studenti.unipr.it>}
 **/
 public class PayFeeController {
 	
@@ -84,6 +84,8 @@ public class PayFeeController {
 	
 	/**
 	 * Sets the name of all the boats that belong to the logged in user or to a user selected from the list of members.
+	 * 
+	 * @param owner the owner of the boats. 
 	**/
 	public void setBoats(final User owner) {
 		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();	
