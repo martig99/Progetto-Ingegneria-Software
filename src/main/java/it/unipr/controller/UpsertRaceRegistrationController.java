@@ -94,8 +94,9 @@ public class UpsertRaceRegistrationController {
 		}
 		
 		String nameBoat = this.boats.getSelectionModel().getSelectedItem().toString();
-		
-		boolean result = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.UPDATE_RACE_REGISTRATION, Arrays.asList(this.registration.getId(), emailMember, nameBoat, this.race))));
+		String descriptionPaymentService = this.paymentServices.getSelectionModel().getSelectedItem().toString();
+
+		boolean result = this.app.isSuccessfulMessage(ClientHelper.getResponseType(new Request(RequestType.UPDATE_RACE_REGISTRATION, Arrays.asList(this.registration.getId(), emailMember, nameBoat, descriptionPaymentService, this.race))));
 		if (result)
 			this.app.initRaceRegistrations(this.race);
 	}
@@ -115,7 +116,7 @@ public class UpsertRaceRegistrationController {
 	 * 
 	 * @param owner the owner of the boats. 
 	**/
-	public void setBoats(final User owner) {
+	public void setBoats(final Member owner) {
 		ObservableList<String> listBoat = FXCollections.<String>observableArrayList();		
     	listBoat.addAll(ClientHelper.getListResponse(new Request(RequestType.GET_ALL_NAME_BOATS_BY_OWNER, Arrays.asList(owner)), String.class));
 		this.boats.setItems(listBoat);
@@ -156,6 +157,7 @@ public class UpsertRaceRegistrationController {
     public void setApp(final App app) {
         this.app = app;
         
+        Member member = new Member();
         if (this.registration == null) {
         	this.title.setText("REGISTER A BOAT FOR THE RACE OF " + this.app.setDateFormat(this.race.getDate()));
 
@@ -165,17 +167,16 @@ public class UpsertRaceRegistrationController {
             	
             	this.boats.setDisable(true);
             } else {
-        		this.setBoats(this.app.getLoggedUser());
+            	member = (Member) this.app.getLoggedUser();
         	}
-        	
-        	this.setPaymentServices();
         } else {
         	this.title.setText("UPDATE THE REGISTRATION OF THE BOAT");
         	
         	this.app.setVisibleElement(this.members, false);
-        	this.app.setVisibleElement(this.paymentServices, false);
-        	
-        	this.setBoats(this.registration.getBoat().getOwner());
+        	member = this.registration.getBoat().getOwner();
         }
+        
+        this.setBoats(member);
+        this.setPaymentServices();
     }
 }

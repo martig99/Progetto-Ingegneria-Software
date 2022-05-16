@@ -293,9 +293,12 @@ public class Payment implements Serializable {
 	**/
 	@Override
 	public String toString() {
-		String boatString = this.boat != null ? " - Boat: " + this.boat.getId() : "";
-		String raceRegistrationString = this.raceRegistration != null ? " - Race Registration: " + this.raceRegistration.getId() : "";
+		String emailMember = this.member != null ? this.member.getEmail() : "";
+		String idBoat = this.boat != null ? String.valueOf(this.boat.getId()) : "";
+		String idRaceRegistration = this.raceRegistration != null ? String.valueOf(this.raceRegistration.getId()) : "";
+		String feeType = this.fee != null ? this.fee.getType().toString() : "";
+		String descriptionPaymentService = this.paymentService != null ? this.paymentService.getDescription() : "";
 		
-		return "Id: " + this.id + " - Date: " + this.date + " - Member: " + this.member.getEmail() + boatString + raceRegistrationString + " - Validity Start Date: " + this.validityStartDate + " - Validity End Date: " + this.validityEndDate + " - Total: " + this.total + " - Payment Service: " + this.paymentService.getDescription();
+		return "Id: " + this.id + " - Date: " + this.date + " - Member: " + emailMember + " - Boat: " + idBoat + " - Race Registration: " + idRaceRegistration + " - Validity Start Date: " + this.validityStartDate + " - Validity End Date: " + this.validityEndDate + " - Total: " + this.total + " - Fee: " + feeType + " - Payment Service: " + descriptionPaymentService;
 	}
 }

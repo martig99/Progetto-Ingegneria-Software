@@ -162,8 +162,10 @@ public class Notification implements Serializable {
 	**/
 	@Override
 	public String toString() {
-		String boatString = this.boat != null ? " - Boat: " + this.boat.getId() : "";
-
-		return "Id: " + this.id + " - Member: " + this.member.getEmail() + boatString + " - Fee: " + this.fee.getType() + " - Status Code: " + this.statusCode.toString();
+		String emailMember = this.member != null ? this.member.getEmail() : "";
+		String idBoat = this.boat != null ? String.valueOf(this.boat.getId()) : "";
+		String feeType = this.fee != null ? this.fee.getType().toString() : "";
+		
+		return "Id: " + this.id + " - Member: " + emailMember + " - Boat: " + idBoat + " - Fee: " + feeType + " - Status Code: " + this.statusCode.toString();
 	}
 }

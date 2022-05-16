@@ -20,6 +20,7 @@ public class RaceRegistrationDAO {
 	 * @return the number of boats participating.
 	**/
 	public int getNumberBoatsInRace(final int idRace) {
+		int result = 0;
 		try {
 			String query = "SELECT COUNT(*) FROM RaceRegistrations WHERE Race = ? AND StatusCode <> ?";
 			
@@ -29,14 +30,14 @@ public class RaceRegistrationDAO {
 
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return rset.getInt(1);
+				result = rset.getInt(1);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return 0;
+		return result;
 	}
 	
 	/**
@@ -47,8 +48,9 @@ public class RaceRegistrationDAO {
 	 * @return <code>true</code> if in the race there is a boat owned by the user.
 	**/
 	public boolean checkBoatInRaceByMember(final int idMember, final int idRace) {
+		boolean result = false;
 		try {		
-			String query = "SELECT * FROM RaceRegistrations JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.Race = ? AND Boats.Owner = ? AND RaceRegistrations.StatusCode <> ?";
+			String query = "SELECT * FROM RaceRegistrations JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat WHERE RaceRegistrations.Race = ? AND Boats.Owner = ? AND RaceRegistrations.StatusCode <> ?";
 			
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
 			pstmt.setInt(1, idRace);
@@ -57,14 +59,14 @@ public class RaceRegistrationDAO {
 
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return true;
+				result = true;
 				
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return false;
+		return result;
 	}
 	
 	/**
@@ -75,6 +77,7 @@ public class RaceRegistrationDAO {
 	 * @return the reference of the race registration or <code>null</code>.
 	**/
 	public RaceRegistration getRaceRegistration(final int idRace, final int idBoat) {
+		RaceRegistration raceRegistration = null;
 		try {
 			String query = "SELECT * FROM RaceRegistrations JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.Race = ? AND RaceRegistrations.Boat = ? AND RaceRegistrations.StatusCode <> ?";
 			
@@ -85,14 +88,14 @@ public class RaceRegistrationDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setRaceRegistrationFromResultSet(rset);
+				raceRegistration = DBUtil.setRaceRegistrationFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return raceRegistration;
 	}
 	
 	/**
@@ -102,6 +105,7 @@ public class RaceRegistrationDAO {
 	 * @return the reference of the race registration or <code>null</code>.
 	**/
 	public RaceRegistration getRaceRegistrationById(final int id) {
+		RaceRegistration raceRegistration = null;
 		try {			
 			String query = "SELECT * FROM RaceRegistrations JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.IdRegistration = ? AND RaceRegistrations.StatusCode <> ?";
 			
@@ -111,7 +115,7 @@ public class RaceRegistrationDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return DBUtil.setRaceRegistrationFromResultSet(rset);
+				raceRegistration = DBUtil.setRaceRegistrationFromResultSet(rset);
 			}		
 			
 			DBUtil.dbDisconnect(rset, pstmt);
@@ -119,7 +123,7 @@ public class RaceRegistrationDAO {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return raceRegistration;
 	}
 	
 	/**
@@ -181,8 +185,9 @@ public class RaceRegistrationDAO {
 	 * @return <code>true</code> if there is at least one registration for the race.
 	**/
 	public boolean existRegistrationsForRace(final int idRace) {
+		boolean result = false;
 		try {	
-			String query = "SELECT * FROM RaceRegistrations JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.Race = ? AND RaceRegistrations.StatusCode <> ?";
+			String query = "SELECT * FROM RaceRegistrations JOIN Races ON Races.IdRace = RaceRegistrations.Race WHERE RaceRegistrations.Race = ? AND RaceRegistrations.StatusCode <> ?";
 			
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
 			pstmt.setInt(1, idRace);
@@ -190,14 +195,14 @@ public class RaceRegistrationDAO {
 	
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return true;
+				result = true;
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return false;
+		return result;
 	}
 	
 	/**
@@ -209,7 +214,7 @@ public class RaceRegistrationDAO {
 	public ArrayList<RaceRegistration> getAllRegistrationByBoat(final int idBoat) {
 		ArrayList<RaceRegistration> list = new ArrayList<RaceRegistration>();
 		try {		
-			String query = "SELECT * FROM RaceRegistrations JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Races ON Races.IdRace = RaceRegistrations.Race WHERE RaceRegistrations.Boat = ? AND RaceRegistrations.StatusCode <> ?";
+			String query = "SELECT * FROM RaceRegistrations JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE RaceRegistrations.Boat = ? AND RaceRegistrations.StatusCode <> ?";
 			
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
 			pstmt.setInt(1, idBoat);
@@ -239,27 +244,6 @@ public class RaceRegistrationDAO {
 			
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
 			pstmt.setInt(1, StatusCode.ELIMINATED.getValue());
-			pstmt.setInt(2, idRegistration);
-			
-			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Updates the information of a race registration.
-	 * 
-	 * @param idRegistration the unique identifier of the registration. 
-	 * @param idBoat the new boat.
-	**/
-	public void updateRaceRegistration(final int idRegistration, final int idBoat) {
-		try {
-			String query = "UPDATE RaceRegistrations SET Boat = ? WHERE IdRegistration = ?";
-			
-			PreparedStatement pstmt = DBUtil.prepareQuery(query);
-			pstmt.setInt(1, idBoat);
 			pstmt.setInt(2, idRegistration);
 			
 			pstmt.executeUpdate();

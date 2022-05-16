@@ -163,6 +163,9 @@ public class RaceRegistration implements Serializable {
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Date: " + this.date + " - Race: [" + this.race.getDate() + ", " + this.race.getName() + "] - Boat: " + this.boat.getName() + " - Status Code: " + this.statusCode.toString();
+		String descriptionRace = this.race != null ? this.race.getDate() + ", " + this.race.getName() : "";
+		String idBoat = this.boat != null ? String.valueOf(this.boat.getId()) : "";
+		
+		return "Id: " + this.id + " - Date: " + this.date + " - Race: [" + descriptionRace + "] - Boat: " + idBoat + " - Status Code: " + this.statusCode.toString();
 	}
 }

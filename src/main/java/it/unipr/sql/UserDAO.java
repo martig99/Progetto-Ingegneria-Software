@@ -21,7 +21,8 @@ public class UserDAO {
 	 * @param type the user type.
 	 * @return the reference of the user or <code>null</code>.
 	**/
-	public User login(final String email, final String password, final UserType type) {		
+	public User login(final String email, final String password, final UserType type) {	
+		User user = null;
 		try {
 			String query = "";
 			if (type == UserType.MEMBER)
@@ -36,13 +37,11 @@ public class UserDAO {
 						
 			ResultSet rset = pstmt.executeQuery();			
 			if (rset.next()) {
-				if (!password.contentEquals(rset.getString("Password"))) {
-					return null;
-				} else {
+				if (password.contentEquals(rset.getString("Password"))) {
 					if (type == UserType.MEMBER) {
-						return DBUtil.setMemberFromResultSet(rset);
+						user = DBUtil.setMemberFromResultSet(rset);
 					} else if (type == UserType.EMPLOYEE) {
-						return DBUtil.setEmployeeFromResultSet(rset);
+						user = DBUtil.setEmployeeFromResultSet(rset);
 					}
 				}
 			}
@@ -52,7 +51,7 @@ public class UserDAO {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return user;
 	}
 	
 	/**
@@ -85,6 +84,7 @@ public class UserDAO {
 	 * @return the reference of the user or <code>null</code>.
 	**/
 	public User getUserByEmail(final String email) {
+		User user = null;
 		try {
 			String query = "SELECT * FROM Users WHERE Email = ? AND StatusCode <> ?";
 			
@@ -93,16 +93,15 @@ public class UserDAO {
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 						
 			ResultSet rset = pstmt.executeQuery();
-			if (rset.next()) {
-				return DBUtil.setUserFromResultSet(rset);
-			}
+			if (rset.next())
+				user = DBUtil.setUserFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return user;
 	}
 	
 	/**
@@ -113,6 +112,7 @@ public class UserDAO {
 	 * @return the reference of the user or <code>null</code>.
 	**/
 	public User getUserByEmail(final String email, final UserType type) {
+		User user = null;
 		try {
 			String query = "";
 			if (type == UserType.MEMBER) 
@@ -127,9 +127,9 @@ public class UserDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
 				if (type == UserType.MEMBER)
-					return DBUtil.setMemberFromResultSet(rset);
+					user = DBUtil.setMemberFromResultSet(rset);
 				else
-					return DBUtil.setEmployeeFromResultSet(rset);
+					user = DBUtil.setEmployeeFromResultSet(rset);
 			}
 			
 			DBUtil.dbDisconnect(rset, pstmt);
@@ -137,7 +137,7 @@ public class UserDAO {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return user;
 	}
 	
 	/**
@@ -147,6 +147,7 @@ public class UserDAO {
 	 * @return the reference of the member or <code>null</code>.
 	**/
 	public Member getMemberByFiscalCode(final String fiscalCode) {
+		Member member = null;
 		try {
 			String query = "SELECT * FROM Users JOIN Members ON IdMember = IdUser WHERE FiscalCode = ? AND StatusCode <> ?";
 			
@@ -156,14 +157,14 @@ public class UserDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setMemberFromResultSet(rset);
+				member = DBUtil.setMemberFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return member;
 	}
 	
 	/**
@@ -199,12 +200,12 @@ public class UserDAO {
 	 * @return the reference of the user or <code>null</code>.
 	**/
 	public User getUserById(final int id) {
-		Member member = (Member) this.getMemberById(id);
+		Member member = this.getMemberById(id);
 		if (member != null) {
 			return member;
 		}
 		
-		Employee employee = (Employee) this.getEmployeeById(id);
+		Employee employee = this.getEmployeeById(id);
 		if (employee != null) {
 			return employee;
 		}
@@ -219,6 +220,7 @@ public class UserDAO {
 	 * @return the reference of the member or <code>null</code>.
 	**/
 	public Member getMemberById(final int id) {
+		Member member = null;
 		try {
 			String query = "SELECT * FROM Users JOIN Members ON IdUser = IdMember WHERE IdMember = ? AND StatusCode <> ?";
 			
@@ -228,14 +230,14 @@ public class UserDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setMemberFromResultSet(rset);
+				member = DBUtil.setMemberFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return member;
 	}
 	
 	/**
@@ -244,7 +246,8 @@ public class UserDAO {
 	 * @param id the unique identifier.
 	 * @return the reference of the employee or <code>null</code>.
 	**/
-	public User getEmployeeById(final int id) {
+	public Employee getEmployeeById(final int id) {
+		Employee employee = null; 
 		try {
 			String query = "SELECT * FROM Users JOIN Employees ON IdUser = IdEmployee WHERE IdEmployee = ? AND StatusCode <> ?";
 			
@@ -254,14 +257,14 @@ public class UserDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setEmployeeFromResultSet(rset);
+				employee = DBUtil.setEmployeeFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return employee;
 	}
 	
 	/**
@@ -446,12 +449,17 @@ public class UserDAO {
 	 * @param id the unique identifier of the user.
 	 * @param admin <code>true</code> if the employee is administrator.
 	**/
-	public void updateEmployee(final int id, final boolean admin) {
+	public void updateEmployee(final int id, final Boolean admin) {
 		try {		
-			String query = "UPDATE Employees SET Administrator = ? WHERE IdEmployee = ?"; 			
+			String query = "UPDATE Employees SET Administrator = IfNull(?, Administrator) WHERE IdEmployee = ?"; 			
 			
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
-			pstmt.setBoolean(1, admin);			
+			
+			if (admin == null)
+				pstmt.setNull(1, Types.BOOLEAN);
+			else 
+				pstmt.setBoolean(1, admin);	
+			
 			pstmt.setInt(2, id);
 						
 			pstmt.executeUpdate();	

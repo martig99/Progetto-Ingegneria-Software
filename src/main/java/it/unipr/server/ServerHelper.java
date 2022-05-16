@@ -209,13 +209,13 @@ public class ServerHelper {
 			fiscalCode = member.getFiscalCode();
 			address = member.getAddress();
 			
-			if (fiscalCode != null && this.club.getUserDAO().getMemberByFiscalCode(fiscalCode) != null) {
-				this.response.setResponseType(ResponseType.ERROR_EXIST_FISCAL_CODE);
+			if (!this.fiscalCodeValidation(fiscalCode)) {			
+				this.response.setResponseType(ResponseType.ERROR_INVALID_FISCAL_CODE);
 				return;
 			}
 			
-			if (!this.fiscalCodeValidation(fiscalCode)) {			
-				this.response.setResponseType(ResponseType.ERROR_INVALID_FISCAL_CODE);
+			if (fiscalCode != null && this.club.getUserDAO().getMemberByFiscalCode(fiscalCode) != null) {
+				this.response.setResponseType(ResponseType.ERROR_EXIST_FISCAL_CODE);
 				return;
 			}
 			
@@ -270,6 +270,11 @@ public class ServerHelper {
 	public void updateMember() {
 		Member member = (Member) this.object.get(0);
 		Member oldMember = (Member) this.club.getUserDAO().getMemberById(member.getId());
+		
+		if (!this.fiscalCodeValidation(member.getFiscalCode())) {			
+			this.response.setResponseType(ResponseType.ERROR_INVALID_FISCAL_CODE);
+			return;
+		}
 		
 		if (member.getFiscalCode() != null && !oldMember.getFiscalCode().equalsIgnoreCase(member.getFiscalCode()) && this.club.getUserDAO().getMemberByFiscalCode(member.getFiscalCode()) != null) {
 			this.response.setResponseType(ResponseType.ERROR_EXIST_FISCAL_CODE);
@@ -733,6 +738,15 @@ public class ServerHelper {
 		return true;
 	}
 	
+	private void registerBoatAtRaceAndPayFee(final Race race, final Boat boat, final Member member, final PaymentService paymentService) {
+		this.club.getRaceRegistrationDAO().registerBoatAtRace(race.getId(), boat.getId());
+		RaceRegistration newRegistration = this.club.getRaceRegistrationDAO().getRaceRegistration(race.getId(), boat.getId());
+		if (newRegistration != null) {
+			Fee fee = this.club.getFeeDAO().getFeeByType(FeeType.RACE_REGISTRATION);	
+			this.club.getPaymentDAO().payFee(member, boat, newRegistration, fee, paymentService, false, false);
+		}
+	}
+	
 	/**
 	 * Inserts a new registration to the race given all the information in the request object.
 	**/
@@ -780,14 +794,13 @@ public class ServerHelper {
 			return;
 		}
 	
-		this.club.getRaceRegistrationDAO().registerBoatAtRace(race.getId(), boat.getId());
-		RaceRegistration newRegistration = this.club.getRaceRegistrationDAO().getRaceRegistration(race.getId(), boat.getId());
-		if (newRegistration != null) {
-			Fee fee = this.club.getFeeDAO().getFeeByType(FeeType.RACE_REGISTRATION);	
-			this.club.getPaymentDAO().payFee(member, boat, newRegistration, fee, paymentService, false, false);
-		}
-		
+		this.registerBoatAtRaceAndPayFee(race, boat, member, paymentService);		
 		this.response.setResponseType(ResponseType.SUCCESS_ADD_RACE_REGISTRATION);
+	}
+	
+	private void removeRegistrationBoatAndRefundFee(final int id) {
+		this.club.getRaceRegistrationDAO().removeRaceRegistration(id);
+		this.club.getPaymentDAO().refundRegistrationFee(id);
 	}
 	
 	/**
@@ -797,7 +810,8 @@ public class ServerHelper {
 		int id = (int) this.object.get(0);
 		String emailMember = (String) this.object.get(1);
 		String nameBoat = (String) this.object.get(2);
-		Race race = (Race) this.object.get(3);
+		String descriptionPaymentService = (String) this.object.get(3);
+		Race race = (Race) this.object.get(4);
 		
 		Member member = (Member) this.club.getUserDAO().getUserByEmail(emailMember, UserType.MEMBER);
 		if (member == null) {
@@ -811,13 +825,22 @@ public class ServerHelper {
 			return;
 		}
 		
+		PaymentService paymentService = this.club.getPaymentDAO().getPaymentServiceByDescription(descriptionPaymentService);
+		if (paymentService == null) {
+			this.response.setResponseType(ResponseType.ERROR_PAYMENT_SERVICE);
+			return;
+		}
+		
 		if (!this.checkOpenRegistration(race.getEndDateRegistration()))
 			return;
 		
 		if (!this.checkPaymentsByRaceRegistration(member, boat, race))
 			return;
+
+		//this.club.getRaceRegistrationDAO().updateRaceRegistration(id, boat.getId());
+		this.removeRegistrationBoatAndRefundFee(id);
+		this.registerBoatAtRaceAndPayFee(race, boat, member, paymentService);
 		
-		this.club.getRaceRegistrationDAO().updateRaceRegistration(id, boat.getId());
 		this.response.setResponseType(ResponseType.SUCCESS_UPDATE_RACE_REGISTRATION);
 	}
 	
@@ -832,8 +855,7 @@ public class ServerHelper {
 		if (!this.checkOpenRegistration(race.getEndDateRegistration()))
 			return;
 		
-		this.club.getRaceRegistrationDAO().removeRaceRegistration(idRegistration);
-		this.club.getPaymentDAO().refundRegistrationFee(idRegistration);
+		this.removeRegistrationBoatAndRefundFee(idRegistration);
 		this.response.setResponseType(ResponseType.SUCCESS_REMOVE_REGISTRATION);
 	}
 	
@@ -945,11 +967,11 @@ public class ServerHelper {
 			case INSERT_RACE_REGISTRATION:
 				this.insertRaceRegistration();
 				break;
-			case REMOVE_RACE_REGISTRATION:
-				this.removeRaceRegistration();
-				break;
 			case UPDATE_RACE_REGISTRATION:
 				this.updateRaceRegistration();
+				break;
+			case REMOVE_RACE_REGISTRATION:
+				this.removeRaceRegistration();
 				break;
 			case GET_ALL_FEES:
 				this.getAllFees();

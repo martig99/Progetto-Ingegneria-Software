@@ -85,6 +85,7 @@ public class BoatDAO {
 	 * @return the reference of the boat or <code>null</code>.
 	**/
 	public Boat getBoatByName(final String name, final User owner) {
+		Boat boat = null;
 		try {	
 			String query = "SELECT * FROM Boats JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE Boats.Name = ? AND Boats.Owner = ? AND Boats.StatusCode <> ?";
 			
@@ -95,14 +96,14 @@ public class BoatDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setBoatFromResultSet(rset);
+				boat = DBUtil.setBoatFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return boat;
 	}
 	
 	/**
@@ -112,6 +113,7 @@ public class BoatDAO {
 	 * @return the reference of the boat or <code>null</code>.
 	**/
 	public Boat getBoatById(final int id) {
+		Boat boat = null;
 		try {			
 			String query = "SELECT * FROM Boats JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE Boats.IdBoat = ? AND Boats.StatusCode <> ?";
 			
@@ -121,14 +123,14 @@ public class BoatDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setBoatFromResultSet(rset);
+				boat = DBUtil.setBoatFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return boat;
 	}
 	
 	/**

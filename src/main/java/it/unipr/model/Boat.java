@@ -163,6 +163,8 @@ public class Boat implements Serializable {
 	**/
 	@Override
 	public String toString() {
-		return "Id: " + this.id + " - Name: " + this.name + " - Length: " + this.length + " - Owner: " + this.owner.getEmail() + " - Status Code: " + this.statusCode.toString();
+		String emailOwner = this.owner != null ? this.owner.getEmail() : "";			
+		
+		return "Id: " + this.id + " - Name: " + this.name + " - Length: " + this.length + " - Owner: " + emailOwner + " - Status Code: " + this.statusCode.toString();
 	}
 }

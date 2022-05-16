@@ -81,6 +81,7 @@ public class NotificationDAO {
 	 * @return the reference of the notification or <code>null</code>.
 	**/
 	public Notification getNotification(final User user, final Boat boat, final Fee fee, final StatusCode statusCode) {
+		Notification notification = null;
 		try {			
 			String query = "SELECT * FROM Notifications JOIN Members ON Members.IdMember = Notifications.Member JOIN Users ON Users.IdUser = Members.IdMember LEFT JOIN Boats ON Boats.IdBoat = Notifications.Boat JOIN Fees ON Fees.IdFee = Notifications.Fee WHERE Notifications.Member = ? AND (? IS NULL OR Notifications.Boat = ?) AND Notifications.Fee = ? AND Notifications.StatusCode = ?";
 			
@@ -100,14 +101,14 @@ public class NotificationDAO {
 					
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setNotificationFromResultSet(rset);
+				notification = DBUtil.setNotificationFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return notification;
 	}
 	
 	/**
@@ -117,6 +118,7 @@ public class NotificationDAO {
 	 * @return <code>true</code> in case of notice of payment of the membership fee.
 	**/
 	public boolean existNotificationMembershipFee(final User user) {
+		boolean result = false;
 		try {			
 			String query = "SELECT * FROM Notifications JOIN Members ON Members.IdMember = Notifications.Member JOIN Fees ON Fees.IdFee = Notifications.Fee WHERE Notifications.Member = ? AND Fees.Type = ? AND Notifications.StatusCode = ?";
 			
@@ -127,14 +129,14 @@ public class NotificationDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return true;
+				result = true;
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return false;
+		return result;
 	}
 	
 	/**
@@ -145,6 +147,7 @@ public class NotificationDAO {
 	 * @return <code>true</code> in case of notice of payment of the storage fee.
 	**/
 	public boolean existNotificationStorageFee(final User user, final Boat boat) {
+		boolean result = false;
 		try {			
 			String query = "SELECT * FROM Notifications JOIN Members ON Members.IdMember = Notifications.Member JOIN Boats ON Boats.IdBoat = Notifications.Boat JOIN Fees ON Fees.IdFee = Notifications.Fee WHERE Notifications.Member = ? AND Notifications.Boat = ? AND Fees.Type = ? AND Notifications.StatusCode = ?";
 			
@@ -156,14 +159,14 @@ public class NotificationDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return true;
+				result = true;
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return false;
+		return result;
 	}
 	
 	/**

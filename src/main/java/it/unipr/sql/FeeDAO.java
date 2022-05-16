@@ -47,6 +47,7 @@ public class FeeDAO {
 	 * @return the reference of the fee or <code>null</code>.
 	**/
 	public Fee getFeeByType(final FeeType type) {
+		Fee fee = null;
 		try {
 			String query = "SELECT * FROM Fees WHERE Type = ? AND StatusCode <> ?";
 			
@@ -56,14 +57,14 @@ public class FeeDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setFeeFromResultSet(rset);
+				fee = DBUtil.setFeeFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return fee;
 	}
 	
 	/**
@@ -73,6 +74,7 @@ public class FeeDAO {
 	 * @return the reference of the fee or <code>null</code>.
 	**/
 	public Fee getFeeById(final int id) {
+		Fee fee = null;
 		try {
 			String query = "SELECT * FROM Fees WHERE IdFee = ? AND StatusCode <> ?";
 			
@@ -82,14 +84,14 @@ public class FeeDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setFeeFromResultSet(rset);
+				fee = DBUtil.setFeeFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return fee;
 	}
 	
 	/**

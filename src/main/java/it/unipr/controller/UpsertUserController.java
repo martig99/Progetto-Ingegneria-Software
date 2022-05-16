@@ -76,10 +76,9 @@ public class UpsertUserController {
 		String password = !this.password.getText().isEmpty() ? this.password.getText() : this.user.getPassword();
 		String fiscalCode = !this.fiscalCode.getText().isEmpty() ? this.fiscalCode.getText() : null;
 		String address = !this.address.getText().isEmpty() ? this.address.getText() : null;
-		Boolean admin = this.userType == UserType.EMPLOYEE ? this.admin.isSelected() : false;
+		Boolean admin = this.userType == UserType.EMPLOYEE ? this.admin.isSelected() : null;
 		
-		Request request = new Request();
-		
+		Request request = new Request();		
 		if (this.user != null) {
 			ResponseType resultUpdate = this.updateUser(idUser, firstName, lastName, email, password);
 			if (resultUpdate == ResponseType.OK) {

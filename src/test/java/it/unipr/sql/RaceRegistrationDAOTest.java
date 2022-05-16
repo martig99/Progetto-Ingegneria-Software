@@ -46,23 +46,6 @@ public class RaceRegistrationDAOTest extends UtilTest {
 	}
 	
 	/**
-	 * Performs the test for the method of updating the registration at the race.
-	**/
-	@Test
-	public void updateRaceRegistrationTest() {
-		idBoat = 3;
-				
-		UtilTest.getClub().getRaceRegistrationDAO().updateRaceRegistration(idRegistration, idBoat);
-		
-		RaceRegistration newRegistration = UtilTest.getClub().getRaceRegistrationDAO().getRaceRegistration(idRace, idBoat);
-		assertAll(
-			() -> assertTrue(newRegistration.getRace().getId() == idRace, newRegistration.getRace().getId() + " should equal " + idRace),
-			() -> assertTrue(newRegistration.getBoat().getId() == idBoat, newRegistration.getBoat().getId() + " should equal " + idBoat)
-		);
-		
-	}
-	
-	/**
 	 * Performs the test for the method of removing the registration at the race.
 	**/
 	@AfterAll

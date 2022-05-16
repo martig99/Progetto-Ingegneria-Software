@@ -45,6 +45,7 @@ public class PaymentDAO {
 	 * @return the reference of the payment service or <code>null</code>.
 	**/
 	public PaymentService getPaymentServiceByDescription(final String description) {
+		PaymentService paymentService = null;
 		try {
 			String query = "SELECT * FROM PaymentServices WHERE Description = ?";
 			
@@ -53,14 +54,14 @@ public class PaymentDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setPaymentServiceFromResultSet(rset);
+				paymentService = DBUtil.setPaymentServiceFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return paymentService;
 	}
 	
 	/**
@@ -72,6 +73,7 @@ public class PaymentDAO {
 	 * @return the date of the last payment or <code>null</code>.
 	**/
 	public Date getLastPaymentFee(final User member, final Boat boat, final FeeType feeType) {
+		Date date = null;
 		try {		
 			String query = "";
 			int parameter = 0;
@@ -89,14 +91,14 @@ public class PaymentDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return rset.getDate(1);
+				date = rset.getDate(1);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return date;
 	}
 
 	private Date getEndDate(final Date startDate, final int period) {		
@@ -117,6 +119,7 @@ public class PaymentDAO {
 	 * @return <code>true</code> if the last payment is valid.
 	**/
 	public boolean checkPaymentStorageFee(final Boat boat) {
+		boolean result = false;
 		try {		
 			String query =  "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Boats ON Boats.IdBoat = Payments.Boat JOIN Fees ON Fees.IdFee = Payments.Fee WHERE Payments.Boat = ? AND Fees.Type = ? AND Payments.ValidityStartDate <= ? AND Payments.ValidityEndDate >= ?";
 			
@@ -130,14 +133,14 @@ public class PaymentDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return true;
+				result = true;
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return false;
+		return result;
 	}
 	
 	/**
@@ -147,6 +150,7 @@ public class PaymentDAO {
 	 * @return <code>true</code> if the last payment is valid.
 	**/
 	public boolean checkPaymentMembershipFee(final User member) {
+		boolean result = false;
 		try {			
 			String query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Fees ON Fees.IdFee = Payments.Fee WHERE Payments.Member = ? AND Fees.Type = ? AND Payments.ValidityStartDate <= ? AND Payments.ValidityEndDate >= ?";
 			
@@ -160,14 +164,14 @@ public class PaymentDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return true;
+				result = true;
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return false;
+		return result;
 	}
 
 	/**
@@ -287,6 +291,7 @@ public class PaymentDAO {
 	 * @return the reference of the payment or <code>null</code>.
 	**/
 	public Payment getPaymentByRaceRegistration(final int id) {
+		Payment payment = null;
 		try {
 			String query = "SELECT * FROM Payments JOIN Members ON Members.IdMember = Payments.Member JOIN Users ON Users.IdUser = Members.IdMember JOIN RaceRegistrations ON RaceRegistrations.IdRegistration = Payments.RaceRegistration JOIN Boats ON Boats.IdBoat = RaceRegistrations.Boat JOIN Races ON Races.IdRace = RaceRegistrations.Race JOIN PaymentServices ON PaymentServices.IdPaymentService = Payments.PaymentService JOIN Fees ON Fees.IdFee = Payments.Fee WHERE Payments.RaceRegistration = ?";
 			
@@ -295,7 +300,7 @@ public class PaymentDAO {
 						
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return DBUtil.setPaymentFromResultSet(rset);
+				payment = DBUtil.setPaymentFromResultSet(rset);
 			}
 			
 			DBUtil.dbDisconnect(rset, pstmt);
@@ -303,7 +308,7 @@ public class PaymentDAO {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return payment;
 	}
 	
 	/**

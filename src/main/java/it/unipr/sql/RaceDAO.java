@@ -47,6 +47,7 @@ public class RaceDAO {
 	 * @return the reference of the race or <code>null</code>.
 	**/
 	public Race getRaceByDate(final Date date) {
+		Race race = null;
 		try {
 			String query = "SELECT * FROM Races WHERE Date = ? AND StatusCode <> ?";
 			
@@ -56,14 +57,14 @@ public class RaceDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				return DBUtil.setRaceFromResultSet(rset);
+				race = DBUtil.setRaceFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return race;
 	}
 	
 	/**
@@ -175,6 +176,7 @@ public class RaceDAO {
 	 * @return the reference of the race or <code>null</code>.
 	**/
 	public Race getRaceById(final int id) {
+		Race race = null;
 		try {
 			String query = "SELECT * FROM Races WHERE IdRace = ? AND StatusCode <> ?";
 			
@@ -184,13 +186,13 @@ public class RaceDAO {
 
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) 
-				return DBUtil.setRaceFromResultSet(rset);
+				race = DBUtil.setRaceFromResultSet(rset);
 			
 			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
-		return null;
+		return race;
 	}
 }
