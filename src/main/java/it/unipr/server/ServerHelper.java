@@ -396,15 +396,17 @@ public class ServerHelper {
 		Date today = this.getZeroTimeCalendar(new Date()).getTime();
 		
 		int idBoat = (int) this.object.get(0);
-		ArrayList<RaceRegistration> list = this.club.getRaceRegistrationDAO().getAllRegistrationByBoat(idBoat);
+		Boat boat = this.club.getBoatDAO().getBoatById(idBoat);
 		
+		ArrayList<RaceRegistration> list = this.club.getRaceRegistrationDAO().getAllRegistrationByBoat(idBoat);
 		for (RaceRegistration registration: list) {
     		if (registration.getRace().getDate().after(today)) {
         		this.club.getRaceRegistrationDAO().removeRaceRegistration(registration.getId());
     			this.club.getPaymentDAO().refundRegistrationFee(registration.getId());
         	}
 		}
-		
+				
+		this.club.getNotificationDAO().updateStatusCodeNotification(boat.getOwner().getId(), idBoat);
 		this.club.getBoatDAO().removeBoat(idBoat);
 		this.response.setResponseType(ResponseType.SUCCESS_REMOVE_BOAT);
 	}
@@ -460,12 +462,15 @@ public class ServerHelper {
 		}
 		
 		Boat boat = null;
+		Integer idBoat = null;
 		if (feeType == FeeType.STORAGE) {
 			boat = this.club.getBoatDAO().getBoatByName(nameBoat, member);
 			
 			if (boat == null) {
 				this.response.setResponseType(ResponseType.ERROR_BOAT);
 				return;
+			} else {
+				idBoat = boat.getId();
 			}
 		}
 		
@@ -477,7 +482,7 @@ public class ServerHelper {
 		
 		Fee fee = this.club.getFeeDAO().getFeeByType(feeType);
 		
-		this.club.getNotificationDAO().insertNotification(member, boat, fee);
+		this.club.getNotificationDAO().insertNotification(member.getId(), idBoat, fee.getId());
 		this.response.setResponseType(ResponseType.SUCCESS_NOTIFY_PAYMENT);
 	}
 	
@@ -517,12 +522,15 @@ public class ServerHelper {
 		}
 				
 		Boat boat = null;
+		Integer idBoat = null;
 		if (feeType == FeeType.STORAGE) {
 			boat = this.club.getBoatDAO().getBoatByName(nameBoat, member);
 			
 			if (boat == null) {
 				this.response.setResponseType(ResponseType.ERROR_BOAT);
 				return;
+			} else {
+				idBoat = boat.getId();
 			}
 		}
 		
@@ -551,7 +559,7 @@ public class ServerHelper {
 			}
 		}
 		
-		this.club.getNotificationDAO().updateStatusCodeNotification(member, boat, fee);
+		this.club.getNotificationDAO().updateStatusCodeNotification(member.getId(), idBoat);
 		this.response.setResponseType(ResponseType.SUCCESS_PAY_FEE);
 	}
 
@@ -837,7 +845,6 @@ public class ServerHelper {
 		if (!this.checkPaymentsByRaceRegistration(member, boat, race))
 			return;
 
-		//this.club.getRaceRegistrationDAO().updateRaceRegistration(id, boat.getId());
 		this.removeRegistrationBoatAndRefundFee(id);
 		this.registerBoatAtRaceAndPayFee(race, boat, member, paymentService);
 		
@@ -871,8 +878,12 @@ public class ServerHelper {
 	 * Updates a fee given all the information in the request object. 
 	**/
 	public void updateFee() {
-		Fee fee = (Fee) this.object.get(0);
-		this.club.getFeeDAO().updateFee(fee.getId(), fee.getType(), fee.getAmount(), fee.getValidityPeriod());
+		Fee oldFee = (Fee) this.object.get(0);
+		this.club.getFeeDAO().updateFee(oldFee.getId(), oldFee.getType(), oldFee.getAmount(), oldFee.getValidityPeriod());
+		
+		Fee newFee = this.club.getFeeDAO().getFeeByType(oldFee.getType());
+		this.club.getNotificationDAO().updateNotificationsByFee(oldFee.getId(), newFee.getId());
+		
 		this.response.setResponseType(ResponseType.SUCCESS_UPDATE_FEE);
 	}
 	
@@ -898,7 +909,7 @@ public class ServerHelper {
 			case UPDATE_EMPLOYEE:
 				this.updateEmployee();
 				break;
-			case REMOVE_USER:
+			case REMOVE_EMPLOYEE:
 				this.removeEmployee();
 				break;
 			case GET_USER_BY_EMAIL:

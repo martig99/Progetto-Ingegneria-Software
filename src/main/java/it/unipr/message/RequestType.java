@@ -36,7 +36,7 @@ public enum RequestType {
 	/**
 	 * The request to remove a user.
 	**/
-	REMOVE_USER,
+	REMOVE_EMPLOYEE,
 	
 	/**
 	 * The request to get a user given the email.

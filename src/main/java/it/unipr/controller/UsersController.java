@@ -102,7 +102,7 @@ public class UsersController {
 			
 	    	Optional<ButtonType> result = this.app.showAlert(Alert.AlertType.CONFIRMATION, "Remove an user", "You are removing the user with unique identifier " + user.getId(), "Are you sure?");
 	    	if (result.get() == ButtonType.OK) {	    		
-	    		Request request = new Request(RequestType.REMOVE_USER, Arrays.asList(user.getId()));
+	    		Request request = new Request(RequestType.REMOVE_EMPLOYEE, Arrays.asList(user.getId()));
 	    		this.app.isSuccessfulMessage(ClientHelper.getResponseType(request));
 	    		this.setTableContent(this.userType);
 	    	}

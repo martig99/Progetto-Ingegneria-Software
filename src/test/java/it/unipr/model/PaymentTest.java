@@ -42,7 +42,7 @@ public class PaymentTest {
 		fee = new Fee(3, FeeType.RACE_REGISTRATION, 0, 0, StatusCode.ACTIVE);
 		paymentService = new PaymentService(1, "Credit Card");
 		
-		toString = "Id: " + id + " - Date: " + date + " - Member: " + member.getEmail() + " - Boat: " + boat.getId() + " - Race Registration: " + registration.getId() + " - Validity Start Date: " + validityStartDate + " - Validity End Date: " + validityEndDate + " - Total: " + total + " - Payment Service: " + paymentService.getDescription();
+		toString = "Id: " + id + " - Date: " + date + " - Member: " + member.getEmail() + " - Boat: " + boat.getId() + " - Race Registration: " + registration.getId() + " - Validity Start Date: " + validityStartDate + " - Validity End Date: " + validityEndDate + " - Total: " + total + " - Fee: " + fee.getType().toString() + " - Payment Service: " + paymentService.getDescription();
 	}
 	
 	/**

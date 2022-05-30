@@ -32,7 +32,7 @@ public class RaceRegistrationTest {
 		boat = new Boat(1, "Yacht", 1, member, StatusCode.ACTIVE);
 		race = new Race(1, "Gara 1", "Roma", Date.valueOf("2022-03-08"), 3, 10, Date.valueOf("2022-03-07"), StatusCode.ACTIVE);
 		
-		toString = "Id: " + id + " - Date: " + date + " - Race: [" + race.getDate() + ", " + race.getName() + "] - Boat: " + boat.getName() + " - Status Code: " + StatusCode.ACTIVE.toString();
+		toString = "Id: " + id + " - Date: " + date + " - Race: [" + race.getDate() + ", " + race.getName() + "] - Boat: " + boat.getId() + " - Status Code: " + StatusCode.ACTIVE.toString();
 	}
 	
 	/**

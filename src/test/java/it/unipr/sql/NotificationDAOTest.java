@@ -26,7 +26,7 @@ public class NotificationDAOTest extends UtilTest {
 		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email, userType);
 		Fee fee = UtilTest.getClub().getFeeDAO().getFeeByType(feeType);
 		
-		UtilTest.getClub().getNotificationDAO().insertNotification(user, null, fee);
+		UtilTest.getClub().getNotificationDAO().insertNotification(user.getId(), null, fee.getId());
 		
 		Notification newNotification = UtilTest.getClub().getNotificationDAO().getNotification(user, null, fee, StatusCode.ACTIVE);
 		assertAll(
@@ -55,7 +55,7 @@ public class NotificationDAOTest extends UtilTest {
 		User user = UtilTest.getClub().getUserDAO().getUserByEmail(email, userType);
 		Fee fee = UtilTest.getClub().getFeeDAO().getFeeByType(feeType);
 		
-		UtilTest.getClub().getNotificationDAO().updateStatusCodeNotification(user, null, fee);
+		UtilTest.getClub().getNotificationDAO().updateStatusCodeNotification(user.getId(), null);
 		
 		Notification newNotification = UtilTest.getClub().getNotificationDAO().getNotification(user, null, fee, StatusCode.ELIMINATED);
 		assertAll(

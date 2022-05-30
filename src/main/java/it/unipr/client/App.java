@@ -26,6 +26,7 @@ public class App extends Application {
 	
 	private Stage primaryStage;
 	private BorderPane rootLayout;
+	private Stage notificationStage;
 	
 	private User loggedUser;
 
@@ -125,6 +126,8 @@ public class App extends Application {
             
             MainController controller = loader.getController();
             controller.setApp(this);
+            
+            this.notificationStage = new Stage();
 		} catch (IOException e){
             e.printStackTrace();
         }
@@ -261,6 +264,8 @@ public class App extends Application {
 	**/
 	public void initNotifications() {
 		try {
+			this.notificationStage.close();
+			
         	FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/main/resources/NotificationsLayout.fxml"));
             
@@ -270,10 +275,9 @@ public class App extends Application {
             NotificationsController controller = loader.getController();
             controller.setApp(this);
 
-            Stage dialogStage = new Stage();
-            dialogStage.setScene(scene);
-            dialogStage.setTitle("Notifications");
-            dialogStage.showAndWait();
+            this.notificationStage.setScene(scene);
+            this.notificationStage.setTitle("Notifications");
+            this.notificationStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -471,7 +475,7 @@ public class App extends Application {
 	 * @return the new formatted float number.
 	**/
 	public float setFloatFormat(final float val) {
-		DecimalFormat df = new DecimalFormat();
+		DecimalFormat df = new DecimalFormat("#.00");
 		df.setMaximumFractionDigits(2);
 		
 		DecimalFormatSymbols sym = DecimalFormatSymbols.getInstance();

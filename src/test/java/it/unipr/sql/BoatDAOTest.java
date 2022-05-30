@@ -56,7 +56,7 @@ public class BoatDAOTest extends UtilTest {
 	**/
 	@Test
 	public void updateNameBoatTest() {		
-		nameBoat = "Classica";
+		nameBoat = "Nave Crocera";
 		
 		UtilTest.getClub().getBoatDAO().updateBoat(id, nameBoat, null);
 		
