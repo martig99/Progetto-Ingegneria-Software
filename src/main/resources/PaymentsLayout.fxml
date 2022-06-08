@@ -44,7 +44,7 @@
 				<TableColumn fx:id="idColumn" prefWidth="50.0" resizable="false" text="Id" />
 				<TableColumn fx:id="dateColumn" prefWidth="75.0" resizable="false" text="Date" />
 				<TableColumn fx:id="memberColumn" prefWidth="150.0" resizable="false" text="Member" visible="false" />
-				<TableColumn fx:id="raceColumn" prefWidth="150.0" resizable="false" text="Race" visible="false" />
+				<TableColumn fx:id="raceColumn" prefWidth="200.0" resizable="false" text="Race" visible="false" />
 				<TableColumn fx:id="boatColumn" prefWidth="100.0" resizable="false" text="Boat" visible="false" />
 				<TableColumn fx:id="validityStartDateColumn" prefWidth="125.0" text="Validity Start Date" />
 				<TableColumn fx:id="validityEndDateColumn" prefWidth="125.0" text="Validity End Date" />

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.*;
 **/
 public class BoatDAOTest extends UtilTest {
 	
-	private final static String fiscalCode = "RSSLRI95A41A944A";
+	private final static String fiscalCode = "RSSLRI97H52H223L";
 	
 	private static int id = 0;
 	private static String nameBoat = "Battello";

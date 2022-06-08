@@ -632,7 +632,7 @@ public class ServerHelper {
 			return false;
 		}
 		
-		if (boatsNumber != 0 && (boatsNumber <= 1 || boatsNumber > totBoats)) {	
+		if (boatsNumber != 0 && boatsNumber <= 1) {	
 			this.response.setResponseType(ResponseType.ERROR_NUMBER_BOATS);
 			return false;
 		}

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 **/
 public class PaymentDAOTest extends UtilTest {
 	
-	private static String fiscalCode = "RSSLRI95A41A944A";
+	private static String fiscalCode = "RSSLRI97H52H223L";
 	
 	/**
 	 * Performs the test for the method that pays a fee. 

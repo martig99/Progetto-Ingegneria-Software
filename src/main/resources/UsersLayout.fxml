@@ -45,7 +45,7 @@
 				<TableColumn fx:id="fiscalCodeColumn" prefWidth="125.0" resizable="false" text="Fiscal Code" />
 				<TableColumn fx:id="firstNameColumn" prefWidth="100.0" resizable="false" text="First Name" />
 				<TableColumn fx:id="lastNameColumn" prefWidth="100.0" resizable="false" text="Last Name" />
-				<TableColumn fx:id="emailColumn" prefWidth="150.0" resizable="false" text="Email" />
+				<TableColumn fx:id="emailColumn" prefWidth="200.0" resizable="false" text="Email" />
 				<TableColumn fx:id="addressColumn" prefWidth="200.0" resizable="false" text="Address" />
 				<TableColumn fx:id="administratorColumn" prefWidth="100.0" resizable="false" text="Administrator" visible="false" />
 			</columns>
