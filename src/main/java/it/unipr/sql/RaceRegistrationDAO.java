@@ -31,8 +31,6 @@ public class RaceRegistrationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				result = rset.getInt(1);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -60,8 +58,6 @@ public class RaceRegistrationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				result = true;
-				
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -89,8 +85,6 @@ public class RaceRegistrationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				raceRegistration = DBUtil.setRaceRegistrationFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -114,11 +108,8 @@ public class RaceRegistrationDAO {
 			pstmt.setInt(2, StatusCode.ELIMINATED.getValue());
 			
 			ResultSet rset = pstmt.executeQuery();
-			if (rset.next()) {
+			if (rset.next())
 				raceRegistration = DBUtil.setRaceRegistrationFromResultSet(rset);
-			}		
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -132,7 +123,7 @@ public class RaceRegistrationDAO {
 	 * @param idRace the unique identifier of the race.
 	 * @param idBoat the unique identifier of the boat registered to the race.
 	**/
-	public void registerBoatAtRace(final int idRace, final int idBoat) {
+	public void registerBoatAtRace(final int idRace, final int idBoat) {		
 		try {
 			String query = "INSERT INTO RaceRegistrations (Date, Race, Boat, StatusCode) VALUES (?,?,?,?)";
 			
@@ -144,7 +135,6 @@ public class RaceRegistrationDAO {
 			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 			
 			pstmt.executeUpdate();			
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -168,9 +158,7 @@ public class RaceRegistrationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
 				list.add(DBUtil.setRaceRegistrationFromResultSet(rset));
-			}			
-			
-			DBUtil.dbDisconnect(rset, pstmt);
+			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -196,11 +184,9 @@ public class RaceRegistrationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				result = true;
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 		
 		return result;
 	}
@@ -223,12 +209,10 @@ public class RaceRegistrationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			while (rset.next()) {
 				list.add(DBUtil.setRaceRegistrationFromResultSet(rset));
-			}			
-			
-			DBUtil.dbDisconnect(rset, pstmt);
+			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 		
 		return list;
 	}
@@ -247,9 +231,8 @@ public class RaceRegistrationDAO {
 			pstmt.setInt(2, idRegistration);
 			
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 	}
 }

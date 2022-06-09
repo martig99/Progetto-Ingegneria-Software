@@ -1,16 +1,9 @@
 package main.java.it.unipr.controller;
 
 import main.java.it.unipr.client.*;
-import main.java.it.unipr.message.*;
 import main.java.it.unipr.model.*;
 
-import java.util.*;
-
-import javafx.util.Duration;
 import javafx.fxml.*;
-import javafx.concurrent.*;
-import javafx.event.EventHandler;
-import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
@@ -33,12 +26,6 @@ public class MainController {
 	
 	@FXML
 	private ImageView logout, notificationsImage;
-	
-	@FXML
-	private StackPane notificationsBlock;
-	
-	@FXML
-	private Label numberNotifications;
 
 	/**
 	 * {@inheritDoc} 
@@ -87,51 +74,6 @@ public class MainController {
         });
     }
     
-    /**
-     * Gets the number of notifications.
-     * 
-     * @return the number.
-    **/
-    public int getNumberNotifications() {
-    	if (this.app.getLoggedUser() != null) {   		
-			Request request = new Request(RequestType.GET_ALL_NOTIFICATIONS, Arrays.asList(this.app.getLoggedUser()));
-			request.setBackgroundRequest(true);
-			
-			ArrayList<Notification> list = ClientHelper.getListResponse(request, Notification.class);
-			return list.size();
-    	}
-    	
-    	return 0;
-	}
-    
-    /**
-     * Updates the number of notifications by setting the label in the fxml page.
-    **/
-    public void updateNumberNotifications() {
-    	if (this.app.getLoggedUser() != null) {
-	    	ScheduledService<Integer> service = new ScheduledService<Integer>() {
-	    		protected Task<Integer> createTask() {
-	        		return new Task<Integer>() {
-	        			protected Integer call() {
-	        				updateValue(getNumberNotifications());
-	        				return getNumberNotifications();
-	        			}
-	        		};
-	        	}
-	    	};
-	    	
-	    	service.setPeriod(Duration.seconds(3));
-	    	service.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-	            @Override
-	            public void handle(WorkerStateEvent t) {
-	            	numberNotifications.setText(t.getSource().getValue().toString());
-	            }
-	        });
-	    	
-	        service.start();
-    	}
-    }
-    
 	/**
      * Sets the reference to the application.
      * 
@@ -150,9 +92,6 @@ public class MainController {
         	
         	this.app.setVisibleElement(this.linkUsers, true);
         	this.app.setVisibleElement(this.notificationsImage, false);
-        	this.app.setVisibleElement(this.notificationsBlock, false);
-        } else {
-        	this.updateNumberNotifications();
         }
         
         this.app.activateLinkMenu(this.menu, this.linkBoats);

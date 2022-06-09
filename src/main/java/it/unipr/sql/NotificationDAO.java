@@ -32,8 +32,6 @@ public class NotificationDAO {
 			while (rset.next()) {
 				list.add(DBUtil.setNotificationFromResultSet(rset));
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -48,7 +46,7 @@ public class NotificationDAO {
 	 * @param idBoat the unique code of the boat to which the storage fee refers or <code>null</code> if the fee to be notified is of membership. 
 	 * @param idFee the unique code of the fee that the member should pay.
 	**/
-	public void insertNotification(final int idUser, final Integer idBoat, final int idFee) {				
+	public void insertNotification(final int idUser, final Integer idBoat, final int idFee) {	
 		try {			
 			String query = "INSERT INTO Notifications (Member, Boat, Fee, StatusCode) VALUES (?,?,?,?)";
 			
@@ -65,7 +63,6 @@ public class NotificationDAO {
 			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 						
 			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -102,8 +99,6 @@ public class NotificationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				notification = DBUtil.setNotificationFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -130,8 +125,6 @@ public class NotificationDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				result = true;
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -159,9 +152,7 @@ public class NotificationDAO {
 			
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
-				result = true;
-			
-			DBUtil.dbDisconnect(rset, pstmt);
+				result = true;		
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -193,7 +184,6 @@ public class NotificationDAO {
 			pstmt.setInt(3, StatusCode.ACTIVE.getValue());
 						
 			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -210,7 +200,6 @@ public class NotificationDAO {
 			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 						
 			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -256,13 +245,10 @@ public class NotificationDAO {
 			while (rset.next()) {
 				list.add(DBUtil.setNotificationFromResultSet(rset));
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		
 		return list;
 	}
-	
 }

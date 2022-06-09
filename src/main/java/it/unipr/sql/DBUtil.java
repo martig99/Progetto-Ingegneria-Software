@@ -33,25 +33,6 @@ public class DBUtil {
     }
 	
 	/**
-	 * Disconnects from the database.
-	 * In particular closes the prepared statement, the result set and the connection.
-	 * 
-	 * @param rset the result set.
-	 * @param pstmt the prepared statement
-	 * @throws SQLException if the execution fails.
-	**/
-	public static void dbDisconnect(final ResultSet rset, final PreparedStatement pstmt) throws SQLException {
-		if (rset != null)
-			rset.close();
-		
-		if (pstmt != null)
-			pstmt.close();
-		
-		if (conn != null && !conn.isClosed())
-			conn.close();
-	}
-	
-	/**
 	 * Gets the object of "PreparedStatement" given a query.
 	 * 
 	 * @param query the query to execute.
@@ -60,7 +41,7 @@ public class DBUtil {
 	**/
 	public static PreparedStatement prepareQuery(final String query) throws SQLException {
 		dbConnect();
-		
+
 		PreparedStatement pstmt = conn.prepareStatement(query);
 		return pstmt;
 	}

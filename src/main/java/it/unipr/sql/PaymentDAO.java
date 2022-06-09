@@ -29,8 +29,6 @@ public class PaymentDAO {
 			while (rset.next()) {
 				list.add(rset.getString("Description"));
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -55,8 +53,6 @@ public class PaymentDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				paymentService = DBUtil.setPaymentServiceFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -92,8 +88,6 @@ public class PaymentDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				date = rset.getDate(1);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -134,8 +128,6 @@ public class PaymentDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				result = true;
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -165,8 +157,6 @@ public class PaymentDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				result = true;
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -201,8 +191,6 @@ public class PaymentDAO {
 			while (rset.next()) {				
 				list.add(DBUtil.setPaymentFromResultSet(rset));
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -278,7 +266,6 @@ public class PaymentDAO {
 			pstmt.setInt(9, paymentService.getId());
 					
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -302,8 +289,6 @@ public class PaymentDAO {
 			if (rset.next()) {
 				payment = DBUtil.setPaymentFromResultSet(rset);
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

@@ -82,7 +82,9 @@ public class ClientHelper {
         	ClientHelper.outputStream.flush();
         	
         	ClientHelper.inputStream = new ObjectInputStream(new BufferedInputStream(ClientHelper.client.getInputStream()));
-            return ClientHelper.inputStream.readObject();
+            Object obj = ClientHelper.inputStream.readObject();
+                                    
+            return obj;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

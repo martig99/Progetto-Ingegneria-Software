@@ -19,7 +19,7 @@ public class RaceDAO {
 	 * 
 	 * @return the list.
 	**/ 
-	public ArrayList<Race> getAllRaces() {
+	public ArrayList<Race> getAllRaces() {		
 		ArrayList<Race> list = new ArrayList<Race>();
 		try {
 			String query = "SELECT * FROM Races WHERE StatusCode <> ? ORDER BY IdRace";
@@ -31,8 +31,6 @@ public class RaceDAO {
 			while (rset.next()) {
 				list.add(DBUtil.setRaceFromResultSet(rset));
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -46,7 +44,7 @@ public class RaceDAO {
 	 * @param date the date.
 	 * @return the reference of the race or <code>null</code>.
 	**/
-	public Race getRaceByDate(final Date date) {
+	public Race getRaceByDate(final Date date) {		
 		Race race = null;
 		try {
 			String query = "SELECT * FROM Races WHERE Date = ? AND StatusCode <> ?";
@@ -58,8 +56,6 @@ public class RaceDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				race = DBUtil.setRaceFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -91,7 +87,6 @@ public class RaceDAO {
 			pstmt.setInt(7, StatusCode.ACTIVE.getValue());
 
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -143,7 +138,6 @@ public class RaceDAO {
 			pstmt.setInt(7, id);
 
 			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -163,10 +157,9 @@ public class RaceDAO {
 			pstmt.setInt(2, idRace);
 
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 	}
 	
 	/**
@@ -187,8 +180,6 @@ public class RaceDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next()) 
 				race = DBUtil.setRaceFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

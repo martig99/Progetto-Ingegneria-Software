@@ -26,7 +26,7 @@ public class BoatDAO {
 			String query = "SELECT * FROM Boats JOIN Members ON Members.IdMember = Boats.Owner JOIN Users ON Users.IdUser = Members.IdMember WHERE (? IS NULL OR Boats.Owner = ?) AND Boats.StatusCode <> ? ORDER BY Boats.IdBoat";
 			PreparedStatement pstmt = DBUtil.prepareQuery(query);
 			
-			if(owner != null) {
+			if (owner != null) {
 				pstmt.setInt(1, owner.getId());
 				pstmt.setInt(2, owner.getId());
 			} else {
@@ -40,8 +40,6 @@ public class BoatDAO {
 			while (rset.next()) {
 				list.add(DBUtil.setBoatFromResultSet(rset));
 			}		
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -68,8 +66,6 @@ public class BoatDAO {
 			while (rset.next()) {
 				list.add(rset.getString(1));
 			}			
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -97,8 +93,6 @@ public class BoatDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				boat = DBUtil.setBoatFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -125,7 +119,6 @@ public class BoatDAO {
 			if (rset.next())
 				boat = DBUtil.setBoatFromResultSet(rset);
 			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -140,7 +133,7 @@ public class BoatDAO {
 	 * @param length the length of the boat.
 	 * @param user the owner of the boat.
 	**/
-	public void insertBoat(final String name, final int length, final User user) {				
+	public void insertBoat(final String name, final int length, final User user) {
 		try {			
 			String query = "INSERT INTO Boats (Name, Length, Owner, StatusCode) VALUES (?,?,?,?)";
 			
@@ -151,7 +144,6 @@ public class BoatDAO {
 			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 						
 			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -164,7 +156,7 @@ public class BoatDAO {
 	 * @param name the new name of the boat.
 	 * @param length the new length of the boat.
 	**/
-	public void updateBoat(final int id, final String name, final Integer length) {		
+	public void updateBoat(final int id, final String name, final Integer length) {	
 		try {		
 			String query = "UPDATE Boats SET Name = IfNull(?, Name), Length = IfNull(?, Length) WHERE IdBoat = ?"; 			
 			
@@ -180,7 +172,6 @@ public class BoatDAO {
 			pstmt.setInt(3, id);
 						
 			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -200,7 +191,6 @@ public class BoatDAO {
 			pstmt.setInt(2, id);
 						
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -223,8 +213,6 @@ public class BoatDAO {
 			if (rset.next()) {
 				return rset.getInt(1);
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

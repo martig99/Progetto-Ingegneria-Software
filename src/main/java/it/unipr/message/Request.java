@@ -22,19 +22,13 @@ public class Request implements Serializable {
 	 * The object included in the request message.
 	**/
 	private List<Serializable> object;
-	
-	/**
-	 * An attribute that is <code>true</code> if the request is to be executed in the background.
-	**/
-	private boolean backgroundRequest;
-	
+
 	/**
 	 * Class constructor.
 	**/
 	public Request() {
 		this.setRequestType(null);
 		this.setObject(null);
-		this.setBackgroundRequest(false);
 	}
 	
 	/**
@@ -45,7 +39,6 @@ public class Request implements Serializable {
 	public Request(final RequestType messageType) {
 		this.setRequestType(messageType);
 		this.setObject(null);
-		this.setBackgroundRequest(false);
 	}
 	
 	/**
@@ -57,7 +50,6 @@ public class Request implements Serializable {
 	public Request(final RequestType requestType, final List<Serializable> object) {
 		this.setRequestType(requestType);
 		this.setObject(object);
-		this.setBackgroundRequest(false);
 	}
 	
 	/**
@@ -95,25 +87,7 @@ public class Request implements Serializable {
 	public void setObject(final List<Serializable> object) {
 		this.object = object;
 	}
-	
-	/**
-	 * Gets whether the request should be executed in the background or not.
-	 * 
-	 * @return <code>true</code> if the request is to be executed in the background.
-	**/
-	public boolean isBackgroundRequest() {
-		return this.backgroundRequest;
-	}
-	
-	/**
-	 * Sets whether the request should be executed in the background or not.
-	 * 
-	 * @param backgroundRequest the new value.
-	**/
-	public void setBackgroundRequest(final boolean backgroundRequest) {
-		this.backgroundRequest = backgroundRequest;
-	}
-	
+
 	/**
 	 * Gets a string that describes a request.
 	 * 

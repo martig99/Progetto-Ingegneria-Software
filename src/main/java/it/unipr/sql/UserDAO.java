@@ -44,12 +44,10 @@ public class UserDAO {
 						user = DBUtil.setEmployeeFromResultSet(rset);
 					}
 				}
-			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
+			}			
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 		
 		return user;
 	}
@@ -95,8 +93,6 @@ public class UserDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				user = DBUtil.setUserFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -131,11 +127,9 @@ public class UserDAO {
 				else
 					user = DBUtil.setEmployeeFromResultSet(rset);
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 		
 		return user;
 	}
@@ -158,8 +152,6 @@ public class UserDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				member = DBUtil.setMemberFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -175,7 +167,7 @@ public class UserDAO {
 	 * @param email the email address of the new user.
 	 * @param password the password of the new user.
 	**/
-	public void insertUser(final String firstName, final String lastName, final String email, final String password) {
+	public void insertUser(final String firstName, final String lastName, final String email, final String password) {	
 		try {
 			String query = "INSERT INTO Users (FirstName, LastName, Email, Password, StatusCode) VALUES (?,?,?,?,?)";
 			
@@ -187,10 +179,9 @@ public class UserDAO {
 			pstmt.setInt(5, StatusCode.ACTIVE.getValue());
 						
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 	}
 	
 	/**
@@ -231,8 +222,6 @@ public class UserDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				member = DBUtil.setMemberFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -258,8 +247,6 @@ public class UserDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				employee = DBUtil.setEmployeeFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -294,8 +281,6 @@ public class UserDAO {
 					list.add(DBUtil.setEmployeeFromResultSet(rset));
 				}
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -320,8 +305,6 @@ public class UserDAO {
 			while (rset.next()) {
 				list.add(rset.getString("Email"));
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -346,7 +329,6 @@ public class UserDAO {
 			pstmt.setString(3, address);
 						
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -367,7 +349,6 @@ public class UserDAO {
 			pstmt.setBoolean(2, admin);
 			
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -387,7 +368,6 @@ public class UserDAO {
 			pstmt.setInt(2, id);
 						
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -414,7 +394,6 @@ public class UserDAO {
 			pstmt.setInt(5, id);
 						
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -436,11 +415,10 @@ public class UserDAO {
 			pstmt.setString(2, address);			
 			pstmt.setInt(3, id);
 						
-			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
+			pstmt.executeUpdate();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}
+		} 
 	}
 
 	/**
@@ -462,8 +440,7 @@ public class UserDAO {
 			
 			pstmt.setInt(2, id);
 						
-			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
+			pstmt.executeUpdate();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

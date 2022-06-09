@@ -31,8 +31,6 @@ public class FeeDAO {
 			while (rset.next()) {
 				list.add(DBUtil.setFeeFromResultSet(rset));
 			}
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -58,8 +56,6 @@ public class FeeDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				fee = DBUtil.setFeeFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -73,7 +69,7 @@ public class FeeDAO {
 	 * @param id the unique identifier of the fee.
 	 * @return the reference of the fee or <code>null</code>.
 	**/
-	public Fee getFeeById(final int id) {
+	public Fee getFeeById(final int id) {		
 		Fee fee = null;
 		try {
 			String query = "SELECT * FROM Fees WHERE IdFee = ? AND StatusCode <> ?";
@@ -85,8 +81,6 @@ public class FeeDAO {
 			ResultSet rset = pstmt.executeQuery();
 			if (rset.next())
 				fee = DBUtil.setFeeFromResultSet(rset);
-			
-			DBUtil.dbDisconnect(rset, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -123,7 +117,6 @@ public class FeeDAO {
 			pstmt.setInt(2, id);
 			
 			pstmt.executeUpdate();	
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -147,7 +140,6 @@ public class FeeDAO {
 			pstmt.setInt(4, StatusCode.ACTIVE.getValue());
 			
 			pstmt.executeUpdate();
-			DBUtil.dbDisconnect(null, pstmt);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
