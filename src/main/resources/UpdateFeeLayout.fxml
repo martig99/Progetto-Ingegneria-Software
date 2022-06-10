@@ -28,7 +28,7 @@
 				<Insets bottom="10.0" left="0.0" right="0.0" top="10.0" />
 			</VBox.margin>
 		</TextField>
-		<TextField fx:id="validityPeriod" promptText="Validity Period" maxWidth="400.0">
+		<TextField fx:id="validityPeriod" promptText="Validity Period (days)" maxWidth="400.0">
         	<font>
            		<Font name="Arial" size="14.0" />
            	</font>

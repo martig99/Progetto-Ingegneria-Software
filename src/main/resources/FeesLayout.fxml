@@ -23,7 +23,7 @@
 				<TableColumn fx:id="idColumn" prefWidth="50.0" resizable="false" text="Id" />
 				<TableColumn fx:id="typeColumn" prefWidth="225.0" resizable="false" text="Type" />
 				<TableColumn fx:id="amountColumn" prefWidth="100.0" resizable="false" text="Amount" />
-				<TableColumn fx:id="validityPeriodColumn" prefWidth="100.0" resizable="false" text="Validity Period" />
+				<TableColumn fx:id="validityPeriodColumn" prefWidth="150.0" resizable="false" text="Validity Period (days)" />
 			</columns>
 			<VBox.margin>
 				<Insets bottom="15.0" left="30.0" right="30.0" top="0.0" />
